@@ -39,7 +39,7 @@ function Screen({
   index: number;
   camera: number;
 }) {
-  const site = MINI_SITES[index % MINI_SITES.length];
+  const site = MINI_SITES[index % MINI_SITES.length]!;
   const depth = place.z - camera;
   const visible = depth > -320 && depth < 3400;
   if (!visible) return null;
