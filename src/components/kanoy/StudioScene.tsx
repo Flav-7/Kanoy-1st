@@ -1,5 +1,5 @@
 import { MINI_SITES, MiniSite } from "./mini-sites";
-import { clamp, ease, mix, range, useScrollProgress } from "./anim";
+import { clamp, mix, range, useScrollProgress } from "./anim";
 import studio from "@/assets/studio-depth.jpg";
 import kanoyK from "@/assets/kanoy-k.png";
 
@@ -16,38 +16,40 @@ type Placement = {
 };
 
 const PLACEMENTS: Placement[] = [
-  { x: -32, y: 2, z: 900, w: 460, rotY: 26, device: "monitor" },
-  { x: 33, y: -6, z: 1500, w: 420, rotY: -24, device: "panel", float: 1 },
-  { x: -38, y: -12, z: 2200, w: 380, rotY: 22, device: "panel", float: -1 },
-  { x: 30, y: 8, z: 2800, w: 480, rotY: -20, device: "monitor" },
-  { x: -26, y: 10, z: 3500, w: 320, rotY: 18, device: "tablet", float: 1 },
-  { x: 36, y: -14, z: 4100, w: 440, rotY: -18, device: "panel", float: -1 },
-  { x: -34, y: -4, z: 4800, w: 470, rotY: 20, device: "monitor" },
-  { x: 28, y: 12, z: 5500, w: 340, rotY: -22, device: "tablet" },
-  { x: -30, y: 14, z: 6200, w: 400, rotY: 16, device: "panel", float: 1 },
-  { x: 32, y: -10, z: 6900, w: 450, rotY: -16, device: "monitor" },
+  { x: -32, y: 2, z: 1700, w: 460, rotY: 26, device: "monitor" },
+  { x: 33, y: -6, z: 2450, w: 420, rotY: -24, device: "panel", float: 1 },
+  { x: -38, y: -12, z: 3200, w: 380, rotY: 22, device: "panel", float: -1 },
+  { x: 30, y: 8, z: 3950, w: 480, rotY: -20, device: "monitor" },
+  { x: -26, y: 10, z: 4700, w: 320, rotY: 18, device: "tablet", float: 1 },
+  { x: 36, y: -14, z: 5450, w: 440, rotY: -18, device: "panel", float: -1 },
+  { x: -34, y: -4, z: 6200, w: 470, rotY: 20, device: "monitor" },
+  { x: 28, y: 12, z: 6950, w: 340, rotY: -22, device: "tablet" },
+  { x: -30, y: 14, z: 7700, w: 400, rotY: 16, device: "panel", float: 1 },
+  { x: 32, y: -10, z: 8450, w: 450, rotY: -16, device: "monitor" },
 ];
 
-const CAMERA_TRAVEL = 7400;
+const CAMERA_TRAVEL = 9200;
 
 function Screen({
   place,
   index,
   camera,
+  reveal,
 }: {
   place: Placement;
   index: number;
   camera: number;
+  reveal: number;
 }) {
   const site = MINI_SITES[index % MINI_SITES.length]!;
   const depth = place.z - camera;
   const visible = depth > -320 && depth < 3400;
   if (!visible) return null;
 
-  const near = clamp((depth + 320) / 700); // fade as it passes the camera
-  const far = 1 - clamp((depth - 2200) / 1200); // fade in from the back
-  const opacity = clamp(near * far);
-  const blur = mix(6, 0, clamp((depth - 100) / 500)) + clamp((depth - 2000) / 1400) * 4;
+  const near = clamp((depth + 300) / 460); // fade as it passes the camera
+  const far = 1 - clamp((depth - 2300) / 1100); // fade in from the back
+  const opacity = clamp(near * far) * reveal;
+  const blur = mix(4, 0, clamp((depth - 60) / 340)) + clamp((depth - 2100) / 1300) * 3.5;
   const drift = place.float ? Math.sin(camera / 900 + index) * 10 * place.float : 0;
 
   return (
@@ -75,7 +77,8 @@ function Screen({
 
 export function StudioScene() {
   const { ref, p } = useScrollProgress<HTMLDivElement>();
-  const camera = ease(p) * CAMERA_TRAVEL;
+  const camera = p * CAMERA_TRAVEL;
+  const reveal = range(p, 0.03, 0.11);
 
   const introOut = range(p, 0.02, 0.12);
   const walkLabel = range(p, 0.13, 0.2) * (1 - range(p, 0.86, 0.96));
@@ -89,8 +92,8 @@ export function StudioScene() {
           className="absolute inset-0"
           style={{
             backgroundImage: `url(${studio})`,
-            backgroundSize: `${mix(112, 190, ease(p))}% auto`,
-            backgroundPosition: `50% ${mix(52, 44, ease(p))}%`,
+            backgroundSize: `${mix(112, 178, p)}% auto`,
+            backgroundPosition: `50% ${mix(52, 45, p)}%`,
             filter: `saturate(${mix(0.85, 1.05, p)}) brightness(${mix(0.5, 0.72, p)}) blur(${mix(0, 3, range(p, 0.75, 1))}px)`,
             transform: `translate3d(0,${mix(0, -3, p)}vh,0)`,
           }}
@@ -102,7 +105,7 @@ export function StudioScene() {
         <div className="camera">
           <div className="world">
             {PLACEMENTS.map((place, i) => (
-              <Screen key={i} place={place} index={i} camera={camera} />
+              <Screen key={i} place={place} index={i} camera={camera} reveal={reveal} />
             ))}
 
             {/* brand object floating in the room */}
