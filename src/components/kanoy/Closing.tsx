@@ -40,7 +40,9 @@ export function About() {
             </p>
           </Reveal>
           <Reveal delay={0.2}>
-            <img src={kanoyK} alt="" aria-hidden loading="lazy" className="k-float w-24 md:w-32" />
+            <span className="k-halo inline-block">
+              <img src={kanoyK} alt="" aria-hidden loading="lazy" className="k-float k-glow w-24 md:w-32" />
+            </span>
           </Reveal>
         </div>
       </div>
