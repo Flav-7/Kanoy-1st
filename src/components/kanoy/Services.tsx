@@ -1,5 +1,4 @@
 import { clamp, range, useScrollProgress } from "./anim";
-import kanoyK from "@/assets/kanoy-k.png";
 
 export const SERVICES = [
   { n: "01", title: "Website Development", text: "Premium websites designed specifically for each business — not templates." },
