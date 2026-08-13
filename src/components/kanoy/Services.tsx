@@ -19,9 +19,9 @@ export function Services() {
       <div className="sticky top-0 flex h-screen flex-col justify-center overflow-hidden px-6 md:px-14">
         <div
           className="pointer-events-none absolute -right-24 top-1/2 -translate-y-1/2"
-          style={{ opacity: 0.14 + p * 0.1, transform: `translate3d(0,-50%,0) rotate(${-10 + p * 20}deg) scale(${1 + p * 0.2})` }}
+          style={{ opacity: 0.07 + p * 0.05, transform: `translate3d(0,-50%,0) rotate(${-10 + p * 20}deg) scale(${1 + p * 0.2})` }}
         >
-          <img src={kanoyK} alt="" aria-hidden loading="lazy" className="w-[46vw]" />
+          <img src={kanoyK} alt="" aria-hidden loading="lazy" className="w-[34vw]" />
         </div>
 
         <div className="relative mx-auto w-full max-w-5xl">

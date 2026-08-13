@@ -24,8 +24,8 @@ export function Process() {
             {STEPS.map((s, i) => {
               const start = i * 0.155;
               const t = range(p, start, start + 0.155);
-              const z = (1 - t) * 1700 - t * 500;
-              const opacity = clamp(t * 5) * (1 - clamp((t - 0.82) / 0.18));
+              const z = (1 - t) * 1200 - t * 320;
+              const opacity = clamp(t * 6) * (1 - clamp((t - 0.88) / 0.12));
               return (
                 <article
                   key={s.n}
