@@ -123,7 +123,16 @@ export function StudioScene() {
         >
           <img src={kanoyK} alt="KANOY" width={1024} height={1024} className="mb-6 w-16 md:w-20" />
           <h1 className="font-display text-[15vw] leading-[0.82] tracking-[-0.05em] text-studio-foreground md:text-[11vw]">
-            KANOY
+            <span className="inline-flex items-center">
+              <img
+                src={kanoyK}
+                alt="K"
+                width={1024}
+                height={1024}
+                className="k-halo k-glow inline-block h-[0.9em] w-auto translate-y-[-0.02em] align-middle"
+              />
+              ANOY
+            </span>
           </h1>
           <p className="mt-6 max-w-xl text-balance font-body text-sm uppercase tracking-[0.32em] text-studio-muted md:text-base">
             We build websites that make people stop scrolling.
