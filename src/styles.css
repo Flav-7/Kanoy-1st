@@ -234,18 +234,6 @@ body {
     drop-shadow(0 0 70px color-mix(in oklab, var(--accent-2) 55%, transparent));
 }
 
-@utility light-beam-unused {
-  position: absolute;
-  left: 50%;
-  top: -30%;
-  width: 70vw;
-  height: 120vh;
-  translate: -50% 0;
-  background: radial-gradient(closest-side, color-mix(in oklab, var(--accent) 28%, transparent), transparent 70%);
-  filter: blur(40px);
-  pointer-events: none;
-}
-
 /* screens */
 @utility screen-shell {
   position: relative;
