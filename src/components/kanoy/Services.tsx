@@ -16,7 +16,7 @@ export function Services() {
 
   return (
     <section ref={ref} className="relative h-[520vh] bg-background" aria-label="What KANOY does">
-      <div className="sticky top-0 flex h-screen flex-col justify-center overflow-hidden px-6 py-[6vh] md:px-14">
+      <div className="sticky top-0 flex h-screen flex-col justify-center overflow-hidden px-6 py-[4vh] md:px-14">
         <div
           className="pointer-events-none absolute -right-[8vw] top-1/2 -translate-y-1/2"
           style={{ opacity: 0.26 + p * 0.12, transform: `translate3d(0,-50%,0) rotate(${-10 + p * 20}deg) scale(${1 + p * 0.2})` }}
@@ -31,7 +31,7 @@ export function Services() {
             What happens in this room
           </div>
           <h2
-            className="mt-[2vh] font-display text-[clamp(1.6rem,4.4vh,3.5rem)] leading-[0.95] tracking-[-0.03em]"
+            className="mt-[1.5vh] font-display text-[clamp(1.5rem,3.6vh,2.9rem)] leading-[0.95] tracking-[-0.03em]"
             style={{
               opacity: range(p, 0.01, 0.08),
               transform: `translateY(${(1 - range(p, 0.01, 0.08)) * 40}px)`,
@@ -40,7 +40,7 @@ export function Services() {
             Services, revealed as you move
           </h2>
 
-          <ul className="mt-[4vh]">
+          <ul className="mt-[2.5vh]">
             {SERVICES.map((s, i) => {
               const start = 0.1 + i * 0.115;
               const t = range(p, start, start + 0.09);
@@ -48,7 +48,7 @@ export function Services() {
               return (
                 <li
                   key={s.n}
-                  className="border-t border-ink/10 py-[1.4vh]"
+                  className="border-t border-ink/10 py-[0.9vh]"
                   style={{
                     opacity: clamp(t - past * 0.55),
                     transform: `translate3d(${(1 - t) * 60}px, ${(1 - t) * 18}px, 0)`,
@@ -57,7 +57,7 @@ export function Services() {
                 >
                   <div className="flex flex-col gap-2 md:flex-row md:items-baseline md:gap-10">
                     <span className="text-[10px] tracking-[0.4em] text-accent">{s.n}</span>
-                    <h3 className="font-display text-[clamp(1.05rem,2.5vh,1.85rem)] tracking-[-0.02em] md:w-[38%]">{s.title}</h3>
+                    <h3 className="font-display text-[clamp(1rem,2.2vh,1.6rem)] tracking-[-0.02em] md:w-[38%]">{s.title}</h3>
                     <p className="max-w-md text-[clamp(0.72rem,1.6vh,0.9rem)] leading-relaxed text-ink/60">{s.text}</p>
                   </div>
                 </li>
