@@ -121,7 +121,7 @@ export function StudioScene() {
             filter: `blur(${introOut * 12}px)`,
           }}
         >
-          <img src={kanoyK} alt="KANOY" width={1024} height={1024} className="mb-6 w-16 md:w-20" />
+          <div className="mb-6" />
           <h1 className="font-display text-[15vw] leading-[0.82] tracking-[-0.05em] text-studio-foreground md:text-[11vw]">
             <span className="inline-flex items-center">
               <img
