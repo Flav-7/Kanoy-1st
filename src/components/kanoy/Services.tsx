@@ -40,7 +40,7 @@ export function Services() {
             Services, revealed as you move
           </h2>
 
-          <ul className="mt-[2.5vh]">
+          <ul className="mt-[2vh]">
             {SERVICES.map((s, i) => {
               const start = 0.1 + i * 0.115;
               const t = range(p, start, start + 0.09);
@@ -48,7 +48,7 @@ export function Services() {
               return (
                 <li
                   key={s.n}
-                  className="border-t border-ink/10 py-[0.9vh]"
+                  className="border-t border-ink/10 py-[0.55vh]"
                   style={{
                     opacity: clamp(t - past * 0.55),
                     transform: `translate3d(${(1 - t) * 60}px, ${(1 - t) * 18}px, 0)`,
