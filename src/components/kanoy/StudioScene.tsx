@@ -121,7 +121,7 @@ export function StudioScene() {
             filter: `blur(${introOut * 12}px)`,
           }}
         >
-          <div className="mb-6" />
+          
           <h1 className="font-display text-[15vw] leading-[0.82] tracking-[-0.05em] text-studio-foreground md:text-[11vw]">
             <span className="inline-flex items-center">
               <img
