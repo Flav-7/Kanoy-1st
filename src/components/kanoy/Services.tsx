@@ -1,4 +1,5 @@
 import { clamp, range, useScrollProgress } from "./anim";
+import kanoyK from "@/assets/kanoy-k.png";
 
 export const SERVICES = [
   { n: "01", title: "Website Development", text: "Premium websites designed specifically for each business — not templates." },
@@ -16,6 +17,15 @@ export function Services() {
   return (
     <section ref={ref} className="relative h-[520vh] bg-background" aria-label="What KANOY does">
       <div className="sticky top-0 flex h-screen flex-col justify-center overflow-hidden px-6 py-[4vh] md:px-14">
+
+        <div
+          className="pointer-events-none absolute -right-[8vw] top-1/2 -translate-y-1/2"
+          style={{ opacity: 0.26 + p * 0.12, transform: `translate3d(0,-50%,0) rotate(${-10 + p * 20}deg) scale(${1 + p * 0.2})` }}
+        >
+          <span className="k-halo">
+            <img src={kanoyK} alt="" aria-hidden loading="lazy" className="k-glow w-[34vw]" />
+          </span>
+        </div>
 
         <div className="relative mx-auto w-full max-w-5xl">
           <div className="eyebrow" style={{ opacity: range(p, 0, 0.06) }}>

@@ -108,30 +108,7 @@ export function StudioScene() {
               <Screen key={i} place={place} index={i} camera={camera} reveal={reveal} />
             ))}
 
-            {/* brand object floating in the room */}
-            {[
-              { x: 6, y: -22, z: 2600, s: 150 },
-              { x: -12, y: 20, z: 5100, s: 110 },
-            ].map((k, i) => {
-              const depth = k.z - camera;
-              if (depth < -200 || depth > 3200) return null;
-              return (
-                <img
-                  key={i}
-                  src={kanoyK}
-                  alt=""
-                  aria-hidden
-                  loading="lazy"
-                  className="absolute left-1/2 top-1/2 k-float"
-                  style={{
-                    width: k.s,
-                    transform: `translate3d(calc(-50% + ${k.x}vw), calc(-50% + ${k.y}vh), ${-depth}px)`,
-                    opacity: clamp((depth + 200) / 600) * (1 - clamp((depth - 2000) / 1200)) * 0.9,
-                    animationDelay: `${i * -3}s`,
-                  }}
-                />
-              );
-            })}
+            {/* brand objects removed at user request */}
           </div>
         </div>
 
