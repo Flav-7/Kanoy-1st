@@ -210,6 +210,30 @@ body {
   pointer-events: none;
 }
 
+/* background brand K: cyan + mint glow so it reads clearly behind content */
+@utility k-halo {
+  position: relative;
+  display: inline-block;
+  isolation: isolate;
+  &::before {
+    content: "";
+    position: absolute;
+    inset: -18%;
+    z-index: -1;
+    background:
+      radial-gradient(closest-side at 38% 30%, color-mix(in oklab, var(--accent) 45%, transparent), transparent 72%),
+      radial-gradient(closest-side at 66% 72%, color-mix(in oklab, var(--accent-2) 42%, transparent), transparent 72%);
+    filter: blur(50px);
+  }
+}
+
+@utility k-glow {
+  filter:
+    saturate(1.35) contrast(1.05)
+    drop-shadow(0 0 26px color-mix(in oklab, var(--accent) 70%, transparent))
+    drop-shadow(0 0 70px color-mix(in oklab, var(--accent-2) 55%, transparent));
+}
+
 /* screens */
 @utility screen-shell {
   position: relative;
