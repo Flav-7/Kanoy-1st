@@ -10,7 +10,7 @@ export function Services() {
   const SERVICES = dict.services.items.map((item, i) => ({ n: SERVICE_NUMBERS[i]!, ...item }));
 
   return (
-    <section ref={ref} className="relative h-[520vh] bg-background" aria-label="What KANOY does">
+    <section id="services" ref={ref} className="relative h-[520vh] bg-background" aria-label="What KANOY does">
       <div className="sticky top-0 flex h-screen flex-col justify-center overflow-hidden px-6 py-[4vh] md:px-14">
 
         <div
@@ -54,7 +54,7 @@ export function Services() {
                   <div className="flex flex-col gap-2 md:flex-row md:items-baseline md:gap-10">
                     <span className="text-[10px] tracking-[0.4em] text-accent">{s.n}</span>
                     <h3 className="font-display text-[clamp(1rem,2.2vh,1.6rem)] tracking-[-0.02em] md:w-[38%]">{s.title}</h3>
-                    <p className="max-w-md text-[clamp(0.72rem,1.6vh,0.9rem)] leading-relaxed text-ink/60">{s.text}</p>
+                    <p className="max-w-md text-[clamp(0.9rem,2vh,1.05rem)] leading-relaxed text-ink/70">{s.text}</p>
                   </div>
                 </li>
               );

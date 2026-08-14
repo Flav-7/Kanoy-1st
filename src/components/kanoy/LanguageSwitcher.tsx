@@ -1,33 +1,66 @@
+import { useEffect, useRef, useState } from "react";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import { LANGUAGES } from "@/lib/i18n/translations";
+import { FLAGS } from "./flags";
 
 export function LanguageSwitcher() {
   const { language, setLanguage } = useLanguage();
+  const [open, setOpen] = useState(false);
+  const rootRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    const onPointerDown = (e: PointerEvent) => {
+      if (!rootRef.current?.contains(e.target as Node)) setOpen(false);
+    };
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setOpen(false);
+    };
+    document.addEventListener("pointerdown", onPointerDown);
+    document.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.removeEventListener("pointerdown", onPointerDown);
+      document.removeEventListener("keydown", onKeyDown);
+    };
+  }, [open]);
+
+  const others = LANGUAGES.filter((l) => l.code !== language);
+  const flagClass = "h-4 w-6 rounded-[3px] object-cover shadow-[0_1px_4px_rgba(0,0,0,0.55)]";
 
   return (
-    <div
-      role="group"
-      aria-label="Language"
-      className="fixed right-4 top-4 z-50 flex items-center gap-1 rounded-full border border-white/15 bg-transparent p-1 md:right-6 md:top-6"
-    >
-      {LANGUAGES.map(({ code, label, flag }) => {
-        const active = language === code;
-        return (
-          <button
-            key={code}
-            type="button"
-            aria-pressed={active}
-            title={label}
-            onClick={() => setLanguage(code)}
-            className={`flex items-center gap-1.5 rounded-full px-2.5 py-1.5 text-[11px] font-medium tracking-wide transition-colors duration-300 ${
-              active ? "bg-accent text-ink" : "text-white/70 hover:text-white"
-            }`}
-          >
-            <span className="text-sm leading-none">{flag}</span>
-            <span>{label}</span>
-          </button>
-        );
-      })}
+    <div ref={rootRef} className="fixed right-4 top-4 z-50 flex items-center gap-2 md:right-6 md:top-6">
+      {open &&
+        others.map(({ code, label }) => {
+          const Flag = FLAGS[code];
+          return (
+            <button
+              key={code}
+              type="button"
+              title={label}
+              aria-label={label}
+              onClick={() => {
+                setLanguage(code);
+                setOpen(false);
+              }}
+              className="opacity-90 transition-transform duration-200 hover:scale-110 hover:opacity-100"
+            >
+              <Flag className={flagClass} />
+            </button>
+          );
+        })}
+
+      <button
+        type="button"
+        aria-expanded={open}
+        aria-label="Language"
+        onClick={() => setOpen((o) => !o)}
+        className="transition-transform duration-200 hover:scale-110"
+      >
+        {(() => {
+          const Flag = FLAGS[language];
+          return <Flag className={`${flagClass} ring-2 ring-white/80`} />;
+        })()}
+      </button>
     </div>
   );
 }

@@ -14,6 +14,7 @@ type StepCopy = { t: string; d: string };
 export type Dictionary = {
   hero: { tagline: string; scrollHint: string };
   studio: { label: string; text: string };
+  nav: { services: string; about: string; process: string; pricing: string; contact: string };
   services: { eyebrow: string; title: string; items: ServiceCopy[] };
   process: { eyebrow: string; stepLabel: string; steps: StepCopy[] };
   about: { eyebrow: string; titleLine1: string; titleLine2: string; text: string };
@@ -33,8 +34,31 @@ export type Dictionary = {
     titleLine2: string;
     subtitle: string;
     contactBtn: string;
-    portfolioBtn: string;
     footerTagline: string;
+    modal: {
+      title: string;
+      emailTitle: string;
+      emailDesc: string;
+      formTitle: string;
+      formDesc: string;
+      back: string;
+      replyLanguageLabel: string;
+      nameLabel: string;
+      namePlaceholder: string;
+      emailLabel: string;
+      emailPlaceholder: string;
+      phoneLabel: string;
+      phonePlaceholder: string;
+      messageLabel: string;
+      messagePlaceholder: string;
+      submit: string;
+      sending: string;
+      successTitle: string;
+      successText: string;
+      errorText: string;
+      retry: string;
+      close: string;
+    };
   };
 };
 
@@ -47,6 +71,13 @@ export const translations: Record<Language, Dictionary> = {
     studio: {
       label: "Dentro do estúdio",
       text: "Cada ecrã que passas é um projeto. Continua a mover-te.",
+    },
+    nav: {
+      services: "Serviços",
+      about: "Sobre",
+      process: "Como trabalhamos",
+      pricing: "Modelo",
+      contact: "Contacto",
     },
     services: {
       eyebrow: "O que acontece nesta sala",
@@ -95,8 +126,31 @@ export const translations: Record<Language, Dictionary> = {
       titleLine2: "ALGO.",
       subtitle: "Diz-nos o que estás a pensar.",
       contactBtn: "Contactar a KANOY",
-      portfolioBtn: "Pedir portefólio",
       footerTagline: "KANOY — Estúdio digital",
+      modal: {
+        title: "Como preferes falar connosco?",
+        emailTitle: "Enviar email direto",
+        emailDesc: "Abre o teu email com tudo pronto — escreves e envias.",
+        formTitle: "Preencher formulário",
+        formDesc: "Diz-nos o que precisas, respondemos-te por email.",
+        back: "Voltar",
+        replyLanguageLabel: "Em que idioma preferes a resposta?",
+        nameLabel: "Nome",
+        namePlaceholder: "O teu nome",
+        emailLabel: "Email",
+        emailPlaceholder: "o-teu-email@exemplo.com",
+        phoneLabel: "Telefone (opcional)",
+        phonePlaceholder: "+351 900 000 000",
+        messageLabel: "Mensagem",
+        messagePlaceholder: "Conta-nos sobre o teu negócio e o que precisas.",
+        submit: "Enviar mensagem",
+        sending: "A enviar…",
+        successTitle: "Mensagem enviada!",
+        successText: "Obrigado. A KANOY vai responder-te em breve.",
+        errorText: "Não foi possível enviar a mensagem. Tenta novamente ou usa o email direto.",
+        retry: "Tentar novamente",
+        close: "Fechar",
+      },
     },
   },
   es: {
@@ -107,6 +161,13 @@ export const translations: Record<Language, Dictionary> = {
     studio: {
       label: "Dentro del estudio",
       text: "Cada pantalla que pasas es un proyecto. Sigue moviéndote.",
+    },
+    nav: {
+      services: "Servicios",
+      about: "Sobre nosotros",
+      process: "Cómo trabajamos",
+      pricing: "El modelo",
+      contact: "Contacto",
     },
     services: {
       eyebrow: "Lo que ocurre en esta sala",
@@ -155,8 +216,31 @@ export const translations: Record<Language, Dictionary> = {
       titleLine2: "ALGO.",
       subtitle: "Cuéntanos qué estás pensando.",
       contactBtn: "Contactar con KANOY",
-      portfolioBtn: "Pedir portafolio",
       footerTagline: "KANOY — Estudio digital",
+      modal: {
+        title: "¿Cómo prefieres hablar con nosotros?",
+        emailTitle: "Enviar email directo",
+        emailDesc: "Abre tu email con todo listo — escribes y envías.",
+        formTitle: "Rellenar formulario",
+        formDesc: "Cuéntanos qué necesitas, te respondemos por email.",
+        back: "Volver",
+        replyLanguageLabel: "¿En qué idioma prefieres la respuesta?",
+        nameLabel: "Nombre",
+        namePlaceholder: "Tu nombre",
+        emailLabel: "Email",
+        emailPlaceholder: "tu-email@ejemplo.com",
+        phoneLabel: "Teléfono (opcional)",
+        phonePlaceholder: "+34 600 000 000",
+        messageLabel: "Mensaje",
+        messagePlaceholder: "Cuéntanos sobre tu negocio y qué necesitas.",
+        submit: "Enviar mensaje",
+        sending: "Enviando…",
+        successTitle: "¡Mensaje enviado!",
+        successText: "Gracias. KANOY te responderá pronto.",
+        errorText: "No se pudo enviar el mensaje. Inténtalo de nuevo o usa el email directo.",
+        retry: "Intentar de nuevo",
+        close: "Cerrar",
+      },
     },
   },
   en: {
@@ -167,6 +251,13 @@ export const translations: Record<Language, Dictionary> = {
     studio: {
       label: "Inside the studio",
       text: "Every screen you pass is a project. Keep moving.",
+    },
+    nav: {
+      services: "Services",
+      about: "About",
+      process: "How we work",
+      pricing: "Pricing",
+      contact: "Contact",
     },
     services: {
       eyebrow: "What happens in this room",
@@ -215,8 +306,31 @@ export const translations: Record<Language, Dictionary> = {
       titleLine2: "SOMETHING.",
       subtitle: "Tell us what you're thinking.",
       contactBtn: "Contact KANOY",
-      portfolioBtn: "Request portfolio",
       footerTagline: "KANOY — Digital studio",
+      modal: {
+        title: "How would you like to reach us?",
+        emailTitle: "Send a direct email",
+        emailDesc: "Opens your email app with everything ready — just write and send.",
+        formTitle: "Fill out a form",
+        formDesc: "Tell us what you need and we'll get back to you by email.",
+        back: "Back",
+        replyLanguageLabel: "Which language would you like the reply in?",
+        nameLabel: "Name",
+        namePlaceholder: "Your name",
+        emailLabel: "Email",
+        emailPlaceholder: "your-email@example.com",
+        phoneLabel: "Phone (optional)",
+        phonePlaceholder: "+1 555 000 0000",
+        messageLabel: "Message",
+        messagePlaceholder: "Tell us about your business and what you need.",
+        submit: "Send message",
+        sending: "Sending…",
+        successTitle: "Message sent!",
+        successText: "Thanks. KANOY will get back to you soon.",
+        errorText: "Couldn't send the message. Try again or use the direct email.",
+        retry: "Try again",
+        close: "Close",
+      },
     },
   },
 };

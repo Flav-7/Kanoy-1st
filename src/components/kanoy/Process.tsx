@@ -9,7 +9,7 @@ export function Process() {
   const STEPS = dict.process.steps.map((step, i) => ({ n: STEP_NUMBERS[i]!, ...step }));
 
   return (
-    <section ref={ref} className="relative h-[600vh] bg-ink text-studio-foreground" aria-label="How KANOY works">
+    <section id="process" ref={ref} className="relative h-[600vh] bg-ink text-studio-foreground" aria-label="How KANOY works">
       <div className="sticky top-0 h-screen overflow-hidden">
         <div className="light-beam" style={{ opacity: 0.22 + p * 0.25 }} />
         <div className="absolute left-6 top-10 md:left-14">

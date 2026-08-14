@@ -1,6 +1,7 @@
 import { useReveal } from "./anim";
 import kanoyK from "@/assets/kanoy-k.png";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
+import { ContactModal } from "./ContactModal";
 
 function Reveal({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) {
   const { ref, shown } = useReveal<HTMLDivElement>(0.25);
@@ -22,7 +23,7 @@ function Reveal({ children, delay = 0 }: { children: React.ReactNode; delay?: nu
 export function About() {
   const { dict } = useLanguage();
   return (
-    <section className="relative bg-sand px-6 py-32 md:px-14 md:py-48" aria-label="About KANOY">
+    <section id="about" className="relative bg-sand px-6 py-32 md:px-14 md:py-48" aria-label="About KANOY">
       <div className="mx-auto max-w-5xl">
         <Reveal>
           <div className="eyebrow">{dict.about.eyebrow}</div>
@@ -50,7 +51,7 @@ export function About() {
 export function Pricing() {
   const { dict } = useLanguage();
   return (
-    <section className="relative bg-background px-6 py-32 md:px-14 md:py-44" aria-label="How KANOY works commercially">
+    <section id="pricing" className="relative bg-background px-6 py-32 md:px-14 md:py-44" aria-label="How KANOY works commercially">
       <div className="mx-auto grid max-w-5xl gap-14 md:grid-cols-2">
         <Reveal>
           <div className="eyebrow">{dict.pricing.eyebrow}</div>
@@ -103,15 +104,7 @@ export function Contact() {
         <Reveal delay={0.12}>
           <p className="mt-8 text-sm uppercase tracking-[0.32em] text-studio-muted">{dict.contact.subtitle}</p>
           <div className="mt-14 flex flex-wrap items-center justify-center gap-4">
-            <a href="mailto:hello@kanoy.studio?subject=Project%20enquiry" className="btn-kanoy bg-accent text-ink">
-              {dict.contact.contactBtn}
-            </a>
-            <a
-              href="mailto:hello@kanoy.studio?subject=Portfolio%20request"
-              className="btn-kanoy-ghost border-studio-foreground/25 text-studio-foreground"
-            >
-              {dict.contact.portfolioBtn}
-            </a>
+            <ContactModal />
           </div>
         </Reveal>
         <div className="mt-28 flex flex-col items-center gap-3 text-[10px] uppercase tracking-[0.4em] text-studio-muted/70">
