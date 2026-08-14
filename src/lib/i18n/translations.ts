@@ -83,25 +83,61 @@ export const translations: Record<Language, Dictionary> = {
       eyebrow: "O que acontece nesta sala",
       title: "Serviços, revelados à medida que avanças",
       items: [
-        { title: "Desenvolvimento de Websites", text: "Websites premium desenhados especificamente para cada negócio — nunca templates." },
-        { title: "Sistemas Automatizados", text: "Construímos sistemas personalizados dentro dos websites sempre que a operação o exige." },
-        { title: "Reservas para Restaurantes", text: "Sistemas de reserva online com gestão de marcações e controlo de serviço." },
-        { title: "Sistemas para Barbearias", text: "Marcações online, agendas individuais por barbeiro e confirmações automáticas." },
-        { title: "Beleza & Estética", text: "Sistemas de marcações pensados para salões, clínicas e negócios de beleza." },
-        { title: "Websites para Empresas", text: "Construção, serviços, negócios locais e indústria — feitos para converter." },
-        { title: "Sistemas Digitais Personalizados", text: "Fora do pacote standard? Desenhamos e construímos a solução do zero." },
+        {
+          title: "Desenvolvimento de Websites",
+          text: "Websites premium desenhados especificamente para cada negócio — nunca templates.",
+        },
+        {
+          title: "Sistemas Automatizados",
+          text: "Construímos sistemas personalizados dentro dos websites sempre que a operação o exige.",
+        },
+        {
+          title: "Reservas para Restaurantes",
+          text: "Sistemas de reserva online com gestão de marcações e controlo de serviço.",
+        },
+        {
+          title: "Sistemas para Barbearias",
+          text: "Marcações online, agendas individuais por barbeiro e confirmações automáticas.",
+        },
+        {
+          title: "Beleza & Estética",
+          text: "Sistemas de marcações pensados para salões, clínicas e negócios de beleza.",
+        },
+        {
+          title: "Websites para Empresas",
+          text: "Construção, serviços, negócios locais e indústria — feitos para converter.",
+        },
+        {
+          title: "Sistemas Digitais Personalizados",
+          text: "Fora do pacote standard? Desenhamos e construímos a solução do zero.",
+        },
       ],
     },
     process: {
       eyebrow: "Como trabalhamos",
       stepLabel: "PASSO",
       steps: [
-        { t: "Diz-nos o que precisas.", d: "Uma conversa breve sobre o teu negócio, os teus clientes e o que tem de acontecer online." },
-        { t: "Desenhamos a experiência.", d: "Direção, estrutura e movimento — pensados para a forma como as pessoas realmente usam o teu site." },
-        { t: "Construímos o website.", d: "Feito à mão, rápido, responsivo e preparado para ser editado e expandido depois." },
-        { t: "Integramos os sistemas.", d: "Reservas, marcações, calendários, automações — o que a operação precisar." },
+        {
+          t: "Diz-nos o que precisas.",
+          d: "Uma conversa breve sobre o teu negócio, os teus clientes e o que tem de acontecer online.",
+        },
+        {
+          t: "Desenhamos a experiência.",
+          d: "Direção, estrutura e movimento — pensados para a forma como as pessoas realmente usam o teu site.",
+        },
+        {
+          t: "Construímos o website.",
+          d: "Feito à mão, rápido, responsivo e preparado para ser editado e expandido depois.",
+        },
+        {
+          t: "Integramos os sistemas.",
+          d: "Reservas, marcações, calendários, automações — o que a operação precisar.",
+        },
         { t: "Lançamos.", d: "Domínio, performance, tracking e um go-live controlado." },
-        { t: "Mantemos e alojamos.", d: "Alojamento, atualizações, gestão técnica — o teu site mantém-se ativo e atual." },
+        {
+          t: "Mantemos e alojamos.",
+          d: "Alojamento, atualizações, gestão técnica — o teu site mantém-se ativo e atual.",
+        },
       ],
     },
     about: {
@@ -119,7 +155,8 @@ export const translations: Record<Language, Dictionary> = {
       included: "incluído",
       needCustom: "Precisas de algo personalizado?",
       talkToUs: "Fala connosco",
-      customNote: "Para projetos personalizados, contacta a KANOY para mais informações ou para pedir um portefólio de trabalhos anteriores.",
+      customNote:
+        "Para projetos personalizados, contacta a KANOY para mais informações ou para pedir um portefólio de trabalhos anteriores.",
     },
     contact: {
       titleLine1: "VAMOS CONSTRUIR",
@@ -173,25 +210,61 @@ export const translations: Record<Language, Dictionary> = {
       eyebrow: "Lo que ocurre en esta sala",
       title: "Servicios, revelados a medida que avanzas",
       items: [
-        { title: "Desarrollo de Sitios Web", text: "Sitios web premium diseñados específicamente para cada negocio — nunca plantillas." },
-        { title: "Sistemas Automatizados", text: "Creamos sistemas personalizados dentro de las webs siempre que la operación lo requiere." },
-        { title: "Reservas para Restaurantes", text: "Sistemas de reserva online con gestión de citas y control de servicio." },
-        { title: "Sistemas para Barberías", text: "Reservas online, agendas individuales por barbero y citas automatizadas." },
-        { title: "Belleza & Estética", text: "Sistemas de citas pensados para salones, clínicas y negocios de belleza." },
-        { title: "Webs para Empresas", text: "Construcción, servicios, negocios locales e industria — hechos para convertir." },
-        { title: "Sistemas Digitales Personalizados", text: "¿Fuera del paquete estándar? Diseñamos y construimos la solución desde cero." },
+        {
+          title: "Desarrollo de Sitios Web",
+          text: "Sitios web premium diseñados específicamente para cada negocio — nunca plantillas.",
+        },
+        {
+          title: "Sistemas Automatizados",
+          text: "Creamos sistemas personalizados dentro de las webs siempre que la operación lo requiere.",
+        },
+        {
+          title: "Reservas para Restaurantes",
+          text: "Sistemas de reserva online con gestión de citas y control de servicio.",
+        },
+        {
+          title: "Sistemas para Barberías",
+          text: "Reservas online, agendas individuales por barbero y citas automatizadas.",
+        },
+        {
+          title: "Belleza & Estética",
+          text: "Sistemas de citas pensados para salones, clínicas y negocios de belleza.",
+        },
+        {
+          title: "Webs para Empresas",
+          text: "Construcción, servicios, negocios locales e industria — hechos para convertir.",
+        },
+        {
+          title: "Sistemas Digitales Personalizados",
+          text: "¿Fuera del paquete estándar? Diseñamos y construimos la solución desde cero.",
+        },
       ],
     },
     process: {
       eyebrow: "Cómo trabajamos",
       stepLabel: "PASO",
       steps: [
-        { t: "Cuéntanos lo que necesitas.", d: "Una conversación breve sobre tu negocio, tus clientes y lo que tiene que pasar online." },
-        { t: "Diseñamos la experiencia.", d: "Dirección, estructura y movimiento — pensados según cómo la gente usa realmente tu web." },
-        { t: "Construimos la web.", d: "Hecha a mano, rápida, responsive y preparada para editarse y ampliarse después." },
-        { t: "Integramos los sistemas.", d: "Reservas, citas, calendarios, automatizaciones — lo que la operación necesite." },
+        {
+          t: "Cuéntanos lo que necesitas.",
+          d: "Una conversación breve sobre tu negocio, tus clientes y lo que tiene que pasar online.",
+        },
+        {
+          t: "Diseñamos la experiencia.",
+          d: "Dirección, estructura y movimiento — pensados según cómo la gente usa realmente tu web.",
+        },
+        {
+          t: "Construimos la web.",
+          d: "Hecha a mano, rápida, responsive y preparada para editarse y ampliarse después.",
+        },
+        {
+          t: "Integramos los sistemas.",
+          d: "Reservas, citas, calendarios, automatizaciones — lo que la operación necesite.",
+        },
         { t: "Lanzamos.", d: "Dominio, rendimiento, tracking y un lanzamiento controlado." },
-        { t: "Mantenemos y alojamos.", d: "Alojamiento, actualizaciones, gestión técnica — tu web se mantiene activa y al día." },
+        {
+          t: "Mantenemos y alojamos.",
+          d: "Alojamiento, actualizaciones, gestión técnica — tu web se mantiene activa y al día.",
+        },
       ],
     },
     about: {
@@ -209,7 +282,8 @@ export const translations: Record<Language, Dictionary> = {
       included: "incluido",
       needCustom: "¿Necesitas algo personalizado?",
       talkToUs: "Habla con nosotros",
-      customNote: "Para proyectos personalizados, contacta con KANOY para más información o para pedir un portafolio de trabajos anteriores.",
+      customNote:
+        "Para proyectos personalizados, contacta con KANOY para más información o para pedir un portafolio de trabajos anteriores.",
     },
     contact: {
       titleLine1: "CONSTRUYAMOS",
@@ -263,25 +337,61 @@ export const translations: Record<Language, Dictionary> = {
       eyebrow: "What happens in this room",
       title: "Services, revealed as you move",
       items: [
-        { title: "Website Development", text: "Premium websites designed specifically for each business — not templates." },
-        { title: "Automated Systems", text: "We build custom systems inside websites whenever the operation requires it." },
-        { title: "Restaurant Reservations", text: "Online reservation systems with booking management and service control." },
-        { title: "Barbershop Systems", text: "Online bookings, individual barber calendars and automated appointments." },
-        { title: "Beauty & Aesthetics", text: "Appointment systems designed for salons, clinics and beauty businesses." },
-        { title: "Business Websites", text: "Construction, services, local businesses and industry — built to convert." },
-        { title: "Custom Digital Systems", text: "Outside the standard package? We design and build the solution from zero." },
+        {
+          title: "Website Development",
+          text: "Premium websites designed specifically for each business — not templates.",
+        },
+        {
+          title: "Automated Systems",
+          text: "We build custom systems inside websites whenever the operation requires it.",
+        },
+        {
+          title: "Restaurant Reservations",
+          text: "Online reservation systems with booking management and service control.",
+        },
+        {
+          title: "Barbershop Systems",
+          text: "Online bookings, individual barber calendars and automated appointments.",
+        },
+        {
+          title: "Beauty & Aesthetics",
+          text: "Appointment systems designed for salons, clinics and beauty businesses.",
+        },
+        {
+          title: "Business Websites",
+          text: "Construction, services, local businesses and industry — built to convert.",
+        },
+        {
+          title: "Custom Digital Systems",
+          text: "Outside the standard package? We design and build the solution from zero.",
+        },
       ],
     },
     process: {
       eyebrow: "How we work",
       stepLabel: "STEP",
       steps: [
-        { t: "Tell us what you need.", d: "A short conversation about your business, your clients and what has to happen online." },
-        { t: "We design the experience.", d: "Direction, structure and motion — designed around how people actually use your site." },
-        { t: "We build the website.", d: "Hand-built, fast, responsive and made to be edited and extended later." },
-        { t: "We integrate the systems.", d: "Reservations, bookings, calendars, automations — whatever the operation needs." },
+        {
+          t: "Tell us what you need.",
+          d: "A short conversation about your business, your clients and what has to happen online.",
+        },
+        {
+          t: "We design the experience.",
+          d: "Direction, structure and motion — designed around how people actually use your site.",
+        },
+        {
+          t: "We build the website.",
+          d: "Hand-built, fast, responsive and made to be edited and extended later.",
+        },
+        {
+          t: "We integrate the systems.",
+          d: "Reservations, bookings, calendars, automations — whatever the operation needs.",
+        },
         { t: "We launch.", d: "Domain, performance, tracking and a controlled go-live." },
-        { t: "We maintain and host it.", d: "Hosting, updates, technical management — your site stays alive and current." },
+        {
+          t: "We maintain and host it.",
+          d: "Hosting, updates, technical management — your site stays alive and current.",
+        },
       ],
     },
     about: {
@@ -299,7 +409,8 @@ export const translations: Record<Language, Dictionary> = {
       included: "included",
       needCustom: "Need something custom?",
       talkToUs: "Talk to us",
-      customNote: "For custom projects, contact KANOY for more information or to request a portfolio of previous work.",
+      customNote:
+        "For custom projects, contact KANOY for more information or to request a portfolio of previous work.",
     },
     contact: {
       titleLine1: "LET'S BUILD",

@@ -54,9 +54,7 @@ function Dots({ p }: { p: Palette }) {
 }
 
 function Wordmark({ p, name }: { p: Palette; name: string }) {
-  return (
-    <span style={{ fontWeight: 800, letterSpacing: 2, color: p.ink }}>{name}</span>
-  );
+  return <span style={{ fontWeight: 800, letterSpacing: 2, color: p.ink }}>{name}</span>;
 }
 
 function Card({
@@ -127,16 +125,32 @@ export const MINI_SITES: MiniSiteDef[] = [
           <div style={{ fontSize: 6.5, opacity: 0.6, color: p.ink, marginTop: 6 }}>
             Tasting menu · Lisbon · Reservations open
           </div>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 6, marginTop: 12 }}>
+          <div
+            style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 6, marginTop: 12 }}
+          >
             {[0, 1, 2].map((i) => (
-              <Card key={i} p={p} h={62} style={{ background: `linear-gradient(160deg,${p.accent}33,#0000)` }}>
+              <Card
+                key={i}
+                p={p}
+                h={62}
+                style={{ background: `linear-gradient(160deg,${p.accent}33,#0000)` }}
+              >
                 <div style={{ fontSize: 7, color: p.accent }}>0{i + 1}</div>
                 <Bars p={p} n={3} />
               </Card>
             ))}
           </div>
           <div style={{ ...row, gap: 6, marginTop: 10 }}>
-            <div style={{ background: p.accent, color: p.bg, fontSize: 6.5, padding: "5px 10px", borderRadius: 2, fontWeight: 700 }}>
+            <div
+              style={{
+                background: p.accent,
+                color: p.bg,
+                fontSize: 6.5,
+                padding: "5px 10px",
+                borderRadius: 2,
+                fontWeight: 700,
+              }}
+            >
               RESERVE A TABLE
             </div>
             <div style={{ fontSize: 6.5, color: p.ink, opacity: 0.5 }}>19:00 · 20:30 · 21:45</div>
@@ -156,24 +170,53 @@ export const MINI_SITES: MiniSiteDef[] = [
           <Wordmark p={p} name="MARÉ" />
           <Dots p={p} />
         </div>
-        <div style={{ display: "grid", gridTemplateColumns: "1.1fr 1fr", gap: 10, padding: "10px 16px" }}>
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "1.1fr 1fr",
+            gap: 10,
+            padding: "10px 16px",
+          }}
+        >
           <div>
             <div style={{ fontSize: 22, lineHeight: 1.05, color: p.ink, fontWeight: 400 }}>
               A quiet suite above the Atlantic
             </div>
             <Bars p={p} n={3} w={95} />
-            <div style={{ marginTop: 10, background: p.soft, border: `1px solid ${p.ink}12`, borderRadius: 3, padding: 7 }}>
-              <div style={{ fontSize: 6, letterSpacing: 1, opacity: 0.55, color: p.ink }}>CHECK IN — CHECK OUT</div>
+            <div
+              style={{
+                marginTop: 10,
+                background: p.soft,
+                border: `1px solid ${p.ink}12`,
+                borderRadius: 3,
+                padding: 7,
+              }}
+            >
+              <div style={{ fontSize: 6, letterSpacing: 1, opacity: 0.55, color: p.ink }}>
+                CHECK IN — CHECK OUT
+              </div>
               <div style={{ ...row, justifyContent: "space-between", marginTop: 5 }}>
                 <span style={{ fontSize: 7.5, color: p.ink }}>12 Sep — 15 Sep</span>
-                <span style={{ background: p.accent, color: "#fff", fontSize: 6, padding: "4px 8px", borderRadius: 2 }}>
+                <span
+                  style={{
+                    background: p.accent,
+                    color: "#fff",
+                    fontSize: 6,
+                    padding: "4px 8px",
+                    borderRadius: 2,
+                  }}
+                >
                   CHECK
                 </span>
               </div>
             </div>
           </div>
           <div style={{ display: "grid", gap: 6 }}>
-            <Card p={p} h={70} style={{ background: `linear-gradient(140deg,${p.accent},#9dc9c2)` }} />
+            <Card
+              p={p}
+              h={70}
+              style={{ background: `linear-gradient(140deg,${p.accent},#9dc9c2)` }}
+            />
             <Card p={p} h={48} style={{ background: "#dcd3c4" }} />
           </div>
         </div>
@@ -195,15 +238,32 @@ export const MINI_SITES: MiniSiteDef[] = [
           <div style={{ fontSize: 26, color: p.ink, fontWeight: 800, letterSpacing: -0.5 }}>
             BOOK YOUR BARBER
           </div>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 5, marginTop: 10 }}>
+          <div
+            style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 5, marginTop: 10 }}
+          >
             {["Rui", "Tomás", "Léo", "Ana"].map((n, i) => (
-              <Card key={n} p={p} h={40} style={{ textAlign: "center", borderColor: i === 1 ? p.accent : undefined }}>
-                <div style={{ width: 14, height: 14, borderRadius: 99, margin: "0 auto", background: i === 1 ? p.accent : "#ffffff22" }} />
+              <Card
+                key={n}
+                p={p}
+                h={40}
+                style={{ textAlign: "center", borderColor: i === 1 ? p.accent : undefined }}
+              >
+                <div
+                  style={{
+                    width: 14,
+                    height: 14,
+                    borderRadius: 99,
+                    margin: "0 auto",
+                    background: i === 1 ? p.accent : "#ffffff22",
+                  }}
+                />
                 <div style={{ fontSize: 6, marginTop: 4, opacity: 0.8 }}>{n}</div>
               </Card>
             ))}
           </div>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(6,1fr)", gap: 4, marginTop: 8 }}>
+          <div
+            style={{ display: "grid", gridTemplateColumns: "repeat(6,1fr)", gap: 4, marginTop: 8 }}
+          >
             {["09:00", "10:30", "11:15", "14:00", "16:30", "18:00"].map((t, i) => (
               <div
                 key={t}
@@ -239,20 +299,50 @@ export const MINI_SITES: MiniSiteDef[] = [
           <Dots p={p} />
         </div>
         <div style={{ padding: "8px 16px" }}>
-          <div style={{ fontSize: 34, lineHeight: 0.95, fontWeight: 900, color: p.ink, letterSpacing: -1.4 }}>
+          <div
+            style={{
+              fontSize: 34,
+              lineHeight: 0.95,
+              fontWeight: 900,
+              color: p.ink,
+              letterSpacing: -1.4,
+            }}
+          >
             TRAIN<span style={{ color: p.accent }}>.</span>
             <br />
             NO EXCUSES
           </div>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 5, marginTop: 10 }}>
+          <div
+            style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 5, marginTop: 10 }}
+          >
             {["BASIC", "PRO", "ELITE"].map((t, i) => (
-              <Card key={t} p={p} h={54} style={{ background: i === 1 ? p.accent : p.soft, color: i === 1 ? "#101215" : p.ink }}>
+              <Card
+                key={t}
+                p={p}
+                h={54}
+                style={{
+                  background: i === 1 ? p.accent : p.soft,
+                  color: i === 1 ? "#101215" : p.ink,
+                }}
+              >
                 <div style={{ fontSize: 6.5, fontWeight: 800, letterSpacing: 1 }}>{t}</div>
                 <Bars p={p} n={3} />
               </Card>
             ))}
           </div>
-          <div style={{ marginTop: 8, height: 16, borderRadius: 2, background: p.soft, ...row, justifyContent: "space-between", padding: "0 7px", fontSize: 5.6, color: p.ink }}>
+          <div
+            style={{
+              marginTop: 8,
+              height: 16,
+              borderRadius: 2,
+              background: p.soft,
+              ...row,
+              justifyContent: "space-between",
+              padding: "0 7px",
+              fontSize: 5.6,
+              color: p.ink,
+            }}
+          >
             <span>HIIT · 18:00</span>
             <span>SPIN · 19:00</span>
             <span style={{ color: p.accent }}>JOIN NOW</span>
@@ -273,10 +363,14 @@ export const MINI_SITES: MiniSiteDef[] = [
           <Dots p={p} />
         </div>
         <div style={{ padding: "8px 16px" }}>
-          <div style={{ fontSize: 20, lineHeight: 1.05, color: p.ink, fontWeight: 700, maxWidth: 200 }}>
+          <div
+            style={{ fontSize: 20, lineHeight: 1.05, color: p.ink, fontWeight: 700, maxWidth: 200 }}
+          >
             Building infrastructure that lasts decades
           </div>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 5, marginTop: 10 }}>
+          <div
+            style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 5, marginTop: 10 }}
+          >
             {[1, 2, 3, 4].map((i) => (
               <Card key={i} p={p} h={44} style={{ background: i === 1 ? p.accent : "#d9d5cf" }} />
             ))}
@@ -292,7 +386,15 @@ export const MINI_SITES: MiniSiteDef[] = [
                 <div style={{ opacity: 0.5 }}>{b}</div>
               </div>
             ))}
-            <div style={{ marginLeft: "auto", background: p.ink, color: "#fff", fontSize: 6, padding: "5px 9px" }}>
+            <div
+              style={{
+                marginLeft: "auto",
+                background: p.ink,
+                color: "#fff",
+                fontSize: 6,
+                padding: "5px 9px",
+              }}
+            >
               REQUEST QUOTE
             </div>
           </div>
@@ -320,7 +422,15 @@ export const MINI_SITES: MiniSiteDef[] = [
           <Dots p={p} />
         </div>
         <div style={{ padding: "6px 16px", position: "relative" }}>
-          <div style={{ fontSize: 40, fontWeight: 900, letterSpacing: -2, color: p.ink, lineHeight: 0.9 }}>
+          <div
+            style={{
+              fontSize: 40,
+              fontWeight: 900,
+              letterSpacing: -2,
+              color: p.ink,
+              lineHeight: 0.9,
+            }}
+          >
             LIVE SET
           </div>
           <div style={{ ...row, gap: 2, marginTop: 8, height: 34, alignItems: "flex-end" }}>
@@ -340,7 +450,15 @@ export const MINI_SITES: MiniSiteDef[] = [
           </div>
           <div style={{ display: "grid", gap: 3, marginTop: 8, fontSize: 6, color: p.ink }}>
             {["18 OCT — LISBON", "02 NOV — PORTO", "22 NOV — MADRID"].map((t) => (
-              <div key={t} style={{ ...row, justifyContent: "space-between", borderTop: "1px solid #ffffff18", paddingTop: 3 }}>
+              <div
+                key={t}
+                style={{
+                  ...row,
+                  justifyContent: "space-between",
+                  borderTop: "1px solid #ffffff18",
+                  paddingTop: 3,
+                }}
+              >
                 <span>{t}</span>
                 <span style={{ color: p.accent }}>TICKETS</span>
               </div>
@@ -361,22 +479,39 @@ export const MINI_SITES: MiniSiteDef[] = [
           <Wordmark p={p} name="AURELLE" />
           <Dots p={p} />
         </div>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, padding: "8px 16px" }}>
+        <div
+          style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, padding: "8px 16px" }}
+        >
           <div>
             <div style={{ fontSize: 21, color: p.ink, fontWeight: 400, lineHeight: 1.1 }}>
               Skin, nails &amp; <em style={{ color: p.accent }}>calm</em>
             </div>
             <div style={{ display: "grid", gap: 4, marginTop: 9, fontSize: 6, color: p.ink }}>
-              {["Facial ritual · 60 min", "Gel manicure · 45 min", "Lash lift · 40 min"].map((s) => (
-                <div key={s} style={{ ...row, justifyContent: "space-between", background: p.soft, padding: "5px 7px", borderRadius: 99 }}>
-                  <span>{s}</span>
-                  <span style={{ color: p.accent }}>+</span>
-                </div>
-              ))}
+              {["Facial ritual · 60 min", "Gel manicure · 45 min", "Lash lift · 40 min"].map(
+                (s) => (
+                  <div
+                    key={s}
+                    style={{
+                      ...row,
+                      justifyContent: "space-between",
+                      background: p.soft,
+                      padding: "5px 7px",
+                      borderRadius: 99,
+                    }}
+                  >
+                    <span>{s}</span>
+                    <span style={{ color: p.accent }}>+</span>
+                  </div>
+                ),
+              )}
             </div>
           </div>
           <div>
-            <Card p={p} h={62} style={{ background: `linear-gradient(150deg,${p.accent},#f0d9d4)` }} />
+            <Card
+              p={p}
+              h={62}
+              style={{ background: `linear-gradient(150deg,${p.accent},#f0d9d4)` }}
+            />
             <div style={{ marginTop: 6, background: p.soft, borderRadius: 3, padding: 7 }}>
               <div style={{ fontSize: 5.6, opacity: 0.6, color: p.ink }}>NEXT AVAILABLE</div>
               <div style={{ fontSize: 8, color: p.ink, marginTop: 2 }}>Tomorrow, 11:30</div>
@@ -402,10 +537,17 @@ export const MINI_SITES: MiniSiteDef[] = [
             <div style={{ fontSize: 18, color: p.ink, fontWeight: 500 }}>42 listings · Cascais</div>
             <div style={{ fontSize: 6, color: p.accent }}>Map view</div>
           </div>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 6, marginTop: 9 }}>
+          <div
+            style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 6, marginTop: 9 }}
+          >
             {[1, 2, 3].map((i) => (
               <div key={i} style={{ borderRadius: 3, overflow: "hidden", background: p.soft }}>
-                <div style={{ height: 40, background: `linear-gradient(160deg,${p.accent}55,#ffffff10)` }} />
+                <div
+                  style={{
+                    height: 40,
+                    background: `linear-gradient(160deg,${p.accent}55,#ffffff10)`,
+                  }}
+                />
                 <div style={{ padding: 6, fontSize: 5.8, color: p.ink }}>
                   <div>Villa 0{i}</div>
                   <div style={{ opacity: 0.5, marginTop: 2 }}>3 bed · 180 m²</div>
@@ -414,7 +556,16 @@ export const MINI_SITES: MiniSiteDef[] = [
             ))}
           </div>
           <div style={{ marginTop: 9, ...row, gap: 6, fontSize: 6, color: p.ink }}>
-            <span style={{ background: p.accent, color: "#101410", padding: "5px 9px", borderRadius: 2 }}>BOOK VIEWING</span>
+            <span
+              style={{
+                background: p.accent,
+                color: "#101410",
+                padding: "5px 9px",
+                borderRadius: 2,
+              }}
+            >
+              BOOK VIEWING
+            </span>
             <span style={{ opacity: 0.5 }}>Instant confirmation</span>
           </div>
         </div>
@@ -433,10 +584,20 @@ export const MINI_SITES: MiniSiteDef[] = [
           <Dots p={p} />
         </div>
         <div style={{ padding: "8px 16px" }}>
-          <div style={{ fontSize: 22, color: p.ink, fontWeight: 600, letterSpacing: -0.6, maxWidth: 230 }}>
+          <div
+            style={{
+              fontSize: 22,
+              color: p.ink,
+              fontWeight: 600,
+              letterSpacing: -0.6,
+              maxWidth: 230,
+            }}
+          >
             Operations, handled end to end
           </div>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 6, marginTop: 10 }}>
+          <div
+            style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 6, marginTop: 10 }}
+          >
             {["Logistics", "Compliance", "Support"].map((t) => (
               <Card key={t} p={p} h={50}>
                 <div style={{ width: 10, height: 10, borderRadius: 2, background: p.accent }} />
@@ -445,9 +606,23 @@ export const MINI_SITES: MiniSiteDef[] = [
               </Card>
             ))}
           </div>
-          <div style={{ marginTop: 9, height: 20, borderRadius: 3, background: p.soft, ...row, padding: "0 7px", gap: 6, fontSize: 6, color: p.ink }}>
+          <div
+            style={{
+              marginTop: 9,
+              height: 20,
+              borderRadius: 3,
+              background: p.soft,
+              ...row,
+              padding: "0 7px",
+              gap: 6,
+              fontSize: 6,
+              color: p.ink,
+            }}
+          >
             <span style={{ opacity: 0.5 }}>Trusted across 12 markets</span>
-            <span style={{ marginLeft: "auto", color: p.accent, fontWeight: 700 }}>Contact sales</span>
+            <span style={{ marginLeft: "auto", color: p.accent, fontWeight: 700 }}>
+              Contact sales
+            </span>
           </div>
         </div>
       </div>
@@ -464,12 +639,28 @@ export const MINI_SITES: MiniSiteDef[] = [
           <Wordmark p={p} name="SLOTLY" />
           <Dots p={p} />
         </div>
-        <div style={{ display: "grid", gridTemplateColumns: "0.9fr 1.1fr", gap: 8, padding: "6px 16px" }}>
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "0.9fr 1.1fr",
+            gap: 8,
+            padding: "6px 16px",
+          }}
+        >
           <div>
             <div style={{ fontSize: 17, color: p.ink, fontWeight: 600 }}>Dashboard</div>
             <div style={{ display: "grid", gap: 4, marginTop: 7 }}>
               {["Today · 14", "Week · 96", "Revenue ↑"].map((t) => (
-                <div key={t} style={{ background: p.soft, borderRadius: 3, padding: "6px 7px", fontSize: 6, color: p.ink }}>
+                <div
+                  key={t}
+                  style={{
+                    background: p.soft,
+                    borderRadius: 3,
+                    padding: "6px 7px",
+                    fontSize: 6,
+                    color: p.ink,
+                  }}
+                >
                   {t}
                 </div>
               ))}
@@ -489,7 +680,18 @@ export const MINI_SITES: MiniSiteDef[] = [
                 />
               ))}
             </div>
-            <div className="mini-slide" style={{ marginTop: 7, background: p.accent, color: "#04121a", fontSize: 6, padding: "5px 7px", borderRadius: 2, fontWeight: 700 }}>
+            <div
+              className="mini-slide"
+              style={{
+                marginTop: 7,
+                background: p.accent,
+                color: "#04121a",
+                fontSize: 6,
+                padding: "5px 7px",
+                borderRadius: 2,
+                fontWeight: 700,
+              }}
+            >
               NEW RESERVATION · 20:30
             </div>
           </div>

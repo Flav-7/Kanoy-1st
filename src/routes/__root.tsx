@@ -81,15 +81,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { title: "KANOY — Digital studio" },
       {
         name: "description",
-        content:
-          "KANOY builds premium websites and custom booking systems for real businesses.",
+        content: "KANOY builds premium websites and custom booking systems for real businesses.",
       },
       { name: "author", content: "KANOY" },
       { property: "og:title", content: "KANOY — Digital studio" },
       {
         property: "og:description",
-        content:
-          "KANOY builds premium websites and custom booking systems for real businesses.",
+        content: "KANOY builds premium websites and custom booking systems for real businesses.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

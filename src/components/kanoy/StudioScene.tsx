@@ -123,7 +123,6 @@ export function StudioScene() {
             filter: `blur(${introOut * 12}px)`,
           }}
         >
-          
           <h1 className="flex items-center gap-[2.4vw] md:gap-4">
             <img
               src={kanoyK}
@@ -149,7 +148,9 @@ export function StudioScene() {
           className="pointer-events-none absolute bottom-10 left-6 md:left-14"
           style={{ opacity: walkLabel, transform: `translateY(${(1 - walkLabel) * 20}px)` }}
         >
-          <div className="text-sm uppercase tracking-[0.42em] text-accent md:text-base">{dict.studio.label}</div>
+          <div className="text-sm uppercase tracking-[0.42em] text-accent md:text-base">
+            {dict.studio.label}
+          </div>
           <div className="mt-3 max-w-sm font-body text-base leading-relaxed text-studio-muted md:text-lg">
             {dict.studio.text}
           </div>
@@ -163,7 +164,10 @@ export function StudioScene() {
         </div>
 
         {/* transition to the light half of the experience */}
-        <div className="pointer-events-none absolute inset-0 bg-background" style={{ opacity: outro }} />
+        <div
+          className="pointer-events-none absolute inset-0 bg-background"
+          style={{ opacity: outro }}
+        />
       </div>
     </section>
   );

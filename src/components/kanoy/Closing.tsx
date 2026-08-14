@@ -23,7 +23,11 @@ function Reveal({ children, delay = 0 }: { children: React.ReactNode; delay?: nu
 export function About() {
   const { dict } = useLanguage();
   return (
-    <section id="about" className="relative bg-sand px-6 py-32 md:px-14 md:py-48" aria-label="About KANOY">
+    <section
+      id="about"
+      className="relative bg-sand px-6 py-32 md:px-14 md:py-48"
+      aria-label="About KANOY"
+    >
       <div className="mx-auto max-w-5xl">
         <Reveal>
           <div className="eyebrow">{dict.about.eyebrow}</div>
@@ -39,7 +43,13 @@ export function About() {
           </Reveal>
           <Reveal delay={0.2}>
             <span className="k-halo inline-block">
-              <img src={kanoyK} alt="" aria-hidden loading="lazy" className="k-float k-glow w-24 md:w-32" />
+              <img
+                src={kanoyK}
+                alt=""
+                aria-hidden
+                loading="lazy"
+                className="k-float k-glow w-24 md:w-32"
+              />
             </span>
           </Reveal>
         </div>
@@ -51,7 +61,11 @@ export function About() {
 export function Pricing() {
   const { dict } = useLanguage();
   return (
-    <section id="pricing" className="relative bg-background px-6 py-32 md:px-14 md:py-44" aria-label="How KANOY works commercially">
+    <section
+      id="pricing"
+      className="relative bg-background px-6 py-32 md:px-14 md:py-44"
+      aria-label="How KANOY works commercially"
+    >
       <div className="mx-auto grid max-w-5xl gap-14 md:grid-cols-2">
         <Reveal>
           <div className="eyebrow">{dict.pricing.eyebrow}</div>
@@ -65,7 +79,10 @@ export function Pricing() {
         <Reveal delay={0.12}>
           <ul className="border-t border-ink/10">
             {dict.pricing.items.map((i) => (
-              <li key={i} className="flex items-center justify-between border-b border-ink/10 py-5 text-sm">
+              <li
+                key={i}
+                className="flex items-center justify-between border-b border-ink/10 py-5 text-sm"
+              >
                 <span>{i}</span>
                 <span className="text-accent">{dict.pricing.included}</span>
               </li>
@@ -102,7 +119,9 @@ export function Contact() {
           </h2>
         </Reveal>
         <Reveal delay={0.12}>
-          <p className="mt-8 text-sm uppercase tracking-[0.32em] text-studio-muted">{dict.contact.subtitle}</p>
+          <p className="mt-8 text-sm uppercase tracking-[0.32em] text-studio-muted">
+            {dict.contact.subtitle}
+          </p>
           <div className="mt-14 flex flex-wrap items-center justify-center gap-4">
             <ContactModal />
           </div>

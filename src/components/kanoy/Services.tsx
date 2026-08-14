@@ -10,12 +10,19 @@ export function Services() {
   const SERVICES = dict.services.items.map((item, i) => ({ n: SERVICE_NUMBERS[i]!, ...item }));
 
   return (
-    <section id="services" ref={ref} className="relative h-[520vh] bg-background" aria-label="What KANOY does">
+    <section
+      id="services"
+      ref={ref}
+      className="relative h-[520vh] bg-background"
+      aria-label="What KANOY does"
+    >
       <div className="sticky top-0 flex h-screen flex-col justify-center overflow-hidden px-6 py-[4vh] md:px-14">
-
         <div
           className="pointer-events-none absolute -right-[8vw] top-1/2 -translate-y-1/2"
-          style={{ opacity: 0.26 + p * 0.12, transform: `translate3d(0,-50%,0) rotate(${-10 + p * 20}deg) scale(${1 + p * 0.2})` }}
+          style={{
+            opacity: 0.26 + p * 0.12,
+            transform: `translate3d(0,-50%,0) rotate(${-10 + p * 20}deg) scale(${1 + p * 0.2})`,
+          }}
         >
           <span className="k-halo">
             <img src={kanoyK} alt="" aria-hidden loading="lazy" className="k-glow w-[34vw]" />
@@ -53,8 +60,12 @@ export function Services() {
                 >
                   <div className="flex flex-col gap-2 md:flex-row md:items-baseline md:gap-10">
                     <span className="text-[10px] tracking-[0.4em] text-accent">{s.n}</span>
-                    <h3 className="font-display text-[clamp(1rem,2.2vh,1.6rem)] tracking-[-0.02em] md:w-[38%]">{s.title}</h3>
-                    <p className="max-w-md text-[clamp(0.9rem,2vh,1.05rem)] leading-relaxed text-ink/70">{s.text}</p>
+                    <h3 className="font-display text-[clamp(1rem,2.2vh,1.6rem)] tracking-[-0.02em] md:w-[38%]">
+                      {s.title}
+                    </h3>
+                    <p className="max-w-md text-[clamp(0.9rem,2vh,1.05rem)] leading-relaxed text-ink/70">
+                      {s.text}
+                    </p>
                   </div>
                 </li>
               );

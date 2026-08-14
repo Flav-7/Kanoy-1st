@@ -9,11 +9,18 @@ export function Process() {
   const STEPS = dict.process.steps.map((step, i) => ({ n: STEP_NUMBERS[i]!, ...step }));
 
   return (
-    <section id="process" ref={ref} className="relative h-[600vh] bg-ink text-studio-foreground" aria-label="How KANOY works">
+    <section
+      id="process"
+      ref={ref}
+      className="relative h-[600vh] bg-ink text-studio-foreground"
+      aria-label="How KANOY works"
+    >
       <div className="sticky top-0 h-screen overflow-hidden">
         <div className="light-beam" style={{ opacity: 0.22 + p * 0.25 }} />
         <div className="absolute left-6 top-10 md:left-14">
-          <div className="text-[10px] uppercase tracking-[0.42em] text-accent">{dict.process.eyebrow}</div>
+          <div className="text-[10px] uppercase tracking-[0.42em] text-accent">
+            {dict.process.eyebrow}
+          </div>
         </div>
         <div className="camera">
           <div className="world">
@@ -32,8 +39,12 @@ export function Process() {
                     filter: `blur(${(1 - clamp(t * 3)) * 8}px)`,
                   }}
                 >
-                  <div className="text-[10px] tracking-[0.4em] text-accent">{dict.process.stepLabel} {s.n}</div>
-                  <h3 className="mt-5 font-display text-3xl leading-[1.02] tracking-[-0.03em] md:text-5xl">{s.t}</h3>
+                  <div className="text-[10px] tracking-[0.4em] text-accent">
+                    {dict.process.stepLabel} {s.n}
+                  </div>
+                  <h3 className="mt-5 font-display text-3xl leading-[1.02] tracking-[-0.03em] md:text-5xl">
+                    {s.t}
+                  </h3>
                   <p className="mt-5 max-w-md text-sm leading-relaxed text-studio-muted">{s.d}</p>
                 </article>
               );

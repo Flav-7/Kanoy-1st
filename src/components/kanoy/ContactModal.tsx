@@ -1,5 +1,11 @@
 import { useState, type FormEvent, type ReactNode } from "react";
-import { Dialog, DialogContent, DialogDescription, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import { LANGUAGES, type Language } from "@/lib/i18n/translations";
 import { sendContactEmail } from "@/lib/contact/send-contact-email";
@@ -12,7 +18,15 @@ type Step = "choice" | "form" | "success" | "error";
 const fieldClass =
   "w-full border-b border-studio-foreground/20 bg-transparent py-2 text-sm text-studio-foreground placeholder:text-studio-muted/60 focus:border-accent focus:outline-none";
 
-function Field({ label, required, children }: { label: string; required?: boolean; children: ReactNode }) {
+function Field({
+  label,
+  required,
+  children,
+}: {
+  label: string;
+  required?: boolean;
+  children: ReactNode;
+}) {
   return (
     <label className="flex flex-col gap-1.5">
       <span className="text-[10px] uppercase tracking-[0.3em] text-studio-muted">
@@ -179,7 +193,11 @@ export function ContactModal() {
                 >
                   {m.back}
                 </button>
-                <button type="submit" disabled={pending} className="btn-kanoy bg-accent text-ink disabled:opacity-60">
+                <button
+                  type="submit"
+                  disabled={pending}
+                  className="btn-kanoy bg-accent text-ink disabled:opacity-60"
+                >
                   {pending ? m.sending : m.submit}
                 </button>
               </div>
@@ -192,8 +210,14 @@ export function ContactModal() {
             <DialogTitle className="font-display text-2xl tracking-[-0.02em] md:text-3xl">
               {m.successTitle}
             </DialogTitle>
-            <DialogDescription className="mt-4 text-studio-muted">{m.successText}</DialogDescription>
-            <button type="button" onClick={() => setOpen(false)} className="btn-kanoy mt-8 bg-accent text-ink">
+            <DialogDescription className="mt-4 text-studio-muted">
+              {m.successText}
+            </DialogDescription>
+            <button
+              type="button"
+              onClick={() => setOpen(false)}
+              className="btn-kanoy mt-8 bg-accent text-ink"
+            >
               {m.close}
             </button>
           </div>
@@ -206,7 +230,11 @@ export function ContactModal() {
             </DialogTitle>
             <DialogDescription className="mt-4 text-studio-muted">{m.errorText}</DialogDescription>
             <div className="mt-8 flex items-center justify-center gap-4">
-              <button type="button" onClick={() => setStep("form")} className="btn-kanoy bg-accent text-ink">
+              <button
+                type="button"
+                onClick={() => setStep("form")}
+                className="btn-kanoy bg-accent text-ink"
+              >
                 {m.retry}
               </button>
               <a
