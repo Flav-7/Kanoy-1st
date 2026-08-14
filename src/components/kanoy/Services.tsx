@@ -1,18 +1,13 @@
 import { clamp, range, useScrollProgress } from "./anim";
 import kanoyK from "@/assets/kanoy-k.png";
+import { useLanguage } from "@/lib/i18n/LanguageContext";
 
-export const SERVICES = [
-  { n: "01", title: "Website Development", text: "Premium websites designed specifically for each business — not templates." },
-  { n: "02", title: "Automated Systems", text: "We build custom systems inside websites whenever the operation requires it." },
-  { n: "03", title: "Restaurant Reservations", text: "Online reservation systems with booking management and service control." },
-  { n: "04", title: "Barbershop Systems", text: "Online bookings, individual barber calendars and automated appointments." },
-  { n: "05", title: "Beauty & Aesthetics", text: "Appointment systems designed for salons, clinics and beauty businesses." },
-  { n: "06", title: "Business Websites", text: "Construction, services, local businesses and industry — built to convert." },
-  { n: "07", title: "Custom Digital Systems", text: "Outside the standard package? We design and build the solution from zero." },
-];
+const SERVICE_NUMBERS = ["01", "02", "03", "04", "05", "06", "07"];
 
 export function Services() {
   const { ref, p } = useScrollProgress<HTMLDivElement>();
+  const { dict } = useLanguage();
+  const SERVICES = dict.services.items.map((item, i) => ({ n: SERVICE_NUMBERS[i]!, ...item }));
 
   return (
     <section ref={ref} className="relative h-[520vh] bg-background" aria-label="What KANOY does">
@@ -29,7 +24,7 @@ export function Services() {
 
         <div className="relative mx-auto w-full max-w-5xl">
           <div className="eyebrow" style={{ opacity: range(p, 0, 0.06) }}>
-            What happens in this room
+            {dict.services.eyebrow}
           </div>
           <h2
             className="mt-[1.5vh] font-display text-[clamp(1.5rem,3.6vh,2.9rem)] leading-[0.95] tracking-[-0.03em]"
@@ -38,7 +33,7 @@ export function Services() {
               transform: `translateY(${(1 - range(p, 0.01, 0.08)) * 40}px)`,
             }}
           >
-            Services, revealed as you move
+            {dict.services.title}
           </h2>
 
           <ul className="mt-[2vh]">

@@ -1,23 +1,19 @@
 import { clamp, range, useScrollProgress } from "./anim";
+import { useLanguage } from "@/lib/i18n/LanguageContext";
 
-const STEPS = [
-  { n: "01", t: "Tell us what you need.", d: "A short conversation about your business, your clients and what has to happen online." },
-  { n: "02", t: "We design the experience.", d: "Direction, structure and motion — designed around how people actually use your site." },
-  { n: "03", t: "We build the website.", d: "Hand-built, fast, responsive and made to be edited and extended later." },
-  { n: "04", t: "We integrate the systems.", d: "Reservations, bookings, calendars, automations — whatever the operation needs." },
-  { n: "05", t: "We launch.", d: "Domain, performance, tracking and a controlled go-live." },
-  { n: "06", t: "We maintain and host it.", d: "Hosting, updates, technical management — your site stays alive and current." },
-];
+const STEP_NUMBERS = ["01", "02", "03", "04", "05", "06"];
 
 export function Process() {
   const { ref, p } = useScrollProgress<HTMLDivElement>();
+  const { dict } = useLanguage();
+  const STEPS = dict.process.steps.map((step, i) => ({ n: STEP_NUMBERS[i]!, ...step }));
 
   return (
     <section ref={ref} className="relative h-[600vh] bg-ink text-studio-foreground" aria-label="How KANOY works">
       <div className="sticky top-0 h-screen overflow-hidden">
         <div className="light-beam" style={{ opacity: 0.22 + p * 0.25 }} />
         <div className="absolute left-6 top-10 md:left-14">
-          <div className="text-[10px] uppercase tracking-[0.42em] text-accent">How we work</div>
+          <div className="text-[10px] uppercase tracking-[0.42em] text-accent">{dict.process.eyebrow}</div>
         </div>
         <div className="camera">
           <div className="world">
@@ -36,7 +32,7 @@ export function Process() {
                     filter: `blur(${(1 - clamp(t * 3)) * 8}px)`,
                   }}
                 >
-                  <div className="text-[10px] tracking-[0.4em] text-accent">STEP {s.n}</div>
+                  <div className="text-[10px] tracking-[0.4em] text-accent">{dict.process.stepLabel} {s.n}</div>
                   <h3 className="mt-5 font-display text-3xl leading-[1.02] tracking-[-0.03em] md:text-5xl">{s.t}</h3>
                   <p className="mt-5 max-w-md text-sm leading-relaxed text-studio-muted">{s.d}</p>
                 </article>

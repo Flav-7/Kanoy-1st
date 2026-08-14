@@ -3,6 +3,7 @@ import { StudioScene } from "@/components/kanoy/StudioScene";
 import { Services } from "@/components/kanoy/Services";
 import { Process } from "@/components/kanoy/Process";
 import { About, Pricing, Contact } from "@/components/kanoy/Closing";
+import { LanguageSwitcher } from "@/components/kanoy/LanguageSwitcher";
 
 const title = "KANOY — Websites that make people stop scrolling";
 const description =
@@ -25,6 +26,7 @@ export const Route = createFileRoute("/")({
 function Index() {
   return (
     <main className="bg-background">
+      <LanguageSwitcher />
       <StudioScene />
       <Services />
       <About />

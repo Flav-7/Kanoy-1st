@@ -148,6 +148,7 @@
 :root {
   --font-display: "Space Grotesk", ui-sans-serif, sans-serif;
   --font-body: "DM Sans", ui-sans-serif, sans-serif;
+  --font-logo: "Baloo 2", ui-sans-serif, sans-serif;
 
   --accent-2: oklch(0.82 0.14 165);
   --studio: oklch(0.15 0.014 235);
@@ -160,6 +161,7 @@
 @theme inline {
   --font-display: var(--font-display);
   --font-body: var(--font-body);
+  --font-logo: var(--font-logo);
   --color-accent-2: var(--accent-2);
   --color-studio: var(--studio);
   --color-studio-foreground: var(--studio-foreground);
@@ -176,6 +178,7 @@ body {
 }
 
 .font-display { font-family: var(--font-display); }
+.font-logo { font-family: var(--font-logo); }
 
 /* camera / world */
 @utility camera {

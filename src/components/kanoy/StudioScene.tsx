@@ -2,6 +2,7 @@ import { MINI_SITES, MiniSite } from "./mini-sites";
 import { clamp, mix, range, useScrollProgress } from "./anim";
 import studio from "@/assets/studio-depth.jpg";
 import kanoyK from "@/assets/kanoy-k.png";
+import { useLanguage } from "@/lib/i18n/LanguageContext";
 
 /** Placement of a screen inside the studio volume. */
 type Placement = {
@@ -77,6 +78,7 @@ function Screen({
 
 export function StudioScene() {
   const { ref, p } = useScrollProgress<HTMLDivElement>();
+  const { dict } = useLanguage();
   const camera = p * CAMERA_TRAVEL;
   const reveal = range(p, 0.03, 0.11);
 
@@ -122,23 +124,23 @@ export function StudioScene() {
           }}
         >
           
-          <h1 className="font-display text-[15vw] leading-[0.82] tracking-[-0.05em] text-studio-foreground md:text-[11vw]">
-            <span className="inline-flex items-center">
-              <img
-                src={kanoyK}
-                alt="K"
-                width={1024}
-                height={1024}
-                className="k-halo k-glow inline-block h-[0.9em] w-auto translate-y-[-0.02em] align-middle"
-              />
-              ANOY
+          <h1 className="flex items-center gap-[2.4vw] md:gap-4">
+            <img
+              src={kanoyK}
+              alt="Kanoy"
+              width={1024}
+              height={1024}
+              className="k-halo k-glow inline-block h-[12vw] w-auto md:h-[8.5vw]"
+            />
+            <span className="font-logo text-[12vw] leading-none tracking-[-0.01em] text-studio-foreground md:text-[8.5vw]">
+              Kanoy
             </span>
           </h1>
           <p className="mt-6 max-w-xl text-balance font-body text-sm uppercase tracking-[0.32em] text-studio-muted md:text-base">
-            We build websites that make people stop scrolling.
+            {dict.hero.tagline}
           </p>
           <span className="mt-16 text-[10px] uppercase tracking-[0.4em] text-accent scroll-hint">
-            Scroll to enter the studio
+            {dict.hero.scrollHint}
           </span>
         </div>
 
@@ -147,9 +149,9 @@ export function StudioScene() {
           className="pointer-events-none absolute bottom-10 left-6 md:left-14"
           style={{ opacity: walkLabel, transform: `translateY(${(1 - walkLabel) * 20}px)` }}
         >
-          <div className="text-[10px] uppercase tracking-[0.42em] text-accent">Inside the studio</div>
-          <div className="mt-2 max-w-xs font-body text-xs leading-relaxed text-studio-muted">
-            Every screen you pass is a project. Keep moving.
+          <div className="text-sm uppercase tracking-[0.42em] text-accent md:text-base">{dict.studio.label}</div>
+          <div className="mt-3 max-w-sm font-body text-base leading-relaxed text-studio-muted md:text-lg">
+            {dict.studio.text}
           </div>
         </div>
 
