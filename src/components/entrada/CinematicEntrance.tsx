@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { gsap } from "./lenisGsap";
 import kanoyLogo from "@/assets/branding/kanoy-logo.jpg";
-import { MINI_SITES, MiniSite } from "../kanoy/mini-sites";
+import { MINI_SITES } from "../kanoy/mini-sites-data";
+import { MiniSite } from "../kanoy/mini-sites";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import { ContactModal } from "../kanoy/ContactModal";
 

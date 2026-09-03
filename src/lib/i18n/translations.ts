@@ -67,8 +67,8 @@ export type Dictionary = {
 export const translations: Record<Language, Dictionary> = {
   pt: {
     hero: {
-      tagline: "Criamos websites que fazem as pessoas parar de fazer scroll.",
-      scrollHint: "Desliza para entrar no estúdio",
+      tagline: "Criamos experiências digitais que fazem marcas crescer",
+      scrollHint: "Conhece o nosso trabalho",
     },
     studio: {
       label: "Dentro do estúdio",

@@ -39,16 +39,16 @@ export function QuickNav() {
   return (
     <div
       ref={rootRef}
-      className={`fixed right-4 top-1/2 z-50 flex -translate-y-1/2 flex-col items-end gap-4 transition-opacity duration-500 md:right-6 ${
+      className={`fixed left-4 top-1/2 z-50 flex -translate-y-1/2 flex-col items-start gap-4 transition-opacity duration-500 md:left-6 ${
         visible ? "opacity-100" : "pointer-events-none opacity-0"
       }`}
       style={{ mixBlendMode: "difference" }}
     >
       {open && (
-        <ul className="flex flex-col items-end gap-3">
+        <ul className="flex flex-col items-start gap-3">
           {items.map((item) => (
             <li key={item.id}>
-              <button type="button" onClick={() => goTo(item.id)} className="block text-right">
+              <button type="button" onClick={() => goTo(item.id)} className="block text-left">
                 <span className="block text-[11px] font-medium uppercase tracking-[0.2em] text-white">
                   {item.label}
                 </span>
@@ -66,7 +66,7 @@ export function QuickNav() {
         aria-label="Menu"
         aria-expanded={open}
         onClick={() => setOpen((o) => !o)}
-        className="flex h-9 w-9 flex-col items-end justify-center gap-[6px]"
+        className="flex h-9 w-9 flex-col items-start justify-center gap-[6px]"
       >
         <span className="h-[2px] w-6 bg-white" />
         <span className="h-[2px] w-6 bg-white" />

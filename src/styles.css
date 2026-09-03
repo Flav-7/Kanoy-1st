@@ -261,6 +261,53 @@ body {
     drop-shadow(0 0 70px color-mix(in oklab, var(--accent-2) 55%, transparent));
 }
 
+/* office backdrop ambience: the LED strips gently breathe and a couple of
+   glass reflections drift a few px — the photo itself never moves. Kept to
+   opacity/transform only (no filter) so it stays cheap and seam-free on a
+   large fixed layer. */
+@keyframes hero-glow-breathe {
+  0% {
+    opacity: 0.55;
+  }
+  35% {
+    opacity: 0.75;
+  }
+  62% {
+    opacity: 0.62;
+  }
+  100% {
+    opacity: 0.55;
+  }
+}
+
+@keyframes hero-reflection-drift {
+  0% {
+    transform: translate(0, 0);
+  }
+  100% {
+    transform: translate(16px, -6px);
+  }
+}
+
+@utility hero-glow {
+  position: absolute;
+  inset: 0;
+  mix-blend-mode: screen;
+  animation-name: hero-glow-breathe;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+
+@utility hero-reflection {
+  position: absolute;
+  inset: -12% -20%;
+  mix-blend-mode: screen;
+  animation-name: hero-reflection-drift;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+}
+
 /* screens */
 @utility screen-shell {
   position: relative;

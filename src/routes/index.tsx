@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { StudioScene } from "@/components/kanoy/StudioScene";
-import { Portal } from "@/components/kanoy/Portal";
+import { StudioBackdrop } from "@/components/kanoy/StudioBackdrop";
+import { StudioAndPortal } from "@/components/kanoy/StudioAndPortal";
 import { Services } from "@/components/kanoy/Services";
 import { Process } from "@/components/kanoy/Process";
 import { About, Pricing, Contact } from "@/components/kanoy/Closing";
@@ -34,8 +34,8 @@ function Index() {
       <CursorTrail />
       <LanguageSwitcher />
       <QuickNav />
-      <StudioScene />
-      <Portal />
+      <StudioBackdrop />
+      <StudioAndPortal />
       <Services />
       <About />
       <Process />

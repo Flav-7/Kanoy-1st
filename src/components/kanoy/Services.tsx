@@ -18,14 +18,14 @@ export function Services() {
     >
       <div className="sticky top-0 flex h-screen flex-col justify-center overflow-hidden px-6 py-[4vh] md:px-14">
         <div
-          className="pointer-events-none absolute -right-[8vw] top-1/2 -translate-y-1/2"
+          className="pointer-events-none absolute right-[6vw] top-1/2 -translate-y-1/2"
           style={{
             opacity: 0.26 + p * 0.12,
-            transform: `translate3d(0,-50%,0) rotate(${-10 + p * 20}deg) scale(${1 + p * 0.2})`,
+            transform: `translate3d(0,-50%,0) rotate(${-10 + p * 20}deg) scale(${1 + p * 0.12})`,
           }}
         >
           <span className="k-halo">
-            <img src={kanoyK} alt="" aria-hidden loading="lazy" className="k-glow w-[34vw]" />
+            <img src={kanoyK} alt="" aria-hidden loading="lazy" className="k-glow w-[28vw]" />
           </span>
         </div>
 

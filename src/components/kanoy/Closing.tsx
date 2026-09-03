@@ -37,20 +37,9 @@ export function About() {
             {dict.about.titleLine2}
           </h2>
         </Reveal>
-        <div className="mt-14 grid gap-10 md:grid-cols-[1fr_auto] md:items-end">
+        <div className="mt-14">
           <Reveal delay={0.1}>
             <p className="max-w-xl text-base leading-relaxed text-ink/65">{dict.about.text}</p>
-          </Reveal>
-          <Reveal delay={0.2}>
-            <span className="k-halo inline-block">
-              <img
-                src={kanoyK}
-                alt=""
-                aria-hidden
-                loading="lazy"
-                className="k-float k-glow w-24 md:w-32"
-              />
-            </span>
           </Reveal>
         </div>
       </div>
