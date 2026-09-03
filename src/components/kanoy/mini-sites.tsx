@@ -1,13 +1,49 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { ZoomIn } from "lucide-react";
 import { H, W, type MiniSiteDef } from "./mini-sites-data";
+
+/** The mock (non-screenshot) preview, redrawn at full size inside the zoom
+ *  overlay — same 420x264 design box as the small thumbnail, scaled up via
+ *  a measured ResizeObserver instead of a fixed width prop. */
+function ZoomedMock({ site }: { site: MiniSiteDef }) {
+  const boxRef = useRef<HTMLDivElement>(null);
+  const [scale, setScale] = useState(0);
+
+  useEffect(() => {
+    const el = boxRef.current;
+    if (!el) return;
+    const ro = new ResizeObserver(([entry]) => {
+      if (entry) setScale(entry.contentRect.width / W);
+    });
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+
+  return (
+    <div
+      ref={boxRef}
+      className="screen-shell"
+      style={{ width: "min(92vw, calc(88vh * 420 / 264))", aspectRatio: `${W} / ${H}` }}
+      onClick={(e) => e.stopPropagation()}
+    >
+      <div
+        style={{
+          width: W,
+          height: H,
+          transform: `scale(${scale})`,
+          transformOrigin: "top left",
+          fontFamily: "var(--font-body)",
+        }}
+      >
+        {site.render?.(site.palette)}
+      </div>
+    </div>
+  );
+}
 
 export function MiniSite({ site, width }: { site: MiniSiteDef; width: number }) {
   const scale = width / W;
   const [open, setOpen] = useState(false);
-  const clickable = Boolean(site.image);
-  const badge = Math.min(Math.max(width * 0.16, 28), 56);
 
   useEffect(() => {
     if (!open) return;
@@ -26,19 +62,16 @@ export function MiniSite({ site, width }: { site: MiniSiteDef; width: number }) 
           height: H * scale,
           overflow: "hidden",
           position: "relative",
-          cursor: clickable ? "zoom-in" : undefined,
+          cursor: "zoom-in",
+          pointerEvents: "auto",
         }}
-        onClick={clickable ? () => setOpen(true) : undefined}
-        role={clickable ? "button" : undefined}
-        tabIndex={clickable ? 0 : undefined}
-        aria-label={clickable ? `Ver ${site.label} em tamanho maior` : undefined}
-        onKeyDown={
-          clickable
-            ? (e) => {
-                if (e.key === "Enter" || e.key === " ") setOpen(true);
-              }
-            : undefined
-        }
+        onClick={() => setOpen(true)}
+        role="button"
+        tabIndex={0}
+        aria-label={`Ver ${site.label} em tamanho maior`}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") setOpen(true);
+        }}
       >
         <div
           style={{
@@ -59,32 +92,9 @@ export function MiniSite({ site, width }: { site: MiniSiteDef; width: number }) 
             site.render?.(site.palette)
           )}
         </div>
-
-        {clickable ? (
-          <div
-            aria-hidden
-            style={{
-              position: "absolute",
-              right: badge * 0.35,
-              bottom: badge * 0.35,
-              width: badge,
-              height: badge,
-              borderRadius: "50%",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              background: "rgba(10,12,14,0.55)",
-              border: "1px solid rgba(255,255,255,0.35)",
-              backdropFilter: "blur(2px)",
-              boxShadow: "0 4px 16px -4px rgba(0,0,0,0.6)",
-            }}
-          >
-            <ZoomIn color="#fff" size={badge * 0.55} strokeWidth={2} />
-          </div>
-        ) : null}
       </div>
 
-      {open && site.image
+      {open
         ? createPortal(
             <div
               className="fixed inset-0 z-[200] flex items-center justify-center bg-black/85 p-6 backdrop-blur-sm"
@@ -93,12 +103,16 @@ export function MiniSite({ site, width }: { site: MiniSiteDef; width: number }) 
               aria-modal
               aria-label={site.label}
             >
-              <img
-                src={site.image}
-                alt={site.label}
-                className="max-h-[88vh] max-w-[92vw] rounded-lg shadow-2xl"
-                onClick={(e) => e.stopPropagation()}
-              />
+              {site.image ? (
+                <img
+                  src={site.image}
+                  alt={site.label}
+                  className="max-h-[88vh] max-w-[92vw] rounded-lg shadow-2xl"
+                  onClick={(e) => e.stopPropagation()}
+                />
+              ) : (
+                <ZoomedMock site={site} />
+              )}
               <button
                 type="button"
                 onClick={() => setOpen(false)}

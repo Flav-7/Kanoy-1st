@@ -185,18 +185,23 @@ body {
 }
 
 /* camera / world */
+/* pointer-events: none so these untransformed, full-viewport wrapper boxes
+   never intercept clicks meant for their 3D-positioned children — a click
+   still reaches a child at any depth, which re-enables pointer-events itself. */
 @utility camera {
   position: absolute;
   inset: 0;
   perspective: 1100px;
   perspective-origin: 50% 48%;
   transform-style: preserve-3d;
+  pointer-events: none;
 }
 
 @utility world {
   position: absolute;
   inset: 0;
   transform-style: preserve-3d;
+  pointer-events: none;
 }
 
 @utility bg-room-veil {

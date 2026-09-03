@@ -6,8 +6,6 @@ import { Process } from "@/components/kanoy/Process";
 import { About, Pricing, Contact } from "@/components/kanoy/Closing";
 import { LanguageSwitcher } from "@/components/kanoy/LanguageSwitcher";
 import { QuickNav } from "@/components/kanoy/QuickNav";
-import { SurrealField } from "@/components/kanoy/SurrealField";
-import { CursorTrail } from "@/components/kanoy/CursorTrail";
 
 const title = "KANOY — Websites that make people stop scrolling";
 const description =
@@ -30,8 +28,6 @@ export const Route = createFileRoute("/")({
 function Index() {
   return (
     <main className="bg-background">
-      <SurrealField />
-      <CursorTrail />
       <LanguageSwitcher />
       <QuickNav />
       <StudioBackdrop />
