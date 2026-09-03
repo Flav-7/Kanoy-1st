@@ -14,6 +14,8 @@ type StepCopy = { t: string; d: string };
 export type Dictionary = {
   hero: { tagline: string; scrollHint: string };
   studio: { label: string; text: string };
+  portal: { eyebrow: string; line: string };
+  entrada: { scrollHint: string; requestPortfolio: string };
   nav: { services: string; about: string; process: string; pricing: string; contact: string };
   services: { eyebrow: string; title: string; items: ServiceCopy[] };
   process: { eyebrow: string; stepLabel: string; steps: StepCopy[] };
@@ -71,6 +73,14 @@ export const translations: Record<Language, Dictionary> = {
     studio: {
       label: "Dentro do estúdio",
       text: "Cada ecrã que passas é um projeto. Continua a mover-te.",
+    },
+    portal: {
+      eyebrow: "A dobrar a realidade",
+      line: "O NÚCLEO DIGITAL DA KANOY",
+    },
+    entrada: {
+      scrollHint: "Desliza para entrar",
+      requestPortfolio: "Pedir portefólio",
     },
     nav: {
       services: "Serviços",
@@ -199,6 +209,14 @@ export const translations: Record<Language, Dictionary> = {
       label: "Dentro del estudio",
       text: "Cada pantalla que pasas es un proyecto. Sigue moviéndote.",
     },
+    portal: {
+      eyebrow: "Doblando la realidad",
+      line: "EL NÚCLEO DIGITAL DE KANOY",
+    },
+    entrada: {
+      scrollHint: "Desliza para entrar",
+      requestPortfolio: "Pedir portafolio",
+    },
     nav: {
       services: "Servicios",
       about: "Sobre nosotros",
@@ -325,6 +343,14 @@ export const translations: Record<Language, Dictionary> = {
     studio: {
       label: "Inside the studio",
       text: "Every screen you pass is a project. Keep moving.",
+    },
+    portal: {
+      eyebrow: "Bending reality",
+      line: "THE KANOY DIGITAL CORE",
+    },
+    entrada: {
+      scrollHint: "Scroll to enter",
+      requestPortfolio: "Request portfolio",
     },
     nav: {
       services: "Services",

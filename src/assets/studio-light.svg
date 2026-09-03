@@ -1,0 +1,138 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" width="1920" height="1080">
+  <defs>
+    <linearGradient id="wall" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#f7f2e6"/>
+      <stop offset="100%" stop-color="#eee5d1"/>
+    </linearGradient>
+    <linearGradient id="sideL" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#e6dcc3"/>
+      <stop offset="100%" stop-color="#f2ead9"/>
+    </linearGradient>
+    <linearGradient id="sideR" x1="1" y1="0" x2="0" y2="0">
+      <stop offset="0%" stop-color="#e6dcc3"/>
+      <stop offset="100%" stop-color="#f2ead9"/>
+    </linearGradient>
+    <linearGradient id="floor" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#d8cdae"/>
+      <stop offset="100%" stop-color="#c3b795"/>
+    </linearGradient>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#eafff5"/>
+      <stop offset="55%" stop-color="#d3f3e0"/>
+      <stop offset="100%" stop-color="#bfe9d2"/>
+    </linearGradient>
+    <linearGradient id="strip" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#2fc9bd"/>
+      <stop offset="50%" stop-color="#6fdca9"/>
+      <stop offset="100%" stop-color="#a7e9bf"/>
+    </linearGradient>
+    <linearGradient id="deskTop" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#f1e9d8"/>
+    </linearGradient>
+    <linearGradient id="screenGlow" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#3fd2c7"/>
+      <stop offset="100%" stop-color="#8fe3b8"/>
+    </linearGradient>
+    <filter id="shadow" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="5"/>
+    </filter>
+    <filter id="glow" x="-100%" y="-100%" width="300%" height="300%">
+      <feGaussianBlur stdDeviation="14"/>
+    </filter>
+  </defs>
+
+  <!-- room shell: ceiling, side walls, floor, window in one-point perspective -->
+  <rect width="1920" height="1080" fill="url(#wall)"/>
+  <polygon points="0,0 1920,0 1180,300 740,300" fill="url(#wall)"/>
+  <polygon points="0,0 0,1080 740,640 740,300" fill="url(#sideL)"/>
+  <polygon points="1920,0 1920,1080 1180,640 1180,300" fill="url(#sideR)"/>
+  <polygon points="0,1080 1920,1080 1180,640 740,640" fill="url(#floor)"/>
+
+  <!-- floor perspective lines -->
+  <g stroke="#ffffff" stroke-opacity="0.35" stroke-width="2">
+    <line x1="0" y1="1080" x2="740" y2="640"/>
+    <line x1="384" y1="1080" x2="838" y2="640"/>
+    <line x1="1920" y1="1080" x2="1180" y2="640"/>
+    <line x1="1536" y1="1080" x2="1082" y2="640"/>
+    <line x1="960" y1="1080" x2="960" y2="640"/>
+  </g>
+
+  <!-- ceiling perspective lines + recessed lights -->
+  <g stroke="#d8cca9" stroke-width="2" opacity="0.7">
+    <line x1="0" y1="0" x2="740" y2="300"/>
+    <line x1="1920" y1="0" x2="1180" y2="300"/>
+  </g>
+  <g filter="url(#glow)">
+    <rect x="240" y="90" width="200" height="26" rx="8" fill="#eafff5"/>
+    <rect x="1480" y="90" width="200" height="26" rx="8" fill="#eafff5"/>
+    <rect x="860" y="150" width="200" height="22" rx="8" fill="url(#strip)"/>
+  </g>
+  <g>
+    <rect x="240" y="90" width="200" height="10" rx="5" fill="#ffffff"/>
+    <rect x="1480" y="90" width="200" height="10" rx="5" fill="#ffffff"/>
+    <rect x="860" y="150" width="200" height="9" rx="4.5" fill="url(#strip)"/>
+  </g>
+
+  <!-- window with soft skyline, at the vanishing point -->
+  <g filter="url(#shadow)">
+    <rect x="740" y="300" width="440" height="340" rx="6" fill="url(#sky)"/>
+  </g>
+  <rect x="740" y="300" width="440" height="340" rx="6" fill="none" stroke="#ffffff" stroke-width="6"/>
+  <line x1="960" y1="300" x2="960" y2="640" stroke="#ffffff" stroke-width="6"/>
+  <line x1="740" y1="470" x2="1180" y2="470" stroke="#ffffff" stroke-width="6"/>
+  <g opacity="0.55" fill="#9fd6c3">
+    <rect x="770" y="520" width="60" height="120"/>
+    <rect x="840" y="480" width="70" height="160"/>
+    <rect x="920" y="540" width="50" height="100"/>
+    <rect x="990" y="500" width="65" height="140"/>
+    <rect x="1065" y="545" width="55" height="95"/>
+  </g>
+  <circle cx="960" cy="400" r="60" fill="#ffffff" opacity="0.8" filter="url(#glow)"/>
+
+  <!-- desk group component, reused via <use> at different depths -->
+  <g id="desk">
+    <ellipse cx="215" cy="196" rx="220" ry="22" fill="#00000014" filter="url(#shadow)"/>
+    <rect x="150" y="8" width="16" height="150" fill="#d8cdb4"/>
+    <rect x="35" y="-108" width="150" height="112" rx="8" fill="#262a33"/>
+    <rect x="47" y="-96" width="126" height="88" rx="4" fill="url(#screenGlow)"/>
+    <rect x="0" y="0" width="430" height="26" rx="8" fill="url(#deskTop)" stroke="#e4d9bf" stroke-width="2"/>
+    <rect x="20" y="26" width="150" height="80" rx="6" fill="#e9dfc7"/>
+    <rect x="60" y="60" width="60" height="34" rx="4" fill="#d9cba8"/>
+  </g>
+
+  <!-- desk group, chair -->
+  <g id="chair">
+    <ellipse cx="0" cy="86" rx="46" ry="12" fill="#00000012" filter="url(#shadow)"/>
+    <rect x="-34" y="-10" width="68" height="70" rx="16" fill="#c3cdd0"/>
+    <rect x="-30" y="-70" width="60" height="66" rx="14" fill="#b3bfc3"/>
+  </g>
+
+  <!-- left row, receding -->
+  <use href="#desk" x="30" y="820"/>
+  <use href="#chair" x="245" y="900"/>
+  <use href="#desk" x="300" y="668" transform="translate(300,668) scale(0.7)"/>
+  <use href="#desk" x="470" y="560" transform="translate(470,560) scale(0.46)"/>
+
+  <!-- right row, receding (mirrored) -->
+  <g transform="translate(1920,0) scale(-1,1)">
+    <use href="#desk" x="30" y="820"/>
+    <use href="#chair" x="245" y="900"/>
+    <use href="#desk" x="300" y="668" transform="translate(300,668) scale(0.7)"/>
+    <use href="#desk" x="470" y="560" transform="translate(470,560) scale(0.46)"/>
+  </g>
+
+  <!-- plants for warmth -->
+  <g transform="translate(120,560)">
+    <ellipse cx="0" cy="92" rx="40" ry="10" fill="#00000012" filter="url(#shadow)"/>
+    <rect x="-22" y="40" width="44" height="52" rx="8" fill="#efe3c9"/>
+    <path d="M0,42 C -46,10 -54,-46 -8,-78 C 14,-36 12,6 0,42 Z" fill="#6bb894"/>
+    <path d="M0,42 C 42,4 46,-50 4,-84 C -8,-40 -10,4 0,42 Z" fill="#7fc9a6"/>
+  </g>
+  <g transform="translate(1800,560) scale(-1,1)">
+    <ellipse cx="0" cy="92" rx="40" ry="10" fill="#00000012" filter="url(#shadow)"/>
+    <rect x="-22" y="40" width="44" height="52" rx="8" fill="#efe3c9"/>
+    <path d="M0,42 C -46,10 -54,-46 -8,-78 C 14,-36 12,6 0,42 Z" fill="#6bb894"/>
+    <path d="M0,42 C 42,4 46,-50 4,-84 C -8,-40 -10,4 0,42 Z" fill="#7fc9a6"/>
+  </g>
+</svg>

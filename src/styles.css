@@ -442,12 +442,265 @@ body {
   animation: miniSlide 6s ease-in-out infinite;
 }
 
+/* portal / wormhole interlude */
+@utility portal-void {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(
+      circle at 50% 50%,
+      color-mix(in oklab, var(--accent) 24%, transparent) 0%,
+      transparent 34%,
+      color-mix(in oklab, var(--studio) 94%, transparent) 72%
+    ),
+    var(--studio);
+}
+
+@utility portal-ring {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  translate: -50% -50%;
+  border-style: solid;
+  border-radius: 50%;
+  box-shadow: 0 0 60px -6px currentColor;
+  animation-name: portalSpin;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+@keyframes portalSpin {
+  from {
+    rotate: 0deg;
+  }
+  to {
+    rotate: 360deg;
+  }
+}
+
+@utility portal-k {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 16vmin;
+  filter: saturate(1.3)
+    drop-shadow(0 0 40px color-mix(in oklab, var(--accent) 70%, transparent))
+    drop-shadow(0 0 90px color-mix(in oklab, var(--accent-2) 55%, transparent));
+  pointer-events: none;
+}
+
+/* RGB-split glitch typography */
+.glitch-text {
+  position: relative;
+  display: inline-block;
+}
+.glitch-text::before,
+.glitch-text::after {
+  content: attr(data-text);
+  position: absolute;
+  inset: 0;
+  opacity: 0.7;
+  mix-blend-mode: screen;
+  pointer-events: none;
+}
+.glitch-text::before {
+  color: var(--accent);
+  clip-path: inset(0 0 55% 0);
+  animation: glitchShift 2.6s infinite steps(2, jump-none);
+}
+.glitch-text::after {
+  color: var(--accent-2);
+  clip-path: inset(55% 0 0 0);
+  animation: glitchShift 3.1s infinite reverse steps(2, jump-none);
+}
+@keyframes glitchShift {
+  0%,
+  88%,
+  100% {
+    transform: translate(0, 0);
+  }
+  90% {
+    transform: translate(-3px, 1px);
+  }
+  92% {
+    transform: translate(3px, -1px);
+  }
+  94% {
+    transform: translate(-2px, 2px);
+  }
+  96% {
+    transform: translate(2px, -2px);
+  }
+}
+
+/* entrada: exterior facade + glass door */
+@utility facade-wall {
+  position: relative;
+  border-radius: 18px;
+  background: linear-gradient(180deg, #f7f2e6 0%, #eee5d1 100%);
+  box-shadow:
+    0 60px 140px -40px oklch(0.2 0.02 90 / 0.45),
+    0 0 0 1px oklch(1 0 0 / 0.4) inset;
+}
+
+@utility facade-grid {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background-image:
+    repeating-linear-gradient(
+      90deg,
+      oklch(0.3 0.02 90 / 0.08) 0px,
+      oklch(0.3 0.02 90 / 0.08) 1px,
+      transparent 1px,
+      transparent 64px
+    ),
+    repeating-linear-gradient(
+      0deg,
+      oklch(0.3 0.02 90 / 0.08) 0px,
+      oklch(0.3 0.02 90 / 0.08) 1px,
+      transparent 1px,
+      transparent 64px
+    );
+  mix-blend-mode: multiply;
+  pointer-events: none;
+}
+
+@utility facade-strip {
+  position: absolute;
+  left: 6%;
+  right: 6%;
+  top: 0;
+  height: 5px;
+  border-radius: 99px;
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+  box-shadow: 0 0 24px 2px color-mix(in oklab, var(--accent) 60%, transparent);
+}
+
+@utility facade-sign {
+  position: absolute;
+  left: 50%;
+  top: 14%;
+  translate: -50% 0;
+  display: flex;
+  align-items: center;
+  gap: 0.9vw;
+  white-space: nowrap;
+}
+
+@utility facade-doorway {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  translate: -50% 0;
+  width: 22%;
+  height: 62%;
+  perspective: 1000px;
+  border-radius: 6px 6px 0 0;
+  overflow: visible;
+  background: linear-gradient(180deg, #1c211f 0%, #0d100f 100%);
+  box-shadow: 0 0 0 6px color-mix(in oklab, #eee5d1 92%, transparent);
+}
+
+@utility door-leaf {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 50%;
+  background: linear-gradient(
+    120deg,
+    oklch(0.9 0.02 200 / 0.16) 0%,
+    oklch(0.3 0.02 200 / 0.5) 45%,
+    oklch(0.9 0.02 200 / 0.12) 100%
+  );
+  border: 1px solid color-mix(in oklab, var(--accent) 45%, transparent);
+  backface-visibility: hidden;
+  box-shadow: inset 0 0 40px -10px color-mix(in oklab, var(--accent-2) 50%, transparent);
+}
+.door-leaf-left {
+  left: 0;
+  transform-origin: left center;
+  border-radius: 4px 0 0 0;
+}
+.door-leaf-right {
+  right: 0;
+  transform-origin: right center;
+  border-radius: 0 4px 0 0;
+}
+
+@utility door-glow {
+  position: absolute;
+  inset: 6% 30%;
+  border-radius: 50%;
+  background: radial-gradient(
+    closest-side,
+    color-mix(in oklab, var(--accent-2) 65%, white),
+    transparent 72%
+  );
+  filter: blur(20px);
+  pointer-events: none;
+}
+
+@utility facade-ground {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 22%;
+  background: linear-gradient(
+    180deg,
+    transparent,
+    color-mix(in oklab, #d8cdae 70%, transparent) 60%
+  );
+  pointer-events: none;
+}
+
+/* entrada: side nav + panels */
+@utility office-screen {
+  position: absolute;
+  z-index: 2;
+}
+
+@utility entrada-nav-item {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding: 6px 0;
+  color: var(--ink);
+  opacity: 0.5;
+  transition: opacity 0.35s ease;
+  &:hover {
+    opacity: 1;
+  }
+}
+@utility entrada-panel {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  display: flex;
+  justify-content: flex-end;
+  pointer-events: none;
+}
+@utility entrada-panel-card {
+  pointer-events: auto;
+  width: min(92vw, 560px);
+  height: 100%;
+  overflow-y: auto;
+  background: color-mix(in oklab, var(--sand) 96%, white);
+  border-left: 1px solid color-mix(in oklab, var(--ink) 10%, transparent);
+  padding: 14vh 8vw 8vh 8vw;
+  box-shadow: -40px 0 90px -40px oklch(0 0 0 / 0.35);
+}
+
 @media (prefers-reduced-motion: reduce) {
   .k-float,
   .scroll-hint,
   .mini-eq,
   .mini-pulse,
-  .mini-slide {
+  .mini-slide,
+  .portal-ring,
+  .glitch-text::before,
+  .glitch-text::after {
     animation: none;
   }
 }

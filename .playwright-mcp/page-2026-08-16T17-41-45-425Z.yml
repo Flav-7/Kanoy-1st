@@ -1,0 +1,104 @@
+- main [ref=e2]:
+  - button "Language" [ref=e4]
+  - region "KANOY" [ref=e9]:
+    - generic [ref=e10]:
+      - img "Entrada no estúdio KANOY" [ref=e11]
+      - generic:
+        - generic:
+          - img "KANOY"
+        - generic:
+          - paragraph: We build websites that make people stop scrolling.
+      - generic:
+        - generic:
+          - generic:
+            - generic:
+              - generic:
+                - generic:
+                  - generic: LUME
+                  - generic:
+                    - generic: Work
+                    - generic: About
+                    - generic: Contact
+                    - generic: Book
+                - generic:
+                  - generic:
+                    - text: Fire &
+                    - emphasis: Season
+                  - generic: Tasting menu · Lisbon · Reservations open
+                  - generic:
+                    - generic: "01"
+                    - generic: "02"
+                    - generic: "03"
+                  - generic:
+                    - generic: RESERVE A TABLE
+                    - generic: 19:00 · 20:30 · 21:45
+      - generic:
+        - generic:
+          - generic:
+            - generic:
+              - generic:
+                - generic:
+                  - generic: MARÉ
+                  - generic:
+                    - generic: Work
+                    - generic: About
+                    - generic: Contact
+                    - generic: Book
+                - generic:
+                  - generic:
+                    - generic: A quiet suite above the Atlantic
+                    - generic:
+                      - generic: CHECK IN — CHECK OUT
+                      - generic:
+                        - generic: 12 Sep — 15 Sep
+                        - generic: CHECK
+      - generic:
+        - generic:
+          - generic:
+            - generic:
+              - generic:
+                - generic:
+                  - generic: RASOR
+                  - generic:
+                    - generic: Work
+                    - generic: About
+                    - generic: Contact
+                    - generic: Book
+                - generic:
+                  - generic: BOOK YOUR BARBER
+                  - generic:
+                    - generic: Rui
+                    - generic: Tomás
+                    - generic: Léo
+                    - generic: Ana
+                  - generic:
+                    - generic: 09:00
+                    - generic: 10:30
+                    - generic: 11:15
+                    - generic: 14:00
+                    - generic: 16:30
+                    - generic: 18:00
+                  - generic: Confirm appointment →
+      - generic: Desliza para entrar
+      - generic [ref=e13]:
+        - list [ref=e14]:
+          - listitem [ref=e15]:
+            - button "01 Sobre" [ref=e16]:
+              - generic [ref=e17]: "01"
+              - generic [ref=e18]: Sobre
+          - listitem [ref=e19]:
+            - button "02 Serviços" [ref=e20]:
+              - generic [ref=e21]: "02"
+              - generic [ref=e22]: Serviços
+          - listitem [ref=e23]:
+            - button "03 Como trabalhamos" [ref=e24]:
+              - generic [ref=e25]: "03"
+              - generic [ref=e26]: Como trabalhamos
+          - listitem [ref=e27]:
+            - button "04 Contacto" [ref=e28]:
+              - generic [ref=e29]: "04"
+              - generic [ref=e30]: Contacto
+        - generic [ref=e31]:
+          - text: Sobre a KANOY
+          - heading "NÃO CONSTRUÍMOS SÓ WEBSITES." [level=2] [ref=e32]: NÃO CONSTRUÍMOSSÓ WEBSITES.
+          - paragraph [ref=e33]: A KANOY cria experiências digitais, websites e sistemas personalizados desenhados à volta da forma como um negócio realmente funciona. Cada projeto começa na realidade do cliente — as marcações, as agendas, os clientes, a pressão de uma operação real — e termina em algo que as pessoas recordam depois de fechar o separador.

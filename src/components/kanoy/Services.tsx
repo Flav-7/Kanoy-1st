@@ -1,5 +1,5 @@
 import { clamp, range, useScrollProgress } from "./anim";
-import kanoyK from "@/assets/kanoy-k.png";
+import kanoyK from "@/assets/branding/kanoy-k.png";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 
 const SERVICE_NUMBERS = ["01", "02", "03", "04", "05", "06", "07"];
