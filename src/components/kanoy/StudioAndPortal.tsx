@@ -1,6 +1,6 @@
 import { MINI_SITES } from "./mini-sites-data";
 import { MiniSite } from "./mini-sites";
-import { clamp, ease, mix, range, useScrollProgress } from "./anim";
+import { clamp, ease, mix, range, useCornerLogoOnLight, useScrollProgress } from "./anim";
 import kanoyK from "@/assets/branding/kanoy-k.png";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 
@@ -97,6 +97,7 @@ function Screen({
 /** The studio walk-through: floating portfolio screens + the travelling K mark. */
 function StudioAct({ p }: { p: number }) {
   const { dict } = useLanguage();
+  const onLight = useCornerLogoOnLight();
   const camera = p * CAMERA_TRAVEL;
   const reveal = range(p, 0.03, 0.11);
 
@@ -176,7 +177,7 @@ function StudioAct({ p }: { p: number }) {
           aria-hidden
           width={1024}
           height={1024}
-          className="k-halo k-glow absolute"
+          className="k-halo k-glow hero-k-shine absolute"
           style={{
             left: 0,
             top: 0,
@@ -187,7 +188,9 @@ function StudioAct({ p }: { p: number }) {
           }}
         />
         <span
-          className="font-logo absolute whitespace-nowrap leading-none tracking-[-0.01em] text-studio-foreground"
+          className={`font-logo hero-text-shine absolute whitespace-nowrap leading-none tracking-[-0.01em] transition-colors duration-300 ${
+            onLight ? "text-ink" : "text-studio-foreground"
+          }`}
           style={{
             left: 0,
             top: 0,
@@ -228,7 +231,6 @@ function PortalAct({ p }: { p: number }) {
 
   const open = range(p, 0, 0.4);
   const rush = range(p, 0.45, 0.86);
-  const flash = range(p, 0.62, 0.8) * (1 - range(p, 0.8, 0.94));
   const whiteout = range(p, 0.86, 1);
 
   const textIn = range(p, 0, 0.16);
@@ -285,8 +287,11 @@ function PortalAct({ p }: { p: number }) {
         </h2>
       </div>
 
-      <div className="pointer-events-none absolute inset-0 bg-white" style={{ opacity: flash * 0.9 }} />
-      <div className="pointer-events-none absolute inset-0 bg-background" style={{ opacity: whiteout }} />
+      <div
+        id="portal-whiteout"
+        className="pointer-events-none absolute inset-0 bg-sand"
+        style={{ opacity: whiteout }}
+      />
     </div>
   );
 }
@@ -313,7 +318,7 @@ export function StudioAndPortal() {
       style={{ height: `${TOTAL_VH}vh` }}
       aria-label="Entering the KANOY studio and its digital core"
     >
-      <div className="sticky top-0 h-screen overflow-hidden">
+      <div className="sticky top-0 z-40 h-screen overflow-hidden">
         {/* the office photo itself lives in <StudioBackdrop>, fixed behind
             this whole section — everything here only tints/decorates it */}
         <div className="absolute inset-0 bg-room-veil" />

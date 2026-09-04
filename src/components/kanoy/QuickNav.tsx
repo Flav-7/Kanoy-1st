@@ -24,15 +24,33 @@ export function QuickNav() {
   useDismiss(open, rootRef, () => setOpen(false));
 
   const items = [
+    { id: "about", target: "about-title", align: 0.5, label: dict.nav.about, subtitle: dict.about.eyebrow },
     { id: "services", label: dict.nav.services, subtitle: dict.services.eyebrow },
-    { id: "about", label: dict.nav.about, subtitle: dict.about.eyebrow },
     { id: "process", label: dict.nav.process, subtitle: dict.process.eyebrow },
     { id: "pricing", label: dict.nav.pricing, subtitle: dict.pricing.eyebrow },
-    { id: "contact", label: dict.nav.contact, subtitle: dict.contact.subtitle },
-  ] satisfies { id: (typeof SECTION_IDS)[number]; label: string; subtitle: string }[];
+    {
+      id: "contact",
+      target: "contact-title",
+      align: 0.22,
+      label: dict.nav.contact,
+      subtitle: dict.contact.subtitle,
+    },
+  ] satisfies {
+    id: (typeof SECTION_IDS)[number];
+    target?: string;
+    align?: number;
+    label: string;
+    subtitle: string;
+  }[];
 
-  const goTo = (id: string) => {
-    document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+  const goTo = (item: (typeof items)[number]) => {
+    const el = document.getElementById(item.target ?? item.id);
+    if (!el) return;
+    const align = item.align ?? 0;
+    const rect = el.getBoundingClientRect();
+    const desiredViewportTop = (window.innerHeight - rect.height) * align;
+    const targetTop = rect.top + window.scrollY - desiredViewportTop;
+    window.scrollTo({ top: targetTop, behavior: "smooth" });
     setOpen(false);
   };
 
@@ -48,7 +66,7 @@ export function QuickNav() {
         <ul className="flex flex-col items-start gap-3">
           {items.map((item) => (
             <li key={item.id}>
-              <button type="button" onClick={() => goTo(item.id)} className="block text-left">
+              <button type="button" onClick={() => goTo(item)} className="block text-left">
                 <span className="block text-[11px] font-medium uppercase tracking-[0.2em] text-white">
                   {item.label}
                 </span>

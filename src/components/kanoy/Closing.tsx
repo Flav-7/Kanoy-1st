@@ -2,6 +2,7 @@ import { useReveal } from "./anim";
 import kanoyK from "@/assets/branding/kanoy-k.png";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import { ContactModal } from "./ContactModal";
+import { InstagramLink } from "./InstagramLink";
 
 function Reveal({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) {
   const { ref, shown } = useReveal<HTMLDivElement>(0.25);
@@ -31,7 +32,10 @@ export function About() {
       <div className="mx-auto max-w-5xl">
         <Reveal>
           <div className="eyebrow">{dict.about.eyebrow}</div>
-          <h2 className="mt-6 font-display text-[10vw] leading-[0.88] tracking-[-0.045em] md:text-[5.4vw]">
+          <h2
+            id="about-title"
+            className="mt-6 font-display text-[10vw] leading-[0.88] tracking-[-0.045em] md:text-[5.4vw]"
+          >
             {dict.about.titleLine1}
             <br />
             {dict.about.titleLine2}
@@ -99,9 +103,16 @@ export function Contact() {
       aria-label="Contact KANOY"
     >
       <div className="light-beam" style={{ opacity: 0.35 }} />
+      <InstagramLink />
+      <span className="absolute bottom-6 left-6 z-50 text-[10px] uppercase tracking-[0.2em] text-neutral-400/70 md:bottom-10 md:left-10">
+        {dict.contact.copyright}
+      </span>
       <div className="relative mx-auto max-w-5xl text-center">
         <Reveal>
-          <h2 className="font-display text-[13vw] leading-[0.85] tracking-[-0.05em] md:text-[8vw]">
+          <h2
+            id="contact-title"
+            className="font-display text-[13vw] leading-[0.85] tracking-[-0.05em] md:text-[8vw]"
+          >
             {dict.contact.titleLine1}
             <br />
             {dict.contact.titleLine2}
@@ -115,8 +126,8 @@ export function Contact() {
             <ContactModal />
           </div>
         </Reveal>
-        <div className="mt-28 flex flex-col items-center gap-3 text-[10px] uppercase tracking-[0.4em] text-studio-muted/70">
-          <img src={kanoyK} alt="KANOY" width={1024} height={1024} loading="lazy" className="w-8" />
+        <div className="mt-10 flex flex-col items-center gap-3 text-[10px] uppercase tracking-[0.4em] text-studio-muted/70">
+          <img src={kanoyK} alt="KANOY" width={1024} height={1024} loading="lazy" className="w-20 md:w-28" />
           <span>{dict.contact.footerTagline}</span>
         </div>
       </div>

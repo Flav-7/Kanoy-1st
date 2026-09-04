@@ -7,7 +7,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
-import { LANGUAGES, type Language } from "@/lib/i18n/translations";
+import { LANGUAGES, translations, type Language } from "@/lib/i18n/translations";
 import { sendContactEmail } from "@/lib/contact/send-contact-email";
 import { FLAGS } from "./flags";
 
@@ -40,13 +40,13 @@ function Field({
 
 export function ContactModal() {
   const { dict, language } = useLanguage();
-  const m = dict.contact.modal;
 
   const [open, setOpen] = useState(false);
   const [step, setStep] = useState<Step>("choice");
   const [pending, setPending] = useState(false);
   const [form, setForm] = useState({ name: "", email: "", phone: "", message: "" });
   const [replyLanguage, setReplyLanguage] = useState<Language>(language);
+  const m = translations[replyLanguage].contact.modal;
 
   const reset = () => {
     setStep("choice");

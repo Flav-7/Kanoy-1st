@@ -1,4 +1,4 @@
-import { clamp, range, useScrollProgress } from "./anim";
+import { clamp, useScrollProgress } from "./anim";
 import kanoyK from "@/assets/branding/kanoy-k.png";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 
@@ -8,20 +8,21 @@ export function Services() {
   const { ref, p } = useScrollProgress<HTMLDivElement>();
   const { dict } = useLanguage();
   const SERVICES = dict.services.items.map((item, i) => ({ n: SERVICE_NUMBERS[i]!, ...item }));
+  const activeIndex = clamp(Math.floor(p * SERVICES.length), 0, SERVICES.length - 1);
 
   return (
     <section
       id="services"
       ref={ref}
-      className="relative h-[520vh] bg-background"
+      className="relative h-[250vh] bg-background"
       aria-label="What KANOY does"
     >
       <div className="sticky top-0 flex h-screen flex-col justify-center overflow-hidden px-6 py-[4vh] md:px-14">
         <div
-          className="pointer-events-none absolute right-[6vw] top-1/2 -translate-y-1/2"
+          className="pointer-events-none absolute right-[3vw] top-[6vh]"
           style={{
             opacity: 0.26 + p * 0.12,
-            transform: `translate3d(0,-50%,0) rotate(${-10 + p * 20}deg) scale(${1 + p * 0.12})`,
+            transform: `rotate(${-10 + p * 20}deg) scale(${1 + p * 0.12})`,
           }}
         >
           <span className="k-halo">
@@ -30,40 +31,41 @@ export function Services() {
         </div>
 
         <div className="relative mx-auto w-full max-w-5xl">
-          <div className="eyebrow" style={{ opacity: range(p, 0, 0.06) }}>
-            {dict.services.eyebrow}
-          </div>
-          <h2
-            className="mt-[1.5vh] font-display text-[clamp(1.5rem,3.6vh,2.9rem)] leading-[0.95] tracking-[-0.03em]"
-            style={{
-              opacity: range(p, 0.01, 0.08),
-              transform: `translateY(${(1 - range(p, 0.01, 0.08)) * 40}px)`,
-            }}
-          >
+          <div className="eyebrow">{dict.services.eyebrow}</div>
+          <h2 className="mt-[1.5vh] font-display text-[clamp(1.5rem,3.6vh,2.9rem)] leading-[0.95] tracking-[-0.03em]">
             {dict.services.title}
           </h2>
 
-          <ul className="mt-[2vh]">
+          <ul className="mt-[3vh]">
             {SERVICES.map((s, i) => {
-              const start = 0.1 + i * 0.115;
-              const t = range(p, start, start + 0.09);
-              const past = range(p, start + 0.16, start + 0.3);
+              const active = i === activeIndex;
               return (
                 <li
                   key={s.n}
-                  className="border-t border-ink/10 py-[0.55vh]"
-                  style={{
-                    opacity: clamp(t - past * 0.55),
-                    transform: `translate3d(${(1 - t) * 60}px, ${(1 - t) * 18}px, 0)`,
-                    filter: `blur(${(1 - t) * 6}px)`,
-                  }}
+                  className={`rounded-2xl px-4 py-[1.1vh] transition-colors duration-500 ${
+                    active ? "bg-accent/10" : i === 0 ? "" : "border-t border-ink/10"
+                  }`}
                 >
                   <div className="flex flex-col gap-2 md:flex-row md:items-baseline md:gap-10">
-                    <span className="text-[10px] tracking-[0.4em] text-accent">{s.n}</span>
-                    <h3 className="font-display text-[clamp(1rem,2.2vh,1.6rem)] tracking-[-0.02em] md:w-[38%]">
+                    <span
+                      className={`text-[10px] tracking-[0.4em] transition-colors duration-500 md:w-8 ${
+                        active ? "text-accent" : "text-accent/40"
+                      }`}
+                    >
+                      {s.n}
+                    </span>
+                    <h3
+                      className={`font-display text-[clamp(1rem,2.2vh,1.6rem)] tracking-[-0.02em] transition-colors duration-500 md:w-[32%] ${
+                        active ? "text-ink" : "text-ink/35"
+                      }`}
+                    >
                       {s.title}
                     </h3>
-                    <p className="max-w-md text-[clamp(0.9rem,2vh,1.05rem)] leading-relaxed text-ink/70">
+                    <p
+                      className={`max-w-md text-[clamp(0.9rem,2vh,1.05rem)] leading-relaxed transition-colors duration-500 ${
+                        active ? "text-ink/70" : "text-ink/30"
+                      }`}
+                    >
                       {s.text}
                     </p>
                   </div>
@@ -71,6 +73,18 @@ export function Services() {
               );
             })}
           </ul>
+
+          <div className="mt-[3vh] flex items-center gap-4 pl-4 text-[11px] tracking-[0.15em] text-ink/50">
+            <span>
+              {String(activeIndex + 1).padStart(2, "0")} / {String(SERVICES.length).padStart(2, "0")}
+            </span>
+            <div className="h-px max-w-[220px] flex-1 bg-ink/15">
+              <div
+                className="h-px bg-ink/70 transition-[width] duration-500"
+                style={{ width: `${((activeIndex + 1) / SERVICES.length) * 100}%` }}
+              />
+            </div>
+          </div>
         </div>
       </div>
     </section>

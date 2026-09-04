@@ -32,8 +32,8 @@ function Index() {
       <QuickNav />
       <StudioBackdrop />
       <StudioAndPortal />
-      <Services />
       <About />
+      <Services />
       <Process />
       <Pricing />
       <Contact />
