@@ -36,7 +36,7 @@ export function Services() {
             {dict.services.title}
           </h2>
 
-          <ul className="mt-[3vh]">
+          <ul className="mt-[3vh] md:pr-[9vw]">
             {SERVICES.map((s, i) => {
               const active = i === activeIndex;
               return (

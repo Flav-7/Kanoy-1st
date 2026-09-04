@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import studio from "@/assets/branding/studio-depth.png";
-import { clamp, mix } from "./anim";
+import studioMobile from "@/assets/branding/studio-depth-mobile.png";
+import { clamp, mix, useIsMobile } from "./anim";
 
 // Combined scroll distance of the two sections this backdrop sits behind:
 // StudioScene (760vh) + Portal (300vh). Kept in sync with those sections'
@@ -17,6 +18,7 @@ const TOTAL_VH = 760 + 300;
  */
 export function StudioBackdrop() {
   const [t, setT] = useState(0);
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     let raf = 0;
@@ -51,8 +53,8 @@ export function StudioBackdrop() {
       <div
         className="absolute inset-0"
         style={{
-          backgroundImage: `url(${studio})`,
-          backgroundSize: `${mix(112, 178, t)}% auto`,
+          backgroundImage: `url(${isMobile ? studioMobile : studio})`,
+          backgroundSize: isMobile ? `${mix(140, 200, t)}% auto` : `${mix(112, 178, t)}% auto`,
           backgroundPosition: `50% ${mix(20, 13, t)}%`,
           backgroundRepeat: "no-repeat",
           transform: `translate3d(0,${mix(0, -3, t)}vh,0)`,

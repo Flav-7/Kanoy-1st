@@ -430,6 +430,32 @@ body {
   animation: kFloat 9s ease-in-out infinite;
 }
 
+@keyframes balloonFloat {
+  0%,
+  100% {
+    translate: 0 0;
+  }
+  50% {
+    translate: 0 -16px;
+  }
+}
+.k-balloon {
+  animation: balloonFloat 4.5s ease-in-out infinite;
+}
+
+@keyframes badgeFloat {
+  0%,
+  100% {
+    translate: 0 0;
+  }
+  50% {
+    translate: 0 -10px;
+  }
+}
+.problem-badge {
+  animation: badgeFloat 5s ease-in-out infinite;
+}
+
 @keyframes heroKShineOnce {
   0% {
     filter: saturate(1.35) contrast(1.05) brightness(1)
@@ -547,25 +573,46 @@ body {
     var(--studio);
 }
 
+/* Centered with inset:0 + margin:auto (plain box layout) rather than the
+   usual left/top:50% + translate(-50%,-50%) trick — these rings resize on
+   every scroll frame via inline width/height, and some WebKit versions
+   don't reliably re-resolve a percentage-based translate() against a box
+   whose size keeps changing while a transform animation runs on it, which
+   was dragging the ring off toward one corner instead of keeping it
+   centered. Plain layout centering has no percentage-transform to get
+   stale, so it tracks the live size correctly every frame. */
 @utility portal-ring {
   position: absolute;
-  left: 50%;
-  top: 50%;
-  translate: -50% -50%;
+  inset: 0;
+  margin: auto;
   border-style: solid;
   border-radius: 50%;
   box-shadow: 0 0 60px -6px currentColor;
   animation-name: portalSpin;
   animation-timing-function: linear;
   animation-iteration-count: infinite;
+  animation-direction: normal;
+}
+
+@utility portal-ring-reverse {
+  animation-name: portalSpinReverse;
 }
 
 @keyframes portalSpin {
   from {
-    rotate: 0deg;
+    transform: rotate(0deg);
   }
   to {
-    rotate: 360deg;
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes portalSpinReverse {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(-360deg);
   }
 }
 
@@ -785,6 +832,8 @@ body {
 
 @media (prefers-reduced-motion: reduce) {
   .k-float,
+  .k-balloon,
+  .problem-badge,
   .scroll-hint,
   .mini-eq,
   .mini-pulse,

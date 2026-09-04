@@ -4,6 +4,7 @@ import { StudioAndPortal } from "@/components/kanoy/StudioAndPortal";
 import { Services } from "@/components/kanoy/Services";
 import { Process } from "@/components/kanoy/Process";
 import { About, Pricing, Contact } from "@/components/kanoy/Closing";
+import { Problem } from "@/components/kanoy/Problem";
 import { LanguageSwitcher } from "@/components/kanoy/LanguageSwitcher";
 import { QuickNav } from "@/components/kanoy/QuickNav";
 
@@ -33,6 +34,7 @@ function Index() {
       <StudioBackdrop />
       <StudioAndPortal />
       <About />
+      <Problem />
       <Services />
       <Process />
       <Pricing />

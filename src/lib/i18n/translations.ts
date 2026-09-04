@@ -16,10 +16,26 @@ export type Dictionary = {
   studio: { label: string; text: string };
   portal: { eyebrow: string; line: string };
   entrada: { scrollHint: string; requestPortfolio: string };
-  nav: { services: string; about: string; process: string; pricing: string; contact: string };
+  nav: {
+    services: string;
+    about: string;
+    problem: string;
+    process: string;
+    pricing: string;
+    contact: string;
+  };
   services: { eyebrow: string; title: string; items: ServiceCopy[] };
   process: { eyebrow: string; stepLabel: string; steps: StepCopy[] };
   about: { eyebrow: string; titleLine1: string; titleLine2: string; text: string };
+  problem: {
+    eyebrow: string;
+    titleLine1: string;
+    titleLine2: string;
+    subtitle: string;
+    items: ServiceCopy[];
+    badges: { slow: string; mobile: string; design: string; conversions: string };
+    scrollHint: string;
+  };
   pricing: {
     eyebrow: string;
     titleLine1: string;
@@ -86,6 +102,7 @@ export const translations: Record<Language, Dictionary> = {
     nav: {
       services: "Serviços",
       about: "Sobre",
+      problem: "O problema",
       process: "Como trabalhamos",
       pricing: "Modelo",
       contact: "Contacto",
@@ -148,6 +165,28 @@ export const translations: Record<Language, Dictionary> = {
       titleLine1: "NÃO CONSTRUÍMOS",
       titleLine2: "SÓ WEBSITES.",
       text: "A KANOY cria experiências digitais, websites e sistemas personalizados desenhados à volta da forma como um negócio realmente funciona. Cada projeto começa na realidade do cliente — as marcações, as agendas, os clientes, a pressão de uma operação real — e termina em algo que as pessoas recordam depois de fechar o separador.",
+    },
+    problem: {
+      eyebrow: "O problema",
+      titleLine1: "A maioria dos websites",
+      titleLine2: "não está a cumprir o seu papel.",
+      subtitle:
+        "Problemas simples que afastam visitantes e limitam o crescimento do teu negócio.",
+      items: [
+        { title: "Lentos", text: "Visitantes desistem ao esperar demasiado." },
+        { title: "Não adaptados a mobile", text: "Má experiência em telemóvel." },
+        { title: "Design desatualizado", text: "Transmite pouco profissionalismo." },
+        { title: "Falta de clareza", text: "Os visitantes não percebem o que fazes." },
+        { title: "Não geram resultados", text: "Muitos visitantes, mas poucas conversões." },
+        { title: "Difíceis de gerir", text: "Atualizações simples tornam-se complicadas." },
+      ],
+      badges: {
+        slow: "Sites lentos",
+        mobile: "Não adaptados a mobile",
+        design: "Design desatualizado",
+        conversions: "Poucas conversões",
+      },
+      scrollHint: "Scroll para explorar",
     },
     pricing: {
       eyebrow: "O modelo",
@@ -214,6 +253,7 @@ export const translations: Record<Language, Dictionary> = {
     nav: {
       services: "Servicios",
       about: "Sobre nosotros",
+      problem: "El problema",
       process: "Cómo trabajamos",
       pricing: "El modelo",
       contact: "Contacto",
@@ -276,6 +316,28 @@ export const translations: Record<Language, Dictionary> = {
       titleLine1: "NO SOLO",
       titleLine2: "CONSTRUIMOS WEBS.",
       text: "KANOY crea experiencias digitales, webs y sistemas personalizados diseñados en torno a cómo funciona realmente un negocio. Cada proyecto empieza en la realidad del cliente — las reservas, las agendas, los clientes, la presión de una operación real — y termina siendo algo que la gente recuerda después de cerrar la pestaña.",
+    },
+    problem: {
+      eyebrow: "El problema",
+      titleLine1: "La mayoría de las webs",
+      titleLine2: "no está cumpliendo su papel.",
+      subtitle:
+        "Problemas simples que alejan a los visitantes y limitan el crecimiento de tu negocio.",
+      items: [
+        { title: "Lentas", text: "Los visitantes se van al esperar demasiado." },
+        { title: "No adaptadas a móvil", text: "Mala experiencia en el móvil." },
+        { title: "Diseño desactualizado", text: "Transmite poco profesionalismo." },
+        { title: "Falta de claridad", text: "Los visitantes no entienden qué haces." },
+        { title: "No generan resultados", text: "Muchas visitas, pero pocas conversiones." },
+        { title: "Difíciles de gestionar", text: "Actualizaciones simples se vuelven complicadas." },
+      ],
+      badges: {
+        slow: "Webs lentas",
+        mobile: "No adaptadas a móvil",
+        design: "Diseño desactualizado",
+        conversions: "Pocas conversiones",
+      },
+      scrollHint: "Desliza para explorar",
     },
     pricing: {
       eyebrow: "El modelo",
@@ -342,6 +404,7 @@ export const translations: Record<Language, Dictionary> = {
     nav: {
       services: "Services",
       about: "About",
+      problem: "The problem",
       process: "How we work",
       pricing: "Pricing",
       contact: "Contact",
@@ -404,6 +467,27 @@ export const translations: Record<Language, Dictionary> = {
       titleLine1: "WE DON'T JUST",
       titleLine2: "BUILD WEBSITES.",
       text: "KANOY creates digital experiences, websites and custom systems designed around the way a business actually operates. Every project starts from the client's reality — the bookings, the calendars, the customers, the pressure of a real operation — and ends as something people remember after they close the tab.",
+    },
+    problem: {
+      eyebrow: "The problem",
+      titleLine1: "Most websites",
+      titleLine2: "aren't doing their job.",
+      subtitle: "Simple problems that drive visitors away and limit your business's growth.",
+      items: [
+        { title: "Slow", text: "Visitors give up waiting too long." },
+        { title: "Not mobile-friendly", text: "Poor experience on phones." },
+        { title: "Outdated design", text: "Comes across as unprofessional." },
+        { title: "Lack of clarity", text: "Visitors don't understand what you do." },
+        { title: "Don't generate results", text: "Lots of visitors, but few conversions." },
+        { title: "Hard to manage", text: "Simple updates become complicated." },
+      ],
+      badges: {
+        slow: "Slow sites",
+        mobile: "Not mobile-friendly",
+        design: "Outdated design",
+        conversions: "Few conversions",
+      },
+      scrollHint: "Scroll to explore",
     },
     pricing: {
       eyebrow: "The model",

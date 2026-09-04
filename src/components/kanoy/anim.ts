@@ -1,5 +1,18 @@
 import { useEffect, useRef, useState } from "react";
 
+/** Tracks whether the viewport is at or below a mobile-width breakpoint. */
+export function useIsMobile(breakpoint = 767) {
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia(`(max-width: ${breakpoint}px)`);
+    const update = () => setIsMobile(mq.matches);
+    update();
+    mq.addEventListener("change", update);
+    return () => mq.removeEventListener("change", update);
+  }, [breakpoint]);
+  return isMobile;
+}
+
 /** Scroll progress (0..1) of an element travelling through the viewport. */
 export function useScrollProgress<T extends HTMLElement>() {
   const ref = useRef<T>(null);
@@ -41,7 +54,7 @@ export const mix = (a: number, b: number, t: number) => a + (b - a) * t;
 
 export const ease = (t: number) => 1 - Math.pow(1 - clamp(t), 3);
 
-const LIGHT_BG_SECTION_IDS = ["about", "services", "pricing"];
+const LIGHT_BG_SECTION_IDS = ["about", "problem", "services", "pricing"];
 
 /** Tracks whether the section currently behind the fixed corner logo has a
  * light background, so the logo text can switch to a readable dark tone. */
@@ -86,19 +99,25 @@ export function useCornerLogoOnLight() {
   return onLight;
 }
 
-/** Reveals once the element scrolls into view. */
-export function useReveal<T extends HTMLElement>(threshold = 0.35) {
+/** Reveals once the element scrolls into view. Pass `repeat: true` to hide it
+ * again once it leaves the viewport, so it replays on every visit. */
+export function useReveal<T extends HTMLElement>(threshold = 0.35, options?: { repeat?: boolean }) {
+  const repeat = options?.repeat ?? false;
   const ref = useRef<T>(null);
   const [shown, setShown] = useState(false);
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
     const io = new IntersectionObserver(
-      (entries) => entries.forEach((e) => e.isIntersecting && setShown(true)),
+      (entries) =>
+        entries.forEach((e) => {
+          if (e.isIntersecting) setShown(true);
+          else if (repeat) setShown(false);
+        }),
       { threshold },
     );
     io.observe(el);
     return () => io.disconnect();
-  }, [threshold]);
+  }, [threshold, repeat]);
   return { ref, shown };
 }

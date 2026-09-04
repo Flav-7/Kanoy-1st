@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import { useDismiss } from "./useDismiss";
 
-const SECTION_IDS = ["services", "about", "process", "pricing", "contact"] as const;
+const SECTION_IDS = ["services", "about", "problem", "process", "pricing", "contact"] as const;
 
 export function QuickNav() {
   const { dict } = useLanguage();
@@ -25,6 +25,7 @@ export function QuickNav() {
 
   const items = [
     { id: "about", target: "about-title", align: 0.5, label: dict.nav.about, subtitle: dict.about.eyebrow },
+    { id: "problem", label: dict.nav.problem, subtitle: dict.problem.eyebrow },
     { id: "services", label: dict.nav.services, subtitle: dict.services.eyebrow },
     { id: "process", label: dict.nav.process, subtitle: dict.process.eyebrow },
     { id: "pricing", label: dict.nav.pricing, subtitle: dict.pricing.eyebrow },
@@ -57,16 +58,16 @@ export function QuickNav() {
   return (
     <div
       ref={rootRef}
-      className={`fixed left-4 top-1/2 z-50 flex -translate-y-1/2 flex-col items-start gap-4 transition-opacity duration-500 md:left-6 ${
+      className={`fixed right-2 top-10 z-50 flex flex-col-reverse items-end gap-4 transition-opacity duration-500 md:left-6 md:right-auto md:top-1/2 md:flex-col md:items-start md:-translate-y-1/2 ${
         visible ? "opacity-100" : "pointer-events-none opacity-0"
       }`}
       style={{ mixBlendMode: "difference" }}
     >
       {open && (
-        <ul className="flex flex-col items-start gap-3">
+        <ul className="flex flex-col items-end gap-3 md:items-start">
           {items.map((item) => (
             <li key={item.id}>
-              <button type="button" onClick={() => goTo(item)} className="block text-left">
+              <button type="button" onClick={() => goTo(item)} className="block text-right md:text-left">
                 <span className="block text-[11px] font-medium uppercase tracking-[0.2em] text-white">
                   {item.label}
                 </span>

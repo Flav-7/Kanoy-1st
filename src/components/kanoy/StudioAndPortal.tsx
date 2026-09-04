@@ -1,6 +1,6 @@
 import { MINI_SITES } from "./mini-sites-data";
 import { MiniSite } from "./mini-sites";
-import { clamp, ease, mix, range, useCornerLogoOnLight, useScrollProgress } from "./anim";
+import { clamp, ease, mix, range, useCornerLogoOnLight, useIsMobile, useScrollProgress } from "./anim";
 import kanoyK from "@/assets/branding/kanoy-k.png";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 
@@ -98,6 +98,7 @@ function Screen({
 function StudioAct({ p }: { p: number }) {
   const { dict } = useLanguage();
   const onLight = useCornerLogoOnLight();
+  const isMobile = useIsMobile();
   const camera = p * CAMERA_TRAVEL;
   const reveal = range(p, 0.03, 0.11);
 
@@ -113,10 +114,13 @@ function StudioAct({ p }: { p: number }) {
   // left and "Kanoy" to its right (a row) — icon and text are positioned
   // independently off that shared anchor so the seam can rotate smoothly
   // from a vertical stack to a horizontal row without any layout snap.
-  const markLeft = mix(50, 2, toCorner); // vw
-  const markTop = mix(42, 2.4, toCorner); // vh
-  const markIconVh = mix(40, 2.6, toCorner);
-  const markTextVw = mix(7, 1.15, toCorner);
+  // On narrow mobile viewports, vh and vw diverge a lot more than on
+  // desktop, so the corner icon (sized in vh, positioned in vw) needs a
+  // bigger left inset there or its own width pushes it off the left edge.
+  const markLeft = mix(50, isMobile ? 11 : 2, toCorner); // vw
+  const markTop = mix(isMobile ? 46 : 42, 2.4, toCorner); // vh
+  const markIconVh = mix(isMobile ? 22 : 40, isMobile ? 3.6 : 2.6, toCorner);
+  const markTextVw = mix(isMobile ? 10.5 : 7, isMobile ? 1.8 : 1.15, toCorner);
   const markGapVw = mix(0.1, 0.5, toCorner);
 
   // Icon: stacked -> centred above the anchor (-50%,-100%); row -> flush left of it (-100%,-50%)
@@ -154,11 +158,11 @@ function StudioAct({ p }: { p: number }) {
         }}
       >
         {/* spacer matching the travelling mark's footprint so the tagline/hint below keep their spot */}
-        <div aria-hidden className="h-[68vh]" />
-        <p className="mt-6 max-w-xl whitespace-pre-line text-balance font-body text-sm uppercase tracking-[0.32em] text-studio-muted md:text-base">
+        <div aria-hidden className={isMobile ? "h-[49vh]" : "h-[68vh]"} />
+        <p className="mt-6 max-w-xl whitespace-pre-line text-balance font-body text-[0.78rem] uppercase tracking-[0.32em] text-studio-muted md:text-base">
           {dict.hero.tagline}
         </p>
-        <span className="mt-5 text-[10px] uppercase tracking-[0.4em] text-accent scroll-hint">
+        <span className="mt-14 text-[10px] uppercase tracking-[0.4em] text-accent scroll-hint md:mt-5">
           {dict.hero.scrollHint}
         </span>
       </div>
@@ -228,6 +232,7 @@ function StudioAct({ p }: { p: number }) {
 /** The digital-core scene: ring formation + heading, right after the studio act. */
 function PortalAct({ p }: { p: number }) {
   const { dict } = useLanguage();
+  const isMobile = useIsMobile();
 
   const open = range(p, 0, 0.4);
   const rush = range(p, 0.45, 0.86);
@@ -237,6 +242,36 @@ function PortalAct({ p }: { p: number }) {
   const textOut = range(p, 0.6, 0.76);
   const textOpacity = clamp(textIn * (1 - textOut));
 
+  const rings = Array.from({ length: RINGS }).map((_, i) => {
+    const stagger = i / RINGS;
+    const localP = clamp((open - stagger * 0.5) / (1 - stagger * 0.5));
+    // On mobile the rings render inside a plain absolutely-positioned box
+    // instead of the perspective/preserve-3d "camera" used on desktop, and
+    // are capped so they never grow much past the screen width — vmin is
+    // the viewport's narrower side, which on a portrait phone is its
+    // width, so anything past ~100vmin was overflowing left and right of
+    // the screen instead of feeling like a full-bleed effect.
+    const size = isMobile
+      ? Math.min(94, mix(18, 40 + i * 6, ease(localP)) + rush * (10 + i * 4))
+      : mix(30, 130 + i * 26, ease(localP)) + rush * (260 + i * 80);
+    const hue = i % 2 === 0 ? "var(--accent)" : "var(--accent-2)";
+    return (
+      <div
+        key={i}
+        className={`portal-ring ${i % 2 ? "portal-ring-reverse" : ""}`}
+        style={{
+          width: `${size}vmin`,
+          height: `${size}vmin`,
+          borderColor: hue,
+          color: hue,
+          borderWidth: mix(1, 2.4, i / RINGS),
+          opacity: clamp(localP) * (1 - rush * 0.45),
+          animationDuration: `${13 + i * 3}s`,
+        }}
+      />
+    );
+  });
+
   return (
     // Portal has no clickable content of its own, and it's now a sibling
     // of the studio act in the same stacking context (they share one
@@ -245,32 +280,15 @@ function PortalAct({ p }: { p: number }) {
     <div className="pointer-events-none absolute inset-0">
       <div className="portal-void" style={{ opacity: mix(0.35, 1, open) }} />
 
-      <div className="camera">
-        <div className="world" style={{ transform: `scale(${1 + rush * 2.4})` }}>
-          {Array.from({ length: RINGS }).map((_, i) => {
-            const stagger = i / RINGS;
-            const localP = clamp((open - stagger * 0.5) / (1 - stagger * 0.5));
-            const size = mix(30, 130 + i * 26, ease(localP)) + rush * (260 + i * 80);
-            const hue = i % 2 === 0 ? "var(--accent)" : "var(--accent-2)";
-            return (
-              <div
-                key={i}
-                className="portal-ring"
-                style={{
-                  width: `${size}vmin`,
-                  height: `${size}vmin`,
-                  borderColor: hue,
-                  color: hue,
-                  borderWidth: mix(1, 2.4, i / RINGS),
-                  opacity: clamp(localP) * (1 - rush * 0.45),
-                  animationDuration: `${13 + i * 3}s`,
-                  animationDirection: i % 2 ? "reverse" : "normal",
-                }}
-              />
-            );
-          })}
+      {isMobile ? (
+        <div className="pointer-events-none absolute inset-0">{rings}</div>
+      ) : (
+        <div className="camera">
+          <div className="world" style={{ transform: `scale(${1 + rush * 2.4})` }}>
+            {rings}
+          </div>
         </div>
-      </div>
+      )}
 
       <div
         className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center px-6 text-center"
@@ -318,7 +336,7 @@ export function StudioAndPortal() {
       style={{ height: `${TOTAL_VH}vh` }}
       aria-label="Entering the KANOY studio and its digital core"
     >
-      <div className="sticky top-0 z-40 h-screen overflow-hidden">
+      <div className="sticky top-0 z-40 h-dvh overflow-hidden">
         {/* the office photo itself lives in <StudioBackdrop>, fixed behind
             this whole section — everything here only tints/decorates it */}
         <div className="absolute inset-0 bg-room-veil" />

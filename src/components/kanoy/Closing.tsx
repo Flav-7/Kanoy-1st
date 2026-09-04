@@ -5,7 +5,7 @@ import { ContactModal } from "./ContactModal";
 import { InstagramLink } from "./InstagramLink";
 
 function Reveal({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) {
-  const { ref, shown } = useReveal<HTMLDivElement>(0.25);
+  const { ref, shown } = useReveal<HTMLDivElement>(0.08);
   return (
     <div
       ref={ref}
@@ -13,7 +13,7 @@ function Reveal({ children, delay = 0 }: { children: React.ReactNode; delay?: nu
         opacity: shown ? 1 : 0,
         transform: shown ? "none" : "translateY(38px)",
         filter: shown ? "none" : "blur(8px)",
-        transition: `opacity 1s ${delay}s cubic-bezier(.2,.7,.2,1), transform 1.1s ${delay}s cubic-bezier(.2,.7,.2,1), filter 1s ${delay}s`,
+        transition: `opacity 0.5s ${delay}s cubic-bezier(.2,.7,.2,1), transform 0.55s ${delay}s cubic-bezier(.2,.7,.2,1), filter 0.5s ${delay}s`,
       }}
     >
       {children}
@@ -127,7 +127,14 @@ export function Contact() {
           </div>
         </Reveal>
         <div className="mt-10 flex flex-col items-center gap-3 text-[10px] uppercase tracking-[0.4em] text-studio-muted/70">
-          <img src={kanoyK} alt="KANOY" width={1024} height={1024} loading="lazy" className="w-20 md:w-28" />
+          <img
+            src={kanoyK}
+            alt="KANOY"
+            width={1024}
+            height={1024}
+            loading="lazy"
+            className="k-balloon w-20 md:w-28"
+          />
           <span>{dict.contact.footerTagline}</span>
         </div>
       </div>
