@@ -82,6 +82,22 @@ function Screen({
         willChange: "transform, opacity",
       }}
     >
+      {site.location && (
+        <div
+          style={{
+            width: place.w,
+            marginBottom: 6,
+            textAlign: "left",
+            color: "var(--studio-muted)",
+            fontSize: 9,
+            letterSpacing: "0.22em",
+            textTransform: "uppercase",
+            whiteSpace: "nowrap",
+          }}
+        >
+          {site.location}
+        </div>
+      )}
       <div className="screen-shell" data-device={place.device}>
         <MiniSite site={site} width={place.w} />
         <span className="screen-glare" aria-hidden />
@@ -118,9 +134,9 @@ function StudioAct({ p }: { p: number }) {
   // desktop, so the corner icon (sized in vh, positioned in vw) needs a
   // bigger left inset there or its own width pushes it off the left edge.
   const markLeft = mix(50, isMobile ? 11 : 2, toCorner); // vw
-  const markTop = mix(isMobile ? 46 : 42, 2.4, toCorner); // vh
-  const markIconVh = mix(isMobile ? 22 : 40, isMobile ? 3.6 : 2.6, toCorner);
-  const markTextVw = mix(isMobile ? 10.5 : 7, isMobile ? 1.8 : 1.15, toCorner);
+  const markTop = mix(isMobile ? 44 : 46, 2.4, toCorner); // vh
+  const markIconVh = mix(isMobile ? 22 : 40, isMobile ? 4.6 : 3.4, toCorner);
+  const markTextVw = mix(isMobile ? 10.5 : 7, isMobile ? 2.3 : 1.5, toCorner);
   const markGapVw = mix(0.1, 0.5, toCorner);
 
   // Icon: stacked -> centred above the anchor (-50%,-100%); row -> flush left of it (-100%,-50%)
@@ -192,13 +208,15 @@ function StudioAct({ p }: { p: number }) {
           }}
         />
         <span
-          className={`font-logo hero-text-shine absolute whitespace-nowrap leading-none tracking-[-0.01em] transition-colors duration-300 ${
+          className={`hero-text-shine absolute whitespace-nowrap leading-none tracking-[-0.01em] transition-colors duration-300 ${
             onLight ? "text-ink" : "text-studio-foreground"
           }`}
           style={{
             left: 0,
             top: 0,
             fontSize: `${markTextVw}vw`,
+            fontFamily: "'Fredoka', sans-serif",
+            fontWeight: 400,
             transform: `translate(${textTx}%, ${textTy}%) translate(${textGapX}vw, ${textGapY}vw)`,
           }}
         >
@@ -236,7 +254,6 @@ function PortalAct({ p }: { p: number }) {
 
   const open = range(p, 0, 0.4);
   const rush = range(p, 0.45, 0.86);
-  const whiteout = range(p, 0.86, 1);
 
   const textIn = range(p, 0, 0.16);
   const textOut = range(p, 0.6, 0.76);
@@ -304,12 +321,6 @@ function PortalAct({ p }: { p: number }) {
           {dict.portal.line}
         </h2>
       </div>
-
-      <div
-        id="portal-whiteout"
-        className="pointer-events-none absolute inset-0 bg-sand"
-        style={{ opacity: whiteout }}
-      />
     </div>
   );
 }

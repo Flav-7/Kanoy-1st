@@ -1,8 +1,39 @@
+import { Clock, Phone } from "lucide-react";
 import { useReveal } from "./anim";
 import kanoyK from "@/assets/branding/kanoy-k.png";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import { ContactModal } from "./ContactModal";
 import { InstagramLink } from "./InstagramLink";
+
+/** Phone, hours and Instagram — laid out differently per breakpoint by the
+ *  two call sites below, not by this component itself. */
+function SupportInfo({
+  title,
+  phone,
+  hours,
+  align,
+}: {
+  title: string;
+  phone: string;
+  hours: string;
+  align: "center" | "right";
+}) {
+  const textAlign = align === "center" ? "text-center" : "text-right";
+  const justify = align === "center" ? "justify-center" : "justify-end";
+  return (
+    <div className={`${textAlign} text-[10px] uppercase tracking-[0.2em] text-neutral-400/70`}>
+      <div className="text-neutral-500">{title}</div>
+      <div className={`mt-1.5 flex items-center gap-1.5 ${justify}`}>
+        <Phone className="h-3 w-3" strokeWidth={1.5} />
+        <span>{phone}</span>
+      </div>
+      <div className={`mt-1 flex items-center gap-1.5 ${justify}`}>
+        <Clock className="h-3 w-3" strokeWidth={1.5} />
+        <span>{hours}</span>
+      </div>
+    </div>
+  );
+}
 
 function Reveal({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) {
   const { ref, shown } = useReveal<HTMLDivElement>(0.08);
@@ -60,7 +91,6 @@ export function Contact({ autoOpenModal }: { autoOpenModal?: boolean | undefined
       aria-label="Contact KANOY"
     >
       <div className="light-beam" style={{ opacity: 0.35 }} />
-      <InstagramLink />
       <span className="absolute bottom-6 left-6 z-50 text-[10px] uppercase tracking-[0.2em] text-neutral-400/70 md:bottom-10 md:left-10">
         {dict.contact.copyright}
       </span>
@@ -93,7 +123,26 @@ export function Contact({ autoOpenModal }: { autoOpenModal?: boolean | undefined
             className="k-balloon w-20 md:w-28"
           />
           <span>{dict.contact.footerTagline}</span>
+          <div className="mt-4 flex flex-col items-center gap-1.5 md:hidden">
+            <SupportInfo
+              title={dict.contact.support.title}
+              phone={dict.contact.support.phone}
+              hours={dict.contact.support.hours}
+              align="center"
+            />
+            <InstagramLink />
+          </div>
         </div>
+      </div>
+      <div className="absolute bottom-10 right-10 z-50 hidden items-center gap-4 md:flex">
+        <SupportInfo
+          title={dict.contact.support.title}
+          phone={dict.contact.support.phone}
+          hours={dict.contact.support.hours}
+          align="right"
+        />
+        <div className="h-9 w-px bg-neutral-700/60" />
+        <InstagramLink />
       </div>
     </section>
   );

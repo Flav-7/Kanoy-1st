@@ -2,6 +2,34 @@ import { useEffect, useRef, useState } from "react";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import { useDismiss } from "./useDismiss";
 
+/** Line-art fingerprint, drawn as strokes (not a raster mask) so it stays
+ *  crisp and readable at the small trigger-button size — a detailed photo
+ *  or filled icon just turns into a blob at 24-28px. */
+function FingerprintIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.8}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      aria-hidden
+    >
+      <path d="M12 10a2 2 0 0 0-2 2c0 1.02-.1 2.51-.26 4" />
+      <path d="M14 13.12c0 2.38 0 6.38-1 8.88" />
+      <path d="M17.29 21.02c.12-.6.43-2.3.5-3.02" />
+      <path d="M2 12a10 10 0 0 1 18-6" />
+      <path d="M2 16h.01" />
+      <path d="M21.8 16c.2-2 .131-5.354 0-6" />
+      <path d="M5 19.5C5.5 18 6 15 6 12a6 6 0 0 1 .34-2" />
+      <path d="M8.65 22c.21-.66.45-1.32.57-2" />
+      <path d="M9 6.8a6 6 0 0 1 9 5.2v2" />
+    </svg>
+  );
+}
+
 const SECTION_IDS = ["services", "about", "problem", "process", "contact"] as const;
 
 export function QuickNav() {
@@ -57,7 +85,7 @@ export function QuickNav() {
   return (
     <div
       ref={rootRef}
-      className={`fixed right-2 top-10 z-50 flex flex-col-reverse items-end gap-4 transition-opacity duration-500 md:left-6 md:right-auto md:top-1/2 md:flex-col md:items-start md:-translate-y-1/2 ${
+      className={`fixed right-2 top-20 z-50 flex flex-col-reverse items-end gap-4 transition-opacity duration-500 md:left-6 md:right-auto md:top-1/2 md:flex-col md:items-start md:-translate-y-1/2 ${
         visible ? "opacity-100" : "pointer-events-none opacity-0"
       }`}
       style={{ mixBlendMode: "difference" }}
@@ -84,11 +112,9 @@ export function QuickNav() {
         aria-label="Menu"
         aria-expanded={open}
         onClick={() => setOpen((o) => !o)}
-        className="flex h-9 w-9 flex-col items-start justify-center gap-[6px]"
+        className="flex h-9 w-9 items-center justify-center text-white"
       >
-        <span className="h-[2px] w-6 bg-white" />
-        <span className="h-[2px] w-6 bg-white" />
-        <span className="h-[2px] w-4 bg-white" />
+        <FingerprintIcon className="h-7 w-7" />
       </button>
     </div>
   );

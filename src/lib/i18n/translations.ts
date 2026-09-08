@@ -42,6 +42,7 @@ export type Dictionary = {
     contactBtn: string;
     footerTagline: string;
     copyright: string;
+    support: { title: string; phone: string; hours: string };
     modal: {
       title: string;
       emailTitle: string;
@@ -112,7 +113,7 @@ export const translations: Record<Language, Dictionary> = {
           text: "Marcações, disponibilidade, notificações e gestão de clientes num único sistema.",
         },
         {
-          title: "Alojamento & Manutenção",
+          title: "Alojamento e Manutenção",
           text: "Performance, segurança, atualizações e suporte contínuo.",
         },
         {
@@ -183,22 +184,23 @@ export const translations: Record<Language, Dictionary> = {
       contactBtn: "Contactar a KANOY",
       footerTagline: "KANOY — Estúdio digital",
       copyright: "© 2026 KANOY. Todos os direitos reservados.",
+      support: { title: "Apoio ao cliente", phone: "+351 923 250 729", hours: "Seg — Sex · 10:00 — 16:00" },
       modal: {
-        title: "Como preferes falar connosco?",
+        title: "Como prefer falar connosco?",
         emailTitle: "Enviar email direto",
-        emailDesc: "Abre o teu email com tudo pronto — escreves e envias.",
+        emailDesc: "Abra o seu email com tudo pronto — escreva e envie.",
         formTitle: "Preencher formulário",
-        formDesc: "Diz-nos o que precisas, respondemos-te por email.",
+        formDesc: "Diga-nos o que precisa, respondemos-lhe por email.",
         back: "Voltar",
-        replyLanguageLabel: "Em que idioma preferes a resposta?",
+        replyLanguageLabel: "Em que idioma prefere a resposta?",
         nameLabel: "Nome",
-        namePlaceholder: "O teu nome",
+        namePlaceholder: "O seu nome",
         emailLabel: "Email",
-        emailPlaceholder: "o-teu-email@exemplo.com",
+        emailPlaceholder: "o-seu-email@exemplo.com",
         phoneLabel: "Telefone (opcional)",
         phonePlaceholder: "+351 900 000 000",
         messageLabel: "Mensagem",
-        messagePlaceholder: "Conta-nos sobre o teu negócio e o que precisas.",
+        messagePlaceholder: "Conte-nos sobre o seu negócio e o que precisa.",
         submit: "Enviar mensagem",
         sending: "A enviar…",
         successTitle: "Mensagem enviada!",
@@ -322,6 +324,7 @@ export const translations: Record<Language, Dictionary> = {
       contactBtn: "Contactar con KANOY",
       footerTagline: "KANOY — Estudio digital",
       copyright: "© 2026 KANOY. Todos los derechos reservados.",
+      support: { title: "Atención al cliente", phone: "+351 923 250 729", hours: "Lun — Vie · 10:00 — 16:00" },
       modal: {
         title: "¿Cómo prefieres hablar con nosotros?",
         emailTitle: "Enviar email directo",
@@ -460,6 +463,7 @@ export const translations: Record<Language, Dictionary> = {
       contactBtn: "Contact KANOY",
       footerTagline: "KANOY — Digital studio",
       copyright: "© 2026 KANOY. All rights reserved.",
+      support: { title: "Customer support", phone: "+351 923 250 729", hours: "Mon — Fri · 10:00 — 16:00" },
       modal: {
         title: "How would you like to reach us?",
         emailTitle: "Send a direct email",

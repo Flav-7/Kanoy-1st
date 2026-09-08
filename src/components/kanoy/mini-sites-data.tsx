@@ -25,6 +25,9 @@ export type MiniSiteDef = {
    *  render below and can be clicked to open larger. */
   image?: string;
   render?: (p: Palette) => ReactNode;
+  /** A caption line shown above the preview, naming where the project is
+   *  based. Rendered outside the image itself, never overlaid on it. */
+  location?: string;
 };
 
 const row: CSSProperties = { display: "flex", alignItems: "center" };
@@ -121,6 +124,7 @@ export const MINI_SITES: MiniSiteDef[] = [
     kind: "Restaurant & reservations",
     palette: { bg: "#120f0d", ink: "#f4ece1", accent: "#c8a45c", soft: "#ffffff0d" },
     image: tierraYMar,
+    location: "Ayamonte (Espanha)",
     render: (p) => (
       <div style={{ background: p.bg, height: "100%" }}>
         <div style={nav(p)}>

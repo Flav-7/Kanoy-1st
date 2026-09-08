@@ -36,7 +36,12 @@ function Index() {
   const [showTalkToUs, setShowTalkToUs] = useState(false);
 
   useEffect(() => {
-    const onScroll = () => setShowTalkToUs(window.scrollY > window.innerHeight * 0.85);
+    const onScroll = () => {
+      const pastHero = window.scrollY > window.innerHeight * 0.85;
+      const contact = document.getElementById("contact");
+      const inContact = contact ? contact.getBoundingClientRect().top < window.innerHeight * 0.5 : false;
+      setShowTalkToUs(pastHero && !inContact);
+    };
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);

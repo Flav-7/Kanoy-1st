@@ -72,16 +72,7 @@ export function useCornerLogoOnLight() {
         const r = el.getBoundingClientRect();
         return r.top <= refY && r.bottom > refY;
       });
-      // the portal act fades its dark scene to the same sand tone as the
-      // About section right before it — flip early so the logo doesn't sit
-      // white over that already-light whiteout screen.
-      const whiteout = document.getElementById("portal-whiteout");
-      const whiteoutRect = whiteout?.getBoundingClientRect();
-      const whiteoutInView = whiteoutRect ? whiteoutRect.top < window.innerHeight && whiteoutRect.bottom > 0 : false;
-      const whiteoutActive =
-        whiteout && whiteoutInView ? parseFloat(getComputedStyle(whiteout).opacity) > 0.5 : false;
-      const active = inLightSection || whiteoutActive;
-      setOnLight((prev) => (prev !== active ? active : prev));
+      setOnLight((prev) => (prev !== inLightSection ? inLightSection : prev));
     };
     const onScroll = () => {
       if (!raf) raf = requestAnimationFrame(compute);
