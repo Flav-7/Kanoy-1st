@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import { useDismiss } from "./useDismiss";
 
-const SECTION_IDS = ["services", "about", "process", "pricing", "contact"] as const;
+const SECTION_IDS = ["services", "about", "process", "contact"] as const;
 
 export function QuickNav() {
   const { dict } = useLanguage();
@@ -27,7 +27,6 @@ export function QuickNav() {
     { id: "services", label: dict.nav.services, subtitle: dict.services.eyebrow },
     { id: "about", label: dict.nav.about, subtitle: dict.about.eyebrow },
     { id: "process", label: dict.nav.process, subtitle: dict.process.eyebrow },
-    { id: "pricing", label: dict.nav.pricing, subtitle: dict.pricing.eyebrow },
     { id: "contact", label: dict.nav.contact, subtitle: dict.contact.subtitle },
   ] satisfies { id: (typeof SECTION_IDS)[number]; label: string; subtitle: string }[];
 

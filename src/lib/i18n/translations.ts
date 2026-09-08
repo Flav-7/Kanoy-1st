@@ -15,22 +15,11 @@ export type Dictionary = {
   hero: { tagline: string; scrollHint: string };
   studio: { label: string; text: string };
   portal: { eyebrow: string; line: string };
-  entrada: { scrollHint: string; requestPortfolio: string };
-  nav: { services: string; about: string; process: string; pricing: string; contact: string };
+  entrada: { scrollHint: string; requestPortfolio: string; talkToUs: string };
+  nav: { services: string; about: string; process: string; contact: string };
   services: { eyebrow: string; title: string; items: ServiceCopy[] };
   process: { eyebrow: string; stepLabel: string; steps: StepCopy[] };
   about: { eyebrow: string; titleLine1: string; titleLine2: string; text: string };
-  pricing: {
-    eyebrow: string;
-    titleLine1: string;
-    titleLine2: string;
-    text: string;
-    items: string[];
-    included: string;
-    needCustom: string;
-    talkToUs: string;
-    customNote: string;
-  };
   contact: {
     titleLine1: string;
     titleLine2: string;
@@ -81,12 +70,12 @@ export const translations: Record<Language, Dictionary> = {
     entrada: {
       scrollHint: "Desliza para entrar",
       requestPortfolio: "Pedir portefólio",
+      talkToUs: "Fale connosco",
     },
     nav: {
       services: "Serviços",
       about: "Sobre",
       process: "Como trabalhamos",
-      pricing: "Modelo",
       contact: "Contacto",
     },
     services: {
@@ -156,18 +145,6 @@ export const translations: Record<Language, Dictionary> = {
       titleLine2: "SÓ WEBSITES.",
       text: "A KANOY cria experiências digitais, websites e sistemas personalizados desenhados à volta da forma como um negócio realmente funciona. Cada projeto começa na realidade do cliente — as marcações, as agendas, os clientes, a pressão de uma operação real — e termina em algo que as pessoas recordam depois de fechar o separador.",
     },
-    pricing: {
-      eyebrow: "O modelo",
-      titleLine1: "Criação do website",
-      titleLine2: "+ gestão mensal",
-      text: "A KANOY trabalha geralmente com uma fase de construção seguida de um serviço mensal. Sistemas personalizados e funcionalidades avançadas são orçamentados individualmente, consoante o que o projeto realmente precisa.",
-      items: ["Alojamento", "Manutenção", "Atualizações", "Gestão técnica"],
-      included: "incluído",
-      needCustom: "Precisas de algo personalizado?",
-      talkToUs: "Fala connosco",
-      customNote:
-        "Para projetos personalizados, contacta a KANOY para mais informações ou para pedir um portefólio de trabalhos anteriores.",
-    },
     contact: {
       titleLine1: "VAMOS CONSTRUIR",
       titleLine2: "ALGO.",
@@ -216,12 +193,12 @@ export const translations: Record<Language, Dictionary> = {
     entrada: {
       scrollHint: "Desliza para entrar",
       requestPortfolio: "Pedir portafolio",
+      talkToUs: "Habla con nosotros",
     },
     nav: {
       services: "Servicios",
       about: "Sobre nosotros",
       process: "Cómo trabajamos",
-      pricing: "El modelo",
       contact: "Contacto",
     },
     services: {
@@ -291,18 +268,6 @@ export const translations: Record<Language, Dictionary> = {
       titleLine2: "CONSTRUIMOS WEBS.",
       text: "KANOY crea experiencias digitales, webs y sistemas personalizados diseñados en torno a cómo funciona realmente un negocio. Cada proyecto empieza en la realidad del cliente — las reservas, las agendas, los clientes, la presión de una operación real — y termina siendo algo que la gente recuerda después de cerrar la pestaña.",
     },
-    pricing: {
-      eyebrow: "El modelo",
-      titleLine1: "Creación de la web",
-      titleLine2: "+ gestión mensual",
-      text: "KANOY suele trabajar con una fase de construcción seguida de un servicio mensual. Los sistemas personalizados y las funcionalidades avanzadas se presupuestan individualmente, según lo que el proyecto realmente necesite.",
-      items: ["Alojamiento", "Mantenimiento", "Actualizaciones", "Gestión técnica"],
-      included: "incluido",
-      needCustom: "¿Necesitas algo personalizado?",
-      talkToUs: "Habla con nosotros",
-      customNote:
-        "Para proyectos personalizados, contacta con KANOY para más información o para pedir un portafolio de trabajos anteriores.",
-    },
     contact: {
       titleLine1: "CONSTRUYAMOS",
       titleLine2: "ALGO.",
@@ -351,12 +316,12 @@ export const translations: Record<Language, Dictionary> = {
     entrada: {
       scrollHint: "Scroll to enter",
       requestPortfolio: "Request portfolio",
+      talkToUs: "Talk to us",
     },
     nav: {
       services: "Services",
       about: "About",
       process: "How we work",
-      pricing: "Pricing",
       contact: "Contact",
     },
     services: {
@@ -425,18 +390,6 @@ export const translations: Record<Language, Dictionary> = {
       titleLine1: "WE DON'T JUST",
       titleLine2: "BUILD WEBSITES.",
       text: "KANOY creates digital experiences, websites and custom systems designed around the way a business actually operates. Every project starts from the client's reality — the bookings, the calendars, the customers, the pressure of a real operation — and ends as something people remember after they close the tab.",
-    },
-    pricing: {
-      eyebrow: "The model",
-      titleLine1: "Website creation",
-      titleLine2: "+ monthly management",
-      text: "KANOY generally works with a build phase followed by a monthly service. Custom systems and advanced functionality are quoted individually, based on what the project really needs.",
-      items: ["Hosting", "Maintenance", "Updates", "Technical management"],
-      included: "included",
-      needCustom: "Need something custom?",
-      talkToUs: "Talk to us",
-      customNote:
-        "For custom projects, contact KANOY for more information or to request a portfolio of previous work.",
     },
     contact: {
       titleLine1: "LET'S BUILD",

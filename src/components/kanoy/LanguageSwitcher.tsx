@@ -1,10 +1,10 @@
-import { useRef, useState } from "react";
+import { useRef, useState, type ReactNode } from "react";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import { LANGUAGES } from "@/lib/i18n/translations";
 import { FLAGS } from "./flags";
 import { useDismiss } from "./useDismiss";
 
-export function LanguageSwitcher() {
+export function LanguageSwitcher({ children }: { children?: ReactNode }) {
   const { language, setLanguage } = useLanguage();
   const [open, setOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
@@ -18,8 +18,10 @@ export function LanguageSwitcher() {
   return (
     <div
       ref={rootRef}
-      className="fixed right-4 top-4 z-50 flex items-center gap-2 md:right-6 md:top-6"
+      className="fixed right-4 top-4 z-50 flex items-center gap-3 md:right-6 md:top-6"
     >
+      {children}
+
       {open &&
         others.map(({ code, label }) => {
           const Flag = FLAGS[code];

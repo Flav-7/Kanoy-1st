@@ -1,4 +1,4 @@
-import { useState, type FormEvent, type ReactNode } from "react";
+import { useEffect, useState, type FormEvent, type ReactNode } from "react";
 import {
   Dialog,
   DialogContent,
@@ -38,7 +38,7 @@ function Field({
   );
 }
 
-export function ContactModal() {
+export function ContactModal({ autoOpen }: { autoOpen?: boolean | undefined }) {
   const { dict, language } = useLanguage();
   const m = dict.contact.modal;
 
@@ -47,6 +47,10 @@ export function ContactModal() {
   const [pending, setPending] = useState(false);
   const [form, setForm] = useState({ name: "", email: "", phone: "", message: "" });
   const [replyLanguage, setReplyLanguage] = useState<Language>(language);
+
+  useEffect(() => {
+    if (autoOpen) setOpen(true);
+  }, [autoOpen]);
 
   const reset = () => {
     setStep("choice");

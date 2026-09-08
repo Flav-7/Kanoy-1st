@@ -47,50 +47,7 @@ export function About() {
   );
 }
 
-export function Pricing() {
-  const { dict } = useLanguage();
-  return (
-    <section
-      id="pricing"
-      className="relative bg-background px-6 py-32 md:px-14 md:py-44"
-      aria-label="How KANOY works commercially"
-    >
-      <div className="mx-auto grid max-w-5xl gap-14 md:grid-cols-2">
-        <Reveal>
-          <div className="eyebrow">{dict.pricing.eyebrow}</div>
-          <h2 className="mt-6 font-display text-4xl leading-[0.98] tracking-[-0.03em] md:text-5xl">
-            {dict.pricing.titleLine1}
-            <br />
-            <span className="text-ink/45">{dict.pricing.titleLine2}</span>
-          </h2>
-          <p className="mt-8 max-w-md text-sm leading-relaxed text-ink/60">{dict.pricing.text}</p>
-        </Reveal>
-        <Reveal delay={0.12}>
-          <ul className="border-t border-ink/10">
-            {dict.pricing.items.map((i) => (
-              <li
-                key={i}
-                className="flex items-center justify-between border-b border-ink/10 py-5 text-sm"
-              >
-                <span>{i}</span>
-                <span className="text-accent">{dict.pricing.included}</span>
-              </li>
-            ))}
-          </ul>
-          <div className="mt-10">
-            <p className="font-display text-2xl tracking-[-0.02em]">{dict.pricing.needCustom}</p>
-            <a href="#contact" className="btn-kanoy mt-6">
-              {dict.pricing.talkToUs}
-            </a>
-            <p className="mt-5 text-xs leading-relaxed text-ink/50">{dict.pricing.customNote}</p>
-          </div>
-        </Reveal>
-      </div>
-    </section>
-  );
-}
-
-export function Contact() {
+export function Contact({ autoOpenModal }: { autoOpenModal?: boolean | undefined }) {
   const { dict } = useLanguage();
   return (
     <section
@@ -112,7 +69,7 @@ export function Contact() {
             {dict.contact.subtitle}
           </p>
           <div className="mt-14 flex flex-wrap items-center justify-center gap-4">
-            <ContactModal />
+            <ContactModal autoOpen={autoOpenModal} />
           </div>
         </Reveal>
         <div className="mt-28 flex flex-col items-center gap-3 text-[10px] uppercase tracking-[0.4em] text-studio-muted/70">
