@@ -5,10 +5,9 @@ import { StudioAndPortal } from "@/components/kanoy/StudioAndPortal";
 import { Services } from "@/components/kanoy/Services";
 import { Process } from "@/components/kanoy/Process";
 import { About, Contact } from "@/components/kanoy/Closing";
+import { Problem } from "@/components/kanoy/Problem";
 import { LanguageSwitcher } from "@/components/kanoy/LanguageSwitcher";
 import { QuickNav } from "@/components/kanoy/QuickNav";
-import { SurrealField } from "@/components/kanoy/SurrealField";
-import { CursorTrail } from "@/components/kanoy/CursorTrail";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 
 const title = "KANOY — Websites that make people stop scrolling";
@@ -45,8 +44,6 @@ function Index() {
 
   return (
     <main className="bg-background">
-      <SurrealField />
-      <CursorTrail />
       <LanguageSwitcher>
         <Link
           to="/"
@@ -65,8 +62,9 @@ function Index() {
       <QuickNav />
       <StudioBackdrop />
       <StudioAndPortal />
-      <Services />
       <About />
+      <Problem />
+      <Services />
       <Process />
       <Contact autoOpenModal={openContact} />
     </main>

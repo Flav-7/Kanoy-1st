@@ -16,16 +16,32 @@ export type Dictionary = {
   studio: { label: string; text: string };
   portal: { eyebrow: string; line: string };
   entrada: { scrollHint: string; requestPortfolio: string; talkToUs: string };
-  nav: { services: string; about: string; process: string; contact: string };
+  nav: {
+    services: string;
+    about: string;
+    problem: string;
+    process: string;
+    contact: string;
+  };
   services: { eyebrow: string; title: string; items: ServiceCopy[] };
   process: { eyebrow: string; stepLabel: string; steps: StepCopy[] };
   about: { eyebrow: string; titleLine1: string; titleLine2: string; text: string };
+  problem: {
+    eyebrow: string;
+    titleLine1: string;
+    titleLine2: string;
+    subtitle: string;
+    items: ServiceCopy[];
+    badges: { slow: string; mobile: string; design: string; conversions: string };
+    scrollHint: string;
+  };
   contact: {
     titleLine1: string;
     titleLine2: string;
     subtitle: string;
     contactBtn: string;
     footerTagline: string;
+    copyright: string;
     modal: {
       title: string;
       emailTitle: string;
@@ -60,12 +76,12 @@ export const translations: Record<Language, Dictionary> = {
       scrollHint: "Conhece o nosso trabalho",
     },
     studio: {
-      label: "Dentro do estúdio",
+      label: "Portefólio",
       text: "Cada ecrã que passas é um projeto. Continua a mover-te.",
     },
     portal: {
       eyebrow: "A dobrar a realidade",
-      line: "O NÚCLEO DIGITAL DA KANOY",
+      line: "SOBRE A KANOY",
     },
     entrada: {
       scrollHint: "Desliza para entrar",
@@ -75,40 +91,33 @@ export const translations: Record<Language, Dictionary> = {
     nav: {
       services: "Serviços",
       about: "Sobre",
+      problem: "O problema",
       process: "Como trabalhamos",
       contact: "Contacto",
     },
     services: {
-      eyebrow: "O que acontece nesta sala",
-      title: "Serviços, revelados à medida que avanças",
+      eyebrow: "O que fazemos",
+      title: "Serviços que fazem o teu negócio avançar.",
       items: [
         {
-          title: "Desenvolvimento de Websites",
-          text: "Websites premium desenhados especificamente para cada negócio — nunca templates.",
+          title: "Websites à Medida",
+          text: "Websites premium desenvolvidos especificamente para o teu negócio — sem templates.",
         },
         {
-          title: "Sistemas Automatizados",
-          text: "Construímos sistemas personalizados dentro dos websites sempre que a operação o exige.",
+          title: "Sistemas Web",
+          text: "Ferramentas e plataformas personalizadas que digitalizam a operação do teu negócio.",
         },
         {
-          title: "Reservas para Restaurantes",
-          text: "Sistemas de reserva online com gestão de marcações e controlo de serviço.",
+          title: "Reservas Online",
+          text: "Marcações, disponibilidade, notificações e gestão de clientes num único sistema.",
         },
         {
-          title: "Sistemas para Barbearias",
-          text: "Marcações online, agendas individuais por barbeiro e confirmações automáticas.",
+          title: "Alojamento & Manutenção",
+          text: "Performance, segurança, atualizações e suporte contínuo.",
         },
         {
-          title: "Beleza & Estética",
-          text: "Sistemas de marcações pensados para salões, clínicas e negócios de beleza.",
-        },
-        {
-          title: "Websites para Empresas",
-          text: "Construção, serviços, negócios locais e indústria — feitos para converter.",
-        },
-        {
-          title: "Sistemas Digitais Personalizados",
-          text: "Fora do pacote standard? Desenhamos e construímos a solução do zero.",
+          title: "Automações",
+          text: "Emails, notificações e workflows automáticos que eliminam tarefas repetitivas.",
         },
       ],
     },
@@ -145,12 +154,35 @@ export const translations: Record<Language, Dictionary> = {
       titleLine2: "SÓ WEBSITES.",
       text: "A KANOY cria experiências digitais, websites e sistemas personalizados desenhados à volta da forma como um negócio realmente funciona. Cada projeto começa na realidade do cliente — as marcações, as agendas, os clientes, a pressão de uma operação real — e termina em algo que as pessoas recordam depois de fechar o separador.",
     },
+    problem: {
+      eyebrow: "O problema",
+      titleLine1: "A maioria dos websites",
+      titleLine2: "não está a cumprir o seu papel.",
+      subtitle:
+        "Problemas simples que afastam visitantes e limitam o crescimento do teu negócio.",
+      items: [
+        { title: "Lentos", text: "Visitantes desistem ao esperar demasiado." },
+        { title: "Não adaptados a mobile", text: "Má experiência em telemóvel." },
+        { title: "Design desatualizado", text: "Transmite pouco profissionalismo." },
+        { title: "Falta de clareza", text: "Os visitantes não percebem o que fazes." },
+        { title: "Não geram resultados", text: "Muitos visitantes, mas poucas conversões." },
+        { title: "Difíceis de gerir", text: "Atualizações simples tornam-se complicadas." },
+      ],
+      badges: {
+        slow: "Sites lentos",
+        mobile: "Não adaptados a mobile",
+        design: "Design desatualizado",
+        conversions: "Poucas conversões",
+      },
+      scrollHint: "Scroll para explorar",
+    },
     contact: {
       titleLine1: "VAMOS CONSTRUIR",
       titleLine2: "ALGO.",
       subtitle: "Diz-nos o que estás a pensar.",
       contactBtn: "Contactar a KANOY",
       footerTagline: "KANOY — Estúdio digital",
+      copyright: "© 2026 KANOY. Todos os direitos reservados.",
       modal: {
         title: "Como preferes falar connosco?",
         emailTitle: "Enviar email direto",
@@ -183,12 +215,12 @@ export const translations: Record<Language, Dictionary> = {
       scrollHint: "Desliza para entrar en el estudio",
     },
     studio: {
-      label: "Dentro del estudio",
+      label: "Portafolio",
       text: "Cada pantalla que pasas es un proyecto. Sigue moviéndote.",
     },
     portal: {
       eyebrow: "Doblando la realidad",
-      line: "EL NÚCLEO DIGITAL DE KANOY",
+      line: "SOBRE KANOY",
     },
     entrada: {
       scrollHint: "Desliza para entrar",
@@ -198,40 +230,33 @@ export const translations: Record<Language, Dictionary> = {
     nav: {
       services: "Servicios",
       about: "Sobre nosotros",
+      problem: "El problema",
       process: "Cómo trabajamos",
       contact: "Contacto",
     },
     services: {
-      eyebrow: "Lo que ocurre en esta sala",
-      title: "Servicios, revelados a medida que avanzas",
+      eyebrow: "Lo que hacemos",
+      title: "Servicios que hacen avanzar tu negocio.",
       items: [
         {
-          title: "Desarrollo de Sitios Web",
-          text: "Sitios web premium diseñados específicamente para cada negocio — nunca plantillas.",
+          title: "Webs a Medida",
+          text: "Sitios web premium desarrollados específicamente para tu negocio — sin plantillas.",
         },
         {
-          title: "Sistemas Automatizados",
-          text: "Creamos sistemas personalizados dentro de las webs siempre que la operación lo requiere.",
+          title: "Sistemas Web",
+          text: "Herramientas y plataformas personalizadas que digitalizan la operación de tu negocio.",
         },
         {
-          title: "Reservas para Restaurantes",
-          text: "Sistemas de reserva online con gestión de citas y control de servicio.",
+          title: "Reservas Online",
+          text: "Citas, disponibilidad, notificaciones y gestión de clientes en un único sistema.",
         },
         {
-          title: "Sistemas para Barberías",
-          text: "Reservas online, agendas individuales por barbero y citas automatizadas.",
+          title: "Alojamiento & Mantenimiento",
+          text: "Rendimiento, seguridad, actualizaciones y soporte continuo.",
         },
         {
-          title: "Belleza & Estética",
-          text: "Sistemas de citas pensados para salones, clínicas y negocios de belleza.",
-        },
-        {
-          title: "Webs para Empresas",
-          text: "Construcción, servicios, negocios locales e industria — hechos para convertir.",
-        },
-        {
-          title: "Sistemas Digitales Personalizados",
-          text: "¿Fuera del paquete estándar? Diseñamos y construimos la solución desde cero.",
+          title: "Automatizaciones",
+          text: "Emails, notificaciones y workflows automáticos que eliminan tareas repetitivas.",
         },
       ],
     },
@@ -268,12 +293,35 @@ export const translations: Record<Language, Dictionary> = {
       titleLine2: "CONSTRUIMOS WEBS.",
       text: "KANOY crea experiencias digitales, webs y sistemas personalizados diseñados en torno a cómo funciona realmente un negocio. Cada proyecto empieza en la realidad del cliente — las reservas, las agendas, los clientes, la presión de una operación real — y termina siendo algo que la gente recuerda después de cerrar la pestaña.",
     },
+    problem: {
+      eyebrow: "El problema",
+      titleLine1: "La mayoría de las webs",
+      titleLine2: "no está cumpliendo su papel.",
+      subtitle:
+        "Problemas simples que alejan a los visitantes y limitan el crecimiento de tu negocio.",
+      items: [
+        { title: "Lentas", text: "Los visitantes se van al esperar demasiado." },
+        { title: "No adaptadas a móvil", text: "Mala experiencia en el móvil." },
+        { title: "Diseño desactualizado", text: "Transmite poco profesionalismo." },
+        { title: "Falta de claridad", text: "Los visitantes no entienden qué haces." },
+        { title: "No generan resultados", text: "Muchas visitas, pero pocas conversiones." },
+        { title: "Difíciles de gestionar", text: "Actualizaciones simples se vuelven complicadas." },
+      ],
+      badges: {
+        slow: "Webs lentas",
+        mobile: "No adaptadas a móvil",
+        design: "Diseño desactualizado",
+        conversions: "Pocas conversiones",
+      },
+      scrollHint: "Desliza para explorar",
+    },
     contact: {
       titleLine1: "CONSTRUYAMOS",
       titleLine2: "ALGO.",
       subtitle: "Cuéntanos qué estás pensando.",
       contactBtn: "Contactar con KANOY",
       footerTagline: "KANOY — Estudio digital",
+      copyright: "© 2026 KANOY. Todos los derechos reservados.",
       modal: {
         title: "¿Cómo prefieres hablar con nosotros?",
         emailTitle: "Enviar email directo",
@@ -306,12 +354,12 @@ export const translations: Record<Language, Dictionary> = {
       scrollHint: "Scroll to enter the studio",
     },
     studio: {
-      label: "Inside the studio",
+      label: "Portfolio",
       text: "Every screen you pass is a project. Keep moving.",
     },
     portal: {
       eyebrow: "Bending reality",
-      line: "THE KANOY DIGITAL CORE",
+      line: "ABOUT KANOY",
     },
     entrada: {
       scrollHint: "Scroll to enter",
@@ -321,40 +369,33 @@ export const translations: Record<Language, Dictionary> = {
     nav: {
       services: "Services",
       about: "About",
+      problem: "The problem",
       process: "How we work",
       contact: "Contact",
     },
     services: {
-      eyebrow: "What happens in this room",
-      title: "Services, revealed as you move",
+      eyebrow: "What we do",
+      title: "Services that move your business forward.",
       items: [
         {
-          title: "Website Development",
-          text: "Premium websites designed specifically for each business — not templates.",
+          title: "Custom Websites",
+          text: "Premium websites developed specifically for your business — no templates.",
         },
         {
-          title: "Automated Systems",
-          text: "We build custom systems inside websites whenever the operation requires it.",
+          title: "Web Systems",
+          text: "Custom tools and platforms that digitize the way your business operates.",
         },
         {
-          title: "Restaurant Reservations",
-          text: "Online reservation systems with booking management and service control.",
+          title: "Online Bookings",
+          text: "Appointments, availability, notifications and customer management in one system.",
         },
         {
-          title: "Barbershop Systems",
-          text: "Online bookings, individual barber calendars and automated appointments.",
+          title: "Hosting & Maintenance",
+          text: "Performance, security, updates and ongoing support.",
         },
         {
-          title: "Beauty & Aesthetics",
-          text: "Appointment systems designed for salons, clinics and beauty businesses.",
-        },
-        {
-          title: "Business Websites",
-          text: "Construction, services, local businesses and industry — built to convert.",
-        },
-        {
-          title: "Custom Digital Systems",
-          text: "Outside the standard package? We design and build the solution from zero.",
+          title: "Automations",
+          text: "Emails, notifications and automatic workflows that remove repetitive tasks.",
         },
       ],
     },
@@ -391,12 +432,34 @@ export const translations: Record<Language, Dictionary> = {
       titleLine2: "BUILD WEBSITES.",
       text: "KANOY creates digital experiences, websites and custom systems designed around the way a business actually operates. Every project starts from the client's reality — the bookings, the calendars, the customers, the pressure of a real operation — and ends as something people remember after they close the tab.",
     },
+    problem: {
+      eyebrow: "The problem",
+      titleLine1: "Most websites",
+      titleLine2: "aren't doing their job.",
+      subtitle: "Simple problems that drive visitors away and limit your business's growth.",
+      items: [
+        { title: "Slow", text: "Visitors give up waiting too long." },
+        { title: "Not mobile-friendly", text: "Poor experience on phones." },
+        { title: "Outdated design", text: "Comes across as unprofessional." },
+        { title: "Lack of clarity", text: "Visitors don't understand what you do." },
+        { title: "Don't generate results", text: "Lots of visitors, but few conversions." },
+        { title: "Hard to manage", text: "Simple updates become complicated." },
+      ],
+      badges: {
+        slow: "Slow sites",
+        mobile: "Not mobile-friendly",
+        design: "Outdated design",
+        conversions: "Few conversions",
+      },
+      scrollHint: "Scroll to explore",
+    },
     contact: {
       titleLine1: "LET'S BUILD",
       titleLine2: "SOMETHING.",
       subtitle: "Tell us what you're thinking.",
       contactBtn: "Contact KANOY",
       footerTagline: "KANOY — Digital studio",
+      copyright: "© 2026 KANOY. All rights reserved.",
       modal: {
         title: "How would you like to reach us?",
         emailTitle: "Send a direct email",
