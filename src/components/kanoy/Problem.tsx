@@ -2,7 +2,7 @@ import type { ComponentType } from "react";
 import { BarChart3, Clock, EyeOff, MessageCircle, Settings, Smartphone } from "lucide-react";
 import { useReveal } from "./anim";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
-import browserWindow from "@/assets/problem/browser-window.png";
+import browserWindow from "@/assets/problem/browser-window.webp";
 
 const ITEM_ICONS = [Clock, Smartphone, EyeOff, MessageCircle, BarChart3, Settings];
 

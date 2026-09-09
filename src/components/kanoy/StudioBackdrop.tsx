@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import studio from "@/assets/branding/studio-depth.png";
-import studioMobile from "@/assets/branding/studio-depth-mobile.png";
+import studio from "@/assets/branding/studio-depth.webp";
+import studioMobile from "@/assets/branding/studio-depth-mobile.webp";
 import { clamp, mix, useIsMobile } from "./anim";
 
 // Combined scroll distance of the two sections this backdrop sits behind:

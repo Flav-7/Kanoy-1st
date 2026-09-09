@@ -1,7 +1,7 @@
 import { MINI_SITES } from "./mini-sites-data";
 import { MiniSite } from "./mini-sites";
 import { clamp, ease, mix, range, useCornerLogoOnLight, useIsMobile, useScrollProgress } from "./anim";
-import kanoyK from "@/assets/branding/kanoy-k.png";
+import kanoyK from "@/assets/branding/kanoy-k.webp";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 
 /** Placement of a screen inside the studio volume. */

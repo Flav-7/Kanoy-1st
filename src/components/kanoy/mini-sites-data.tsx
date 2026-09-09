@@ -9,7 +9,7 @@
  * Fast Refresh for the component file if they're combined.
  */
 import type { CSSProperties, ReactNode } from "react";
-import tierraYMar from "@/assets/portfolio/tierra-y-mar.png";
+import tierraYMar from "@/assets/portfolio/tierra-y-mar.webp";
 
 export const W = 420;
 export const H = 264;

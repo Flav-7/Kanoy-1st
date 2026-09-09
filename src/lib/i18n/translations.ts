@@ -42,6 +42,8 @@ export type Dictionary = {
     contactBtn: string;
     footerTagline: string;
     copyright: string;
+    termsLink: string;
+    privacyLink: string;
     support: { title: string; phone: string; hours: string };
     modal: {
       title: string;
@@ -184,6 +186,8 @@ export const translations: Record<Language, Dictionary> = {
       contactBtn: "Contactar a KANOY",
       footerTagline: "KANOY — Estúdio digital",
       copyright: "© 2026 KANOY. Todos os direitos reservados.",
+      termsLink: "Termos e Condições",
+      privacyLink: "Política de Privacidade",
       support: { title: "Apoio ao cliente", phone: "+351 923 250 729", hours: "Seg — Sex · 10:00 — 16:00" },
       modal: {
         title: "Como prefer falar connosco?",
@@ -324,6 +328,8 @@ export const translations: Record<Language, Dictionary> = {
       contactBtn: "Contactar con KANOY",
       footerTagline: "KANOY — Estudio digital",
       copyright: "© 2026 KANOY. Todos los derechos reservados.",
+      termsLink: "Términos y Condiciones",
+      privacyLink: "Política de Privacidad",
       support: { title: "Atención al cliente", phone: "+351 923 250 729", hours: "Lun — Vie · 10:00 — 16:00" },
       modal: {
         title: "¿Cómo prefieres hablar con nosotros?",
@@ -463,6 +469,8 @@ export const translations: Record<Language, Dictionary> = {
       contactBtn: "Contact KANOY",
       footerTagline: "KANOY — Digital studio",
       copyright: "© 2026 KANOY. All rights reserved.",
+      termsLink: "Terms & Conditions",
+      privacyLink: "Privacy Policy",
       support: { title: "Customer support", phone: "+351 923 250 729", hours: "Mon — Fri · 10:00 — 16:00" },
       modal: {
         title: "How would you like to reach us?",
