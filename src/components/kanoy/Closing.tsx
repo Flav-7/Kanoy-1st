@@ -1,9 +1,25 @@
 import { Clock, Phone } from "lucide-react";
+import { Link } from "@tanstack/react-router";
 import { useReveal } from "./anim";
-import kanoyK from "@/assets/branding/kanoy-k.png";
+import kanoyK from "@/assets/branding/kanoy-k.webp";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import { ContactModal } from "./ContactModal";
 import { InstagramLink } from "./InstagramLink";
+
+function LegalLinks({ className }: { className?: string }) {
+  const { dict } = useLanguage();
+  return (
+    <nav className={`flex items-center gap-3 ${className ?? ""}`} aria-label="Legal">
+      <Link to="/termos" className="transition-colors hover:text-neutral-300">
+        {dict.contact.termsLink}
+      </Link>
+      <span aria-hidden="true">·</span>
+      <Link to="/privacidade" className="transition-colors hover:text-neutral-300">
+        {dict.contact.privacyLink}
+      </Link>
+    </nav>
+  );
+}
 
 /** Phone, hours and Instagram — laid out differently per breakpoint by the
  *  two call sites below, not by this component itself. */
@@ -90,10 +106,11 @@ export function Contact({ autoOpenModal }: { autoOpenModal?: boolean | undefined
       className="relative overflow-hidden bg-ink px-6 py-40 text-studio-foreground md:px-14 md:py-56"
       aria-label="Contact KANOY"
     >
-      <div className="light-beam" style={{ opacity: 0.35 }} />
-      <span className="absolute bottom-6 left-6 z-50 text-[10px] uppercase tracking-[0.2em] text-neutral-400/70 md:bottom-10 md:left-10">
-        {dict.contact.copyright}
-      </span>
+      <div className="light-beam" style={{ opacity: 0.35, top: "-10%" }} />
+      <div className="absolute bottom-6 left-6 z-50 flex flex-col gap-1.5 text-[10px] uppercase tracking-[0.2em] text-neutral-400/70 md:bottom-10 md:left-10">
+        <span>{dict.contact.copyright}</span>
+        <LegalLinks />
+      </div>
       <div className="relative mx-auto max-w-5xl text-center">
         <Reveal>
           <h2

@@ -53,7 +53,13 @@ export function QuickNav() {
 
   const items = [
     { id: "about", target: "about-title", align: 0.5, label: dict.nav.about, subtitle: dict.about.eyebrow },
-    { id: "problem", label: dict.nav.problem, subtitle: dict.problem.eyebrow },
+    // The section itself starts with a large top padding, so landing on its
+    // very top edge (the default align:0) leaves mostly blank space above
+    // the fold on short mobile viewports. Skip past most of that padding
+    // there only — desktop has the room for it to look fine as-is. Keep
+    // some of it (rather than skipping all 128px) so the eyebrow doesn't
+    // land directly under the fixed corner logo, which sits ~40px tall.
+    { id: "problem", label: dict.nav.problem, subtitle: dict.problem.eyebrow, mobileOffset: 65 },
     { id: "services", label: dict.nav.services, subtitle: dict.services.eyebrow },
     { id: "process", label: dict.nav.process, subtitle: dict.process.eyebrow },
     {
@@ -67,6 +73,7 @@ export function QuickNav() {
     id: (typeof SECTION_IDS)[number];
     target?: string;
     align?: number;
+    mobileOffset?: number;
     label: string;
     subtitle: string;
   }[];
@@ -77,7 +84,8 @@ export function QuickNav() {
     const align = item.align ?? 0;
     const rect = el.getBoundingClientRect();
     const desiredViewportTop = (window.innerHeight - rect.height) * align;
-    const targetTop = rect.top + window.scrollY - desiredViewportTop;
+    let targetTop = rect.top + window.scrollY - desiredViewportTop;
+    if (item.mobileOffset && window.innerWidth < 768) targetTop += item.mobileOffset;
     window.scrollTo({ top: targetTop, behavior: "smooth" });
     setOpen(false);
   };
