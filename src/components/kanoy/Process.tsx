@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { useScrollProgress } from "./anim";
 import { folderPath, useFolderSize } from "./folder-shape";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
@@ -64,8 +64,8 @@ function StepFolder({
           onClick();
         }
       }}
-      className={`relative mx-auto w-full shrink-0 cursor-pointer text-left transition-[padding] duration-500 ease-out ${
-        isActive ? "min-h-[280px] px-8 pb-8 pt-4 md:px-12 md:pb-10" : "px-8 pb-10 pt-4"
+      className={`relative mx-auto w-full shrink-0 cursor-pointer text-left transition-[padding] duration-150 ease-out ${
+        isActive ? "min-h-[280px] px-8 pb-8 pt-4 md:px-12 md:pb-10" : "min-h-0 px-8 pb-10 pt-4"
       }`}
       style={{
         maxWidth: `${isActive ? 100 : widthPct}%`,
@@ -83,7 +83,7 @@ function StepFolder({
           ? "0 24px 48px -16px color-mix(in oklab, var(--accent) 30%, black 70%)"
           : "none",
         transition:
-          "padding 500ms ease-out, background 500ms ease-out, max-width 500ms ease-out, min-height 500ms ease-out, transform 500ms ease-out, box-shadow 500ms ease-out, margin-top 500ms ease-out",
+          "padding 150ms ease-out, background 150ms ease-out, max-width 150ms ease-out, min-height 150ms ease-out, transform 150ms ease-out, box-shadow 150ms ease-out, margin-top 150ms ease-out",
       }}
     >
       {d && (
@@ -115,7 +115,7 @@ function StepFolder({
           {stepLabel} {step.n}
         </div>
         <div
-          className={`grid transition-all duration-500 ease-out ${
+          className={`grid transition-all duration-150 ease-out ${
             isActive ? "mt-5 grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
           }`}
         >
@@ -138,24 +138,11 @@ export function Process() {
   const [hoverIndex, setHoverIndex] = useState<number | null>(null);
   const activeIndex = hoverIndex ?? 0;
 
-  // Opening a step resizes it, so a cursor merely passing over 03/04 on its
-  // way to 05 would trigger a reflow before ever arriving. Committing only
-  // after a brief dwell (like a hover-intent menu) means transit doesn't
-  // resize anything; only the step the cursor actually settles on does.
-  // The dwell has to be long enough to actually filter normal mouse transit
-  // across a ~40px tab sliver (a handful of ms isn't) or every folder the
-  // cursor crosses on the way to its target still briefly opens and closes.
-  const HOVER_DWELL_MS = 90;
-  const hoverTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
   const openStep = (i: number) => {
     if (hoverIndex === i) return;
-    if (hoverTimeout.current) clearTimeout(hoverTimeout.current);
-    hoverTimeout.current = setTimeout(() => setHoverIndex(i), HOVER_DWELL_MS);
+    setHoverIndex(i);
   };
-  const closeSteps = () => {
-    if (hoverTimeout.current) clearTimeout(hoverTimeout.current);
-    hoverTimeout.current = setTimeout(() => setHoverIndex(null), HOVER_DWELL_MS);
-  };
+  const closeSteps = () => setHoverIndex(null);
 
   return (
     <section

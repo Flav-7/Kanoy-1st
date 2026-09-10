@@ -38,7 +38,8 @@ const COPY: Record<
         heading: "2. Que dados recolhemos",
         body: [
           "Recolhemos apenas os dados que nos fornece voluntariamente através do formulário de contacto: nome, email, telefone (opcional), o conteúdo da mensagem e o idioma em que prefere ser contactado.",
-          "Este website não utiliza cookies de rastreio nem ferramentas de analytics de terceiros. É guardada apenas a sua preferência de idioma no armazenamento local (localStorage) do seu navegador, que nunca é enviada para os nossos servidores.",
+          "Guardamos ainda a sua preferência de idioma no armazenamento local (localStorage) do seu navegador, que nunca é enviada para os nossos servidores.",
+          "Este website pode utilizar cookies de analytics para perceber como os visitantes usam o site. Estes cookies só são ativados se aceitar através do banner apresentado na sua primeira visita; se recusar, ou não escolher, não são colocados quaisquer cookies de analytics. Pode alterar a sua escolha a qualquer momento limpando os dados de navegação deste site no seu browser.",
         ],
       },
       {
@@ -106,7 +107,8 @@ const COPY: Record<
         heading: "2. Qué datos recogemos",
         body: [
           "Recogemos únicamente los datos que nos facilitas voluntariamente a través del formulario de contacto: nombre, email, teléfono (opcional), el contenido del mensaje y el idioma en el que prefieres ser contactado.",
-          "Este sitio web no utiliza cookies de rastreo ni herramientas de analítica de terceros. Solo se guarda tu preferencia de idioma en el almacenamiento local (localStorage) de tu navegador, que nunca se envía a nuestros servidores.",
+          "Guardamos también tu preferencia de idioma en el almacenamiento local (localStorage) de tu navegador, que nunca se envía a nuestros servidores.",
+          "Este sitio web puede utilizar cookies de analítica para entender cómo los visitantes usan el sitio. Estos cookies solo se activan si los aceptas a través del banner que aparece en tu primera visita; si los rechazas, o no eliges, no se colocará ningún cookie de analítica. Puedes cambiar tu elección en cualquier momento borrando los datos de navegación de este sitio en tu navegador.",
         ],
       },
       {
@@ -174,7 +176,8 @@ const COPY: Record<
         heading: "2. What data we collect",
         body: [
           "We only collect the data you voluntarily give us through the contact form: name, email, phone (optional), the content of your message, and your preferred reply language.",
-          "This website does not use tracking cookies or third-party analytics tools. Only your language preference is stored in your browser's local storage (localStorage), which never leaves your device.",
+          "We also store your language preference in your browser's local storage (localStorage), which never leaves your device.",
+          "This website may use analytics cookies to understand how visitors use the site. These cookies are only activated if you accept them via the banner shown on your first visit; if you decline, or make no choice, no analytics cookies are set. You can change your choice at any time by clearing this site's browsing data in your browser.",
         ],
       },
       {

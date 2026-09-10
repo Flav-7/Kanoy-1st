@@ -1,4 +1,4 @@
-import { Clock, Phone } from "lucide-react";
+import { Clock, Mail, Phone } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { useReveal } from "./anim";
 import kanoyK from "@/assets/branding/kanoy-k.webp";
@@ -26,11 +26,13 @@ function LegalLinks({ className }: { className?: string }) {
 function SupportInfo({
   title,
   phone,
+  email,
   hours,
   align,
 }: {
   title: string;
   phone: string;
+  email: string;
   hours: string;
   align: "center" | "right";
 }) {
@@ -42,6 +44,10 @@ function SupportInfo({
       <div className={`mt-1.5 flex items-center gap-1.5 ${justify}`}>
         <Phone className="h-3 w-3" strokeWidth={1.5} />
         <span>{phone}</span>
+      </div>
+      <div className={`mt-1 flex items-center gap-1.5 ${justify}`}>
+        <Mail className="h-3 w-3" strokeWidth={1.5} />
+        <span>{email}</span>
       </div>
       <div className={`mt-1 flex items-center gap-1.5 ${justify}`}>
         <Clock className="h-3 w-3" strokeWidth={1.5} />
@@ -144,6 +150,7 @@ export function Contact({ autoOpenModal }: { autoOpenModal?: boolean | undefined
             <SupportInfo
               title={dict.contact.support.title}
               phone={dict.contact.support.phone}
+              email={dict.contact.support.email}
               hours={dict.contact.support.hours}
               align="center"
             />
@@ -155,6 +162,7 @@ export function Contact({ autoOpenModal }: { autoOpenModal?: boolean | undefined
         <SupportInfo
           title={dict.contact.support.title}
           phone={dict.contact.support.phone}
+          email={dict.contact.support.email}
           hours={dict.contact.support.hours}
           align="right"
         />

@@ -44,7 +44,7 @@ export type Dictionary = {
     copyright: string;
     termsLink: string;
     privacyLink: string;
-    support: { title: string; phone: string; hours: string };
+    support: { title: string; phone: string; email: string; hours: string };
     modal: {
       title: string;
       emailTitle: string;
@@ -69,6 +69,12 @@ export type Dictionary = {
       retry: string;
       close: string;
     };
+  };
+  cookies: {
+    message: string;
+    privacyLink: string;
+    decline: string;
+    accept: string;
   };
 };
 
@@ -188,9 +194,14 @@ export const translations: Record<Language, Dictionary> = {
       copyright: "© 2026 KANOY. Todos os direitos reservados.",
       termsLink: "Termos e Condições",
       privacyLink: "Política de Privacidade",
-      support: { title: "Apoio ao cliente", phone: "+351 923 250 729", hours: "Seg — Sex · 10:00 — 16:00" },
+      support: {
+        title: "Apoio ao cliente",
+        phone: "+351 923 250 729",
+        email: "geral@kanoy.pt",
+        hours: "Seg — Sex · 10:00 — 16:00",
+      },
       modal: {
-        title: "Como prefer falar connosco?",
+        title: "Como prefere falar connosco?",
         emailTitle: "Enviar email direto",
         emailDesc: "Abra o seu email com tudo pronto — escreva e envie.",
         formTitle: "Preencher formulário",
@@ -213,6 +224,13 @@ export const translations: Record<Language, Dictionary> = {
         retry: "Tentar novamente",
         close: "Fechar",
       },
+    },
+    cookies: {
+      message:
+        "Usamos cookies de analytics para perceber como o site é usado. Só os ativamos com a sua autorização.",
+      privacyLink: "Saber mais",
+      decline: "Recusar",
+      accept: "Aceitar",
     },
   },
   es: {
@@ -330,7 +348,12 @@ export const translations: Record<Language, Dictionary> = {
       copyright: "© 2026 KANOY. Todos los derechos reservados.",
       termsLink: "Términos y Condiciones",
       privacyLink: "Política de Privacidad",
-      support: { title: "Atención al cliente", phone: "+351 923 250 729", hours: "Lun — Vie · 10:00 — 16:00" },
+      support: {
+        title: "Atención al cliente",
+        phone: "+351 923 250 729",
+        email: "geral@kanoy.pt",
+        hours: "Lun — Vie · 10:00 — 16:00",
+      },
       modal: {
         title: "¿Cómo prefieres hablar con nosotros?",
         emailTitle: "Enviar email directo",
@@ -355,6 +378,13 @@ export const translations: Record<Language, Dictionary> = {
         retry: "Intentar de nuevo",
         close: "Cerrar",
       },
+    },
+    cookies: {
+      message:
+        "Usamos cookies de analítica para entender cómo se usa el sitio. Solo los activamos con tu autorización.",
+      privacyLink: "Saber más",
+      decline: "Rechazar",
+      accept: "Aceptar",
     },
   },
   en: {
@@ -471,7 +501,12 @@ export const translations: Record<Language, Dictionary> = {
       copyright: "© 2026 KANOY. All rights reserved.",
       termsLink: "Terms & Conditions",
       privacyLink: "Privacy Policy",
-      support: { title: "Customer support", phone: "+351 923 250 729", hours: "Mon — Fri · 10:00 — 16:00" },
+      support: {
+        title: "Customer support",
+        phone: "+351 923 250 729",
+        email: "geral@kanoy.pt",
+        hours: "Mon — Fri · 10:00 — 16:00",
+      },
       modal: {
         title: "How would you like to reach us?",
         emailTitle: "Send a direct email",
@@ -496,6 +531,12 @@ export const translations: Record<Language, Dictionary> = {
         retry: "Try again",
         close: "Close",
       },
+    },
+    cookies: {
+      message: "We use analytics cookies to understand how the site is used. We only turn them on with your consent.",
+      privacyLink: "Learn more",
+      decline: "Decline",
+      accept: "Accept",
     },
   },
 };
