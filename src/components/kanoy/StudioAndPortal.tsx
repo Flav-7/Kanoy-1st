@@ -1,8 +1,14 @@
+import { useEffect, useLayoutEffect, useRef } from "react";
 import { MINI_SITES } from "./mini-sites-data";
 import { MiniSite } from "./mini-sites";
-import { clamp, ease, mix, range, useCornerLogoOnLight, useIsMobile, useScrollProgress } from "./anim";
+import { clamp, ease, mix, range, useCornerLogoOnLight, useIsMobile } from "./anim";
 import kanoyK from "@/assets/branding/kanoy-k.webp";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
+
+// `useLayoutEffect` warns on the server (TanStack Start renders this on the
+// server too) — this scene is entirely scroll-driven, so it has nothing
+// meaningful to show until it's running on the client anyway.
+const useIsomorphicLayoutEffect = typeof window !== "undefined" ? useLayoutEffect : useEffect;
 
 /** Placement of a screen inside the studio volume. */
 type Placement = {
@@ -44,46 +50,31 @@ const TOTAL_VH = STUDIO_VH + PORTAL_VH;
 const STUDIO_FRAC = STUDIO_VH / TOTAL_VH;
 const PORTAL_FRAC = PORTAL_VH / TOTAL_VH;
 
+/** One floating portfolio screen. Its own DOM node never unmounts while the
+ *  scene is alive — the parent's per-frame loop toggles `display`,
+ *  `transform`, `opacity` and `filter` on it directly via `screenRef`
+ *  instead of through React state, so scrolling through the whole 3D walk-
+ *  through never triggers a React re-render. */
 function Screen({
   place,
   index,
-  camera,
-  reveal,
+  screenRef,
 }: {
   place: Placement;
   index: number;
-  camera: number;
-  reveal: number;
+  screenRef: (el: HTMLDivElement | null) => void;
 }) {
   const site = MINI_SITES[index % MINI_SITES.length]!;
-  const depth = place.z - camera;
-  const visible = depth > -320 && depth < 3400;
-  if (!visible) return null;
-
-  const near = clamp((depth + 300) / 460); // fade as it passes the camera
-  const far = 1 - clamp((depth - 2300) / 1100); // fade in from the back
-  const opacity = clamp(near * far) * reveal;
-  // Real project screenshots stay crisp and clickable for their whole time
-  // on screen — the depth blur is only for the fake mock screens, where it
-  // doesn't matter that detail is lost while it's far from the camera.
-  const blur = site.image
-    ? 0
-    : mix(4, 0, clamp((depth - 60) / 340)) + clamp((depth - 2100) / 1300) * 3.5;
-  const drift = place.float ? Math.sin(camera / 900 + index) * 10 * place.float : 0;
 
   return (
     <div
+      ref={screenRef}
       className="absolute left-1/2 top-1/2"
-      style={{
-        transform: `translate3d(calc(-50% + ${place.x}vw), calc(-50% + ${place.y + drift * 0.1}vh), ${-depth}px) rotateY(${place.rotY}deg) rotateX(${place.rotX ?? 0}deg)`,
-        transformStyle: "preserve-3d",
-        opacity,
-        // real screenshots (site.image) never blur — blur is always exactly
-        // 0 for them (see `blur` above) — so skip the filter entirely
-        // instead of forcing a `blur(0px)` layer on every scroll frame.
-        filter: site.image ? undefined : `blur(${blur.toFixed(2)}px)`,
-        willChange: "transform, opacity",
-      }}
+      // opacity:0 matches every placement's computed value at scroll
+      // position 0 (the reveal hasn't started yet) — a static, SSR-safe
+      // stand-in for the very first paint, before the scroll effect below
+      // has run and taken over with the real per-frame value.
+      style={{ transformStyle: "preserve-3d", willChange: "transform, opacity", opacity: 0 }}
     >
       {site.location && (
         <div
@@ -113,221 +104,6 @@ function Screen({
   );
 }
 
-/** The studio walk-through: floating portfolio screens + the travelling K mark. */
-function StudioAct({ p }: { p: number }) {
-  const { dict } = useLanguage();
-  const onLight = useCornerLogoOnLight();
-  const isMobile = useIsMobile();
-  const camera = p * CAMERA_TRAVEL;
-  const reveal = range(p, 0.03, 0.11);
-
-  const introOut = range(p, 0.02, 0.12);
-  const toCorner = ease(introOut);
-  const walkLabel = range(p, 0.13, 0.2) * (1 - range(p, 0.86, 0.96));
-
-  // The hero mark travels from big-and-centred to the small top-left corner
-  // logo as the page moves from the first screen into the second — one
-  // continuous fixed element, not a separate logo swapped in after a fade.
-  // The anchor point sits at the seam between icon and text: large, the K
-  // sits above it and "Kanoy" below (a stack); small, the K sits to its
-  // left and "Kanoy" to its right (a row) — icon and text are positioned
-  // independently off that shared anchor so the seam can rotate smoothly
-  // from a vertical stack to a horizontal row without any layout snap.
-  // On narrow mobile viewports, vh and vw diverge a lot more than on
-  // desktop, so the corner icon (sized in vh, positioned in vw) needs a
-  // bigger left inset there or its own width pushes it off the left edge.
-  const markLeft = mix(50, isMobile ? 11 : 2, toCorner); // vw
-  const markTop = mix(isMobile ? 44 : 46, 2.4, toCorner); // vh
-  const markIconVh = mix(isMobile ? 22 : 40, isMobile ? 4.6 : 3.4, toCorner);
-  const markTextVw = mix(isMobile ? 10.5 : 7, isMobile ? 2.3 : 1.5, toCorner);
-  const markGapVw = mix(0.1, 0.5, toCorner);
-
-  // Icon: stacked -> centred above the anchor (-50%,-100%); row -> flush left of it (-100%,-50%)
-  const iconTx = mix(-50, -100, toCorner);
-  const iconTy = mix(-100, -50, toCorner);
-  const iconGapX = mix(0, -markGapVw / 2, toCorner);
-  const iconGapY = mix(-markGapVw / 2, 0, toCorner);
-
-  // Text: stacked -> centred below the anchor (-50%,0%); row -> flush right of it (0%,-50%)
-  const textTx = mix(-50, 0, toCorner);
-  const textTy = mix(0, -50, toCorner);
-  const textGapX = mix(0, markGapVw / 2, toCorner);
-  const textGapY = mix(markGapVw / 2, 0, toCorner);
-
-  return (
-    <>
-      <div className="light-beam" style={{ opacity: mix(0.35, 0.8, p) }} />
-
-      {/* 3D volume */}
-      <div className="camera">
-        <div className="world">
-          {PLACEMENTS.map((place, i) => (
-            <Screen key={i} place={place} index={i} camera={camera} reveal={reveal} />
-          ))}
-        </div>
-      </div>
-
-      {/* opening title */}
-      <div
-        className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center px-6 text-center"
-        style={{
-          opacity: 1 - introOut,
-          transform: `translate3d(0,${introOut * -6}vh,0) scale(${1 + introOut * 0.12})`,
-          filter: `blur(${introOut * 12}px)`,
-        }}
-      >
-        {/* spacer matching the travelling mark's footprint so the tagline/hint below keep their spot */}
-        <div aria-hidden className={isMobile ? "h-[49vh]" : "h-[68vh]"} />
-        <p className="mt-6 max-w-xl whitespace-pre-line text-balance font-body text-[0.78rem] uppercase tracking-[0.32em] text-studio-muted md:text-base">
-          {dict.hero.tagline}
-        </p>
-        <span className="mt-14 text-[10px] uppercase tracking-[0.4em] text-accent scroll-hint md:mt-5">
-          {dict.hero.scrollHint}
-        </span>
-      </div>
-
-      {/* the K + "Kanoy" mark itself — fixed to the viewport so it can
-          travel from the big centred hero position into the persistent
-          top-left corner logo as the page scrolls into the second screen,
-          then stays there for the rest of the site */}
-      <div
-        className="pointer-events-none fixed z-40"
-        style={{ left: `${markLeft}vw`, top: `${markTop}vh` }}
-      >
-        <img
-          src={kanoyK}
-          alt=""
-          aria-hidden
-          width={1024}
-          height={1024}
-          className="k-halo k-glow hero-k-shine absolute"
-          style={{
-            left: 0,
-            top: 0,
-            height: `${markIconVh}vh`,
-            width: "auto",
-            maxWidth: "none",
-            transform: `translate(${iconTx}%, ${iconTy}%) translate(${iconGapX}vw, ${iconGapY}vw)`,
-          }}
-        />
-        <span
-          className={`hero-text-shine absolute whitespace-nowrap leading-none tracking-[-0.01em] transition-colors duration-300 ${
-            onLight ? "text-ink" : "text-studio-foreground"
-          }`}
-          style={{
-            left: 0,
-            top: 0,
-            fontSize: `${markTextVw}vw`,
-            fontFamily: "'Fredoka', sans-serif",
-            fontWeight: 400,
-            transform: `translate(${textTx}%, ${textTy}%) translate(${textGapX}vw, ${textGapY}vw)`,
-          }}
-        >
-          Kanoy
-        </span>
-      </div>
-
-      {/* mid-journey label */}
-      <div
-        className="pointer-events-none absolute bottom-10 left-6 md:left-14"
-        style={{ opacity: walkLabel, transform: `translateY(${(1 - walkLabel) * 20}px)` }}
-      >
-        <div className="text-sm uppercase tracking-[0.42em] text-accent md:text-base">
-          {dict.studio.label}
-        </div>
-        <div className="mt-3 max-w-sm font-body text-base leading-relaxed text-studio-muted md:text-lg">
-          {dict.studio.text}
-        </div>
-      </div>
-
-      {/* depth ruler */}
-      <div className="pointer-events-none absolute right-6 top-1/2 hidden -translate-y-1/2 md:block">
-        <div className="depth-ruler">
-          <span style={{ height: `${p * 100}%` }} />
-        </div>
-      </div>
-    </>
-  );
-}
-
-/** The digital-core scene: ring formation + heading, right after the studio act. */
-function PortalAct({ p }: { p: number }) {
-  const { dict } = useLanguage();
-  const isMobile = useIsMobile();
-
-  const open = range(p, 0, 0.4);
-  const rush = range(p, 0.45, 0.86);
-
-  const textIn = range(p, 0, 0.16);
-  const textOut = range(p, 0.6, 0.76);
-  const textOpacity = clamp(textIn * (1 - textOut));
-
-  const rings = Array.from({ length: RINGS }).map((_, i) => {
-    const stagger = i / RINGS;
-    const localP = clamp((open - stagger * 0.5) / (1 - stagger * 0.5));
-    // On mobile the rings render inside a plain absolutely-positioned box
-    // instead of the perspective/preserve-3d "camera" used on desktop, and
-    // are capped so they never grow much past the screen width — vmin is
-    // the viewport's narrower side, which on a portrait phone is its
-    // width, so anything past ~100vmin was overflowing left and right of
-    // the screen instead of feeling like a full-bleed effect.
-    const size = isMobile
-      ? Math.min(94, mix(18, 40 + i * 6, ease(localP)) + rush * (10 + i * 4))
-      : mix(30, 130 + i * 26, ease(localP)) + rush * (260 + i * 80);
-    const hue = i % 2 === 0 ? "var(--accent)" : "var(--accent-2)";
-    return (
-      <div
-        key={i}
-        className={`portal-ring ${i % 2 ? "portal-ring-reverse" : ""}`}
-        style={{
-          width: `${size}vmin`,
-          height: `${size}vmin`,
-          borderColor: hue,
-          color: hue,
-          borderWidth: mix(1, 2.4, i / RINGS),
-          opacity: clamp(localP) * (1 - rush * 0.45),
-          animationDuration: `${13 + i * 3}s`,
-        }}
-      />
-    );
-  });
-
-  return (
-    // Portal has no clickable content of its own, and it's now a sibling
-    // of the studio act in the same stacking context (they share one
-    // sticky container) — without this, its rings sit invisibly over the
-    // portfolio screens even at opacity 0 and swallow clicks meant for them.
-    <div className="pointer-events-none absolute inset-0">
-      <div className="portal-void" style={{ opacity: mix(0.35, 1, open) }} />
-
-      {isMobile ? (
-        <div className="pointer-events-none absolute inset-0">{rings}</div>
-      ) : (
-        <div className="camera">
-          <div className="world" style={{ transform: `scale(${1 + rush * 2.4})` }}>
-            {rings}
-          </div>
-        </div>
-      )}
-
-      <div
-        className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center px-6 text-center"
-        style={{ opacity: textOpacity }}
-      >
-        <span className="eyebrow glitch-text text-accent" data-text={dict.portal.eyebrow}>
-          {dict.portal.eyebrow}
-        </span>
-        <h2
-          className="glitch-text mt-5 text-balance font-display text-[9vw] font-semibold leading-[0.95] tracking-tight text-studio-foreground md:text-[5vw]"
-          data-text={dict.portal.line}
-        >
-          {dict.portal.line}
-        </h2>
-      </div>
-    </div>
-  );
-}
-
 /**
  * The studio walk-through and the Portal "digital core" scene, fused into
  * one continuously scroll-jacked section. They used to be two separate
@@ -337,15 +113,218 @@ function PortalAct({ p }: { p: number }) {
  * only one pin for the whole combined distance, split into two consecutive
  * progress slices (studioP, then portalP) so each act's timing works
  * exactly as it did on its own.
+ *
+ * Every value driven by scroll (camera position, the 10 screens' transform/
+ * opacity/filter, the travelling K mark, the portal rings, ...) used to live
+ * in React state, so this whole tree re-rendered on every single scroll
+ * frame across ~11 screen-heights of scroll — the dominant cause of the
+ * scroll jank reported on kanoy.pt. It's now one rAF-driven loop that reads
+ * scroll position and writes styles straight to refs, bypassing React's
+ * render/reconciliation for the hot path entirely; React only re-renders
+ * this tree for genuinely rare state (language switch, mobile breakpoint,
+ * the corner-logo light/dark toggle).
  */
 export function StudioAndPortal() {
-  const { ref, p } = useScrollProgress<HTMLDivElement>();
-  const studioP = clamp(p / STUDIO_FRAC);
-  const portalP = clamp((p - STUDIO_FRAC) / PORTAL_FRAC);
+  const { dict } = useLanguage();
+  const onLight = useCornerLogoOnLight();
+  const isMobile = useIsMobile();
+  const isMobileRef = useRef(isMobile);
+  isMobileRef.current = isMobile;
+
+  const sectionRef = useRef<HTMLDivElement>(null);
+  const lightBeamRef = useRef<HTMLDivElement>(null);
+  const openingTitleRef = useRef<HTMLDivElement>(null);
+  const kMarkWrapRef = useRef<HTMLDivElement>(null);
+  const kIconRef = useRef<HTMLImageElement>(null);
+  const kTextRef = useRef<HTMLSpanElement>(null);
+  const walkLabelRef = useRef<HTMLDivElement>(null);
+  const depthRulerSpanRef = useRef<HTMLSpanElement>(null);
+  const screenRefs = useRef<(HTMLDivElement | null)[]>([]);
+
+  const portalVoidRef = useRef<HTMLDivElement>(null);
+  const portalWorldRef = useRef<HTMLDivElement>(null);
+  const portalTextRef = useRef<HTMLDivElement>(null);
+  const ringRefs = useRef<(HTMLDivElement | null)[]>([]);
+
+  useIsomorphicLayoutEffect(() => {
+    let raf = 0;
+
+    const applyFrame = (p: number) => {
+      const mobile = isMobileRef.current;
+      const studioP = clamp(p / STUDIO_FRAC);
+      const portalP = clamp((p - STUDIO_FRAC) / PORTAL_FRAC);
+
+      // ---- Studio act ----
+      const camera = studioP * CAMERA_TRAVEL;
+      const reveal = range(studioP, 0.03, 0.11);
+      const introOut = range(studioP, 0.02, 0.12);
+      const toCorner = ease(introOut);
+      const walkLabel = range(studioP, 0.13, 0.2) * (1 - range(studioP, 0.86, 0.96));
+
+      if (lightBeamRef.current)
+        lightBeamRef.current.style.opacity = String(mix(0.35, 0.8, studioP));
+
+      if (openingTitleRef.current) {
+        const el = openingTitleRef.current;
+        el.style.opacity = String(1 - introOut);
+        el.style.transform = `translate3d(0,${introOut * -6}vh,0) scale(${1 + introOut * 0.12})`;
+        el.style.filter = `blur(${introOut * 12}px)`;
+      }
+
+      // The hero mark travels from big-and-centred to the small top-left
+      // corner logo as the page moves from the first screen into the
+      // second. See the anchor/stack-to-row explanation this used to carry
+      // as a comment on the old per-render version — the math is unchanged,
+      // only how it reaches the DOM.
+      const markLeft = mix(50, mobile ? 11 : 2, toCorner);
+      const markTop = mix(mobile ? 44 : 46, 2.4, toCorner);
+      const markIconVh = mix(mobile ? 22 : 40, mobile ? 4.6 : 3.4, toCorner);
+      const markTextVw = mix(mobile ? 10.5 : 7, mobile ? 2.3 : 1.5, toCorner);
+      const markGapVw = mix(0.1, 0.5, toCorner);
+      const iconTx = mix(-50, -100, toCorner);
+      const iconTy = mix(-100, -50, toCorner);
+      const iconGapX = mix(0, -markGapVw / 2, toCorner);
+      const iconGapY = mix(-markGapVw / 2, 0, toCorner);
+      const textTx = mix(-50, 0, toCorner);
+      const textTy = mix(0, -50, toCorner);
+      const textGapX = mix(0, markGapVw / 2, toCorner);
+      const textGapY = mix(markGapVw / 2, 0, toCorner);
+
+      if (kMarkWrapRef.current) {
+        kMarkWrapRef.current.style.left = `${markLeft}vw`;
+        kMarkWrapRef.current.style.top = `${markTop}vh`;
+      }
+      if (kIconRef.current) {
+        kIconRef.current.style.height = `${markIconVh}vh`;
+        kIconRef.current.style.transform = `translate(${iconTx}%, ${iconTy}%) translate(${iconGapX}vw, ${iconGapY}vw)`;
+      }
+      if (kTextRef.current) {
+        kTextRef.current.style.fontSize = `${markTextVw}vw`;
+        kTextRef.current.style.transform = `translate(${textTx}%, ${textTy}%) translate(${textGapX}vw, ${textGapY}vw)`;
+      }
+
+      if (walkLabelRef.current) {
+        walkLabelRef.current.style.opacity = String(walkLabel);
+        walkLabelRef.current.style.transform = `translateY(${(1 - walkLabel) * 20}px)`;
+      }
+
+      if (depthRulerSpanRef.current) depthRulerSpanRef.current.style.height = `${studioP * 100}%`;
+
+      for (let i = 0; i < PLACEMENTS.length; i++) {
+        const el = screenRefs.current[i];
+        if (!el) continue;
+        const place = PLACEMENTS[i]!;
+        const site = MINI_SITES[i % MINI_SITES.length]!;
+        const depth = place.z - camera;
+        const visible = depth > -320 && depth < 3400;
+        if (!visible) {
+          if (el.style.display !== "none") el.style.display = "none";
+          continue;
+        }
+        if (el.style.display === "none") el.style.display = "";
+
+        const near = clamp((depth + 300) / 460); // fade as it passes the camera
+        const far = 1 - clamp((depth - 2300) / 1100); // fade in from the back
+        const opacity = clamp(near * far) * reveal;
+        // Real project screenshots stay crisp for their whole time on
+        // screen — the depth blur is only for the fake mock screens.
+        const blur = site.image
+          ? 0
+          : mix(4, 0, clamp((depth - 60) / 340)) + clamp((depth - 2100) / 1300) * 3.5;
+        const drift = place.float ? Math.sin(camera / 900 + i) * 10 * place.float : 0;
+
+        el.style.transform = `translate3d(calc(-50% + ${place.x}vw), calc(-50% + ${place.y + drift * 0.1}vh), ${-depth}px) rotateY(${place.rotY}deg) rotateX(${place.rotX ?? 0}deg)`;
+        el.style.opacity = String(opacity);
+        el.style.filter = site.image ? "" : `blur(${blur.toFixed(2)}px)`;
+      }
+
+      // ---- Portal act ----
+      const open = range(portalP, 0, 0.4);
+      const rush = range(portalP, 0.45, 0.86);
+      const textIn = range(portalP, 0, 0.16);
+      const textOut = range(portalP, 0.6, 0.76);
+      const textOpacity = clamp(textIn * (1 - textOut));
+
+      if (portalVoidRef.current) portalVoidRef.current.style.opacity = String(mix(0.35, 1, open));
+      if (!mobile && portalWorldRef.current)
+        portalWorldRef.current.style.transform = `scale(${1 + rush * 2.4})`;
+      if (portalTextRef.current) portalTextRef.current.style.opacity = String(textOpacity);
+
+      for (let i = 0; i < RINGS; i++) {
+        const el = ringRefs.current[i];
+        if (!el) continue;
+        const stagger = i / RINGS;
+        const localP = clamp((open - stagger * 0.5) / (1 - stagger * 0.5));
+        // On mobile the rings render inside a plain absolutely-positioned
+        // box instead of the perspective/preserve-3d "camera" used on
+        // desktop, and are capped so they never grow much past the screen
+        // width — vmin is the viewport's narrower side, which on a
+        // portrait phone is its width, so anything past ~100vmin was
+        // overflowing left and right instead of feeling full-bleed.
+        const size = mobile
+          ? Math.min(94, mix(18, 40 + i * 6, ease(localP)) + rush * (10 + i * 4))
+          : mix(30, 130 + i * 26, ease(localP)) + rush * (260 + i * 80);
+        el.style.width = `${size}vmin`;
+        el.style.height = `${size}vmin`;
+        el.style.opacity = String(clamp(localP) * (1 - rush * 0.45));
+      }
+    };
+
+    const computeP = () => {
+      const el = sectionRef.current;
+      if (!el) return 0;
+      const r = el.getBoundingClientRect();
+      const total = r.height - window.innerHeight;
+      return total <= 0 ? 0 : clamp(-r.top / total, 0, 1);
+    };
+
+    let lastP = -1;
+    const tick = () => {
+      raf = 0;
+      const p = computeP();
+      if (Math.abs(p - lastP) <= 0.0008) return;
+      lastP = p;
+      applyFrame(p);
+    };
+    const onScroll = () => {
+      if (!raf) raf = requestAnimationFrame(tick);
+    };
+
+    applyFrame(computeP()); // paint the correct frame before the first scroll event
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+      if (raf) cancelAnimationFrame(raf);
+    };
+  }, []);
+
+  const rings = Array.from({ length: RINGS }).map((_, i) => {
+    const hue = i % 2 === 0 ? "var(--accent)" : "var(--accent-2)";
+    return (
+      <div
+        key={i}
+        ref={(el) => {
+          ringRefs.current[i] = el;
+        }}
+        className={`portal-ring ${i % 2 ? "portal-ring-reverse" : ""}`}
+        style={{
+          borderColor: hue,
+          color: hue,
+          borderWidth: mix(1, 2.4, i / RINGS),
+          animationDuration: `${13 + i * 3}s`,
+          width: "30vmin",
+          height: "30vmin",
+          opacity: 0,
+        }}
+      />
+    );
+  });
 
   return (
     <section
-      ref={ref}
+      ref={sectionRef}
       className="relative"
       style={{ height: `${TOTAL_VH}vh` }}
       aria-label="Entering the KANOY studio and its digital core"
@@ -354,8 +333,142 @@ export function StudioAndPortal() {
         {/* the office photo itself lives in <StudioBackdrop>, fixed behind
             this whole section — everything here only tints/decorates it */}
         <div className="absolute inset-0 bg-room-veil" />
-        <StudioAct p={studioP} />
-        <PortalAct p={portalP} />
+
+        <div ref={lightBeamRef} className="light-beam" style={{ opacity: 0.35 }} />
+
+        {/* 3D volume */}
+        <div className="camera">
+          <div className="world">
+            {PLACEMENTS.map((place, i) => (
+              <Screen
+                key={i}
+                place={place}
+                index={i}
+                screenRef={(el) => {
+                  screenRefs.current[i] = el;
+                }}
+              />
+            ))}
+          </div>
+        </div>
+
+        {/* opening title — the style prop below is the scroll-position-0
+            frame (fully shown, no blur/scale), matching what the effect
+            would write on first paint at the top of the page */}
+        <div
+          ref={openingTitleRef}
+          className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center px-6 text-center"
+          style={{ opacity: 1, transform: "translate3d(0,0,0) scale(1)", filter: "blur(0px)" }}
+        >
+          {/* spacer matching the travelling mark's footprint so the tagline/hint below keep their spot */}
+          <div aria-hidden className={isMobile ? "h-[49vh]" : "h-[68vh]"} />
+          <p className="mt-6 max-w-xl whitespace-pre-line text-balance font-body text-[0.78rem] uppercase tracking-[0.32em] text-studio-muted md:text-base">
+            {dict.hero.tagline}
+          </p>
+          <span className="mt-14 text-[10px] uppercase tracking-[0.4em] text-accent scroll-hint md:mt-5">
+            {dict.hero.scrollHint}
+          </span>
+        </div>
+
+        {/* the K + "Kanoy" mark itself — fixed to the viewport so it can
+            travel from the big centred hero position into the persistent
+            top-left corner logo as the page scrolls into the second screen,
+            then stays there for the rest of the site */}
+        <div
+          ref={kMarkWrapRef}
+          className="pointer-events-none fixed z-40"
+          style={{ left: "50vw", top: "46vh" }}
+        >
+          <img
+            ref={kIconRef}
+            src={kanoyK}
+            alt=""
+            aria-hidden
+            width={1024}
+            height={1024}
+            className="k-halo k-glow hero-k-shine absolute"
+            style={{
+              left: 0,
+              top: 0,
+              height: "40vh",
+              width: "auto",
+              maxWidth: "none",
+              transform: "translate(-50%, -100%) translate(0vw, -0.05vw)",
+            }}
+          />
+          <span
+            ref={kTextRef}
+            className={`hero-text-shine absolute whitespace-nowrap leading-none tracking-[-0.01em] transition-colors duration-300 ${
+              onLight ? "text-ink" : "text-studio-foreground"
+            }`}
+            style={{
+              left: 0,
+              top: 0,
+              fontFamily: "'Fredoka', sans-serif",
+              fontWeight: 400,
+              fontSize: "7vw",
+              transform: "translate(-50%, 0%) translate(0vw, 0.05vw)",
+            }}
+          >
+            Kanoy
+          </span>
+        </div>
+
+        {/* mid-journey label */}
+        <div
+          ref={walkLabelRef}
+          className="pointer-events-none absolute bottom-10 left-6 md:left-14"
+          style={{ opacity: 0, transform: "translateY(20px)" }}
+        >
+          <div className="text-sm uppercase tracking-[0.42em] text-accent md:text-base">
+            {dict.studio.label}
+          </div>
+          <div className="mt-3 max-w-sm font-body text-base leading-relaxed text-studio-muted md:text-lg">
+            {dict.studio.text}
+          </div>
+        </div>
+
+        {/* depth ruler */}
+        <div className="pointer-events-none absolute right-6 top-1/2 hidden -translate-y-1/2 md:block">
+          <div className="depth-ruler">
+            <span ref={depthRulerSpanRef} style={{ height: "0%" }} />
+          </div>
+        </div>
+
+        {/* Portal has no clickable content of its own, and it's a sibling
+            of the studio act in the same stacking context (they share one
+            sticky container) — without this, its rings sit invisibly over
+            the portfolio screens even at opacity 0 and swallow clicks
+            meant for them. */}
+        <div className="pointer-events-none absolute inset-0">
+          <div ref={portalVoidRef} className="portal-void" style={{ opacity: 0.35 }} />
+
+          {isMobile ? (
+            <div className="pointer-events-none absolute inset-0">{rings}</div>
+          ) : (
+            <div className="camera">
+              <div ref={portalWorldRef} className="world">
+                {rings}
+              </div>
+            </div>
+          )}
+
+          <div
+            ref={portalTextRef}
+            className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center px-6 text-center"
+            style={{ opacity: 0 }}
+          >
+            <span className="eyebrow glitch-text text-accent" data-text={dict.portal.eyebrow}>
+              {dict.portal.eyebrow}
+            </span>
+            <h2
+              className="glitch-text mt-5 text-balance font-display text-[9vw] font-semibold leading-[0.95] tracking-tight text-studio-foreground md:text-[5vw]"
+              data-text={dict.portal.line}
+            >
+              {dict.portal.line}
+            </h2>
+          </div>
+        </div>
       </div>
     </section>
   );
