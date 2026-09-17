@@ -7,6 +7,7 @@ import {
   mix,
   range,
   useCornerLogoOnLight,
+  useIsLowEndDevice,
   useIsMobile,
   usePrefersReducedMotion,
 } from "./anim";
@@ -45,6 +46,10 @@ const PLACEMENTS: Placement[] = [
 
 const CAMERA_TRAVEL = 9200;
 const RINGS = 7;
+// Arbitrary fixed size (in vmin) for each ring's wrapper box — only its
+// ratio to the per-frame `size` value matters, since the actual on-screen
+// size comes from `transform: scale(size / RING_REF_SIZE)`.
+const RING_REF_SIZE = 100;
 
 // The two acts share ONE sticky/scroll-jacked container (see below) instead
 // of each owning its own — that's what stops the "restart" seam when
@@ -149,7 +154,12 @@ export function StudioAndPortal() {
   const isMobile = useIsMobile();
   const isMobileRef = useRef(isMobile);
   isMobileRef.current = isMobile;
-  const reducedMotion = usePrefersReducedMotion();
+  // Either the visitor asked the OS for less motion, or their hardware
+  // looks weak enough that the full 3D scroll-jacked scene would likely
+  // stutter regardless — both get the same plain static grid below.
+  const prefersReducedMotion = usePrefersReducedMotion();
+  const isLowEndDevice = useIsLowEndDevice();
+  const useSimpleScene = prefersReducedMotion || isLowEndDevice;
 
   const sectionRef = useRef<HTMLDivElement>(null);
   const lightBeamRef = useRef<HTMLDivElement>(null);
@@ -165,9 +175,10 @@ export function StudioAndPortal() {
   const portalWorldRef = useRef<HTMLDivElement>(null);
   const portalTextRef = useRef<HTMLDivElement>(null);
   const ringRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const ringBorderRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   useIsomorphicLayoutEffect(() => {
-    if (reducedMotion) return;
+    if (useSimpleScene) return;
     let raf = 0;
 
     const applyFrame = (p: number) => {
@@ -249,14 +260,22 @@ export function StudioAndPortal() {
         const opacity = clamp(near * far) * reveal;
         // Real project screenshots stay crisp for their whole time on
         // screen — the depth blur is only for the fake mock screens.
-        const blur = site.image
+        // `blur` is a genuinely expensive filter to recomposite, so it's
+        // quantized to the nearest half-pixel (imperceptible on its own)
+        // instead of a fresh value every frame — most frames land on the
+        // same rounded value as the one before, so the browser can skip
+        // re-blurring a layer that hasn't visibly changed.
+        const blurRaw = site.image
           ? 0
           : mix(4, 0, clamp((depth - 60) / 340)) + clamp((depth - 2100) / 1300) * 3.5;
+        const blur = Math.round(blurRaw * 2) / 2;
         const drift = place.float ? Math.sin(camera / 900 + i) * 10 * place.float : 0;
 
         el.style.transform = `translate3d(calc(-50% + ${place.x}vw), calc(-50% + ${place.y + drift * 0.1}vh), ${-depth}px) rotateY(${place.rotY}deg) rotateX(${place.rotX ?? 0}deg)`;
         el.style.opacity = String(opacity);
-        el.style.filter = site.image ? "" : `blur(${blur.toFixed(2)}px)`;
+        // An empty string (rather than `blur(0px)`) also skips promoting
+        // an in-focus screen onto its own GPU compositing layer at all.
+        el.style.filter = blur > 0 ? `blur(${blur}px)` : "";
       }
 
       // ---- Portal act ----
@@ -285,9 +304,23 @@ export function StudioAndPortal() {
         const size = mobile
           ? Math.min(94, mix(18, 40 + i * 6, ease(localP)) + rush * (10 + i * 4))
           : mix(30, 130 + i * 26, ease(localP)) + rush * (260 + i * 80);
-        el.style.width = `${size}vmin`;
-        el.style.height = `${size}vmin`;
+        // `size` used to be written straight to width/height, which forces
+        // a full layout recalculation every scroll frame. The wrapper's box
+        // is a fixed RING_REF_SIZE now, and `transform: scale()` (a
+        // compositor-only op, no layout) does the resizing instead.
+        const scale = size / RING_REF_SIZE;
+        el.style.transform = `scale(${scale})`;
         el.style.opacity = String(clamp(localP) * (1 - rush * 0.45));
+
+        // Scaling the wrapper also visually scales the border/glow drawn
+        // inside it, so both are divided back down by the same factor —
+        // same constant on-screen thickness the fixed border-width/
+        // box-shadow values gave before, just computed instead of static.
+        const borderEl = ringBorderRefs.current[i];
+        if (borderEl) {
+          borderEl.style.borderWidth = `${(mix(1, 2.4, i / RINGS) / scale).toFixed(3)}px`;
+          borderEl.style.boxShadow = `0 0 ${(60 / scale).toFixed(1)}px ${(-6 / scale).toFixed(1)}px currentColor`;
+        }
       }
     };
 
@@ -319,7 +352,7 @@ export function StudioAndPortal() {
       window.removeEventListener("resize", onScroll);
       if (raf) cancelAnimationFrame(raf);
     };
-  }, [reducedMotion]);
+  }, [useSimpleScene]);
 
   const rings = Array.from({ length: RINGS }).map((_, i) => {
     const hue = i % 2 === 0 ? "var(--accent)" : "var(--accent-2)";
@@ -329,28 +362,39 @@ export function StudioAndPortal() {
         ref={(el) => {
           ringRefs.current[i] = el;
         }}
-        className={`portal-ring ${i % 2 ? "portal-ring-reverse" : ""}`}
+        className="portal-ring-wrap"
         style={{
-          borderColor: hue,
-          color: hue,
-          borderWidth: mix(1, 2.4, i / RINGS),
-          animationDuration: `${13 + i * 3}s`,
-          width: "30vmin",
-          height: "30vmin",
+          width: `${RING_REF_SIZE}vmin`,
+          height: `${RING_REF_SIZE}vmin`,
           opacity: 0,
+          transform: "scale(0.3)",
         }}
-      />
+      >
+        <div
+          ref={(el) => {
+            ringBorderRefs.current[i] = el;
+          }}
+          className={`portal-ring ${i % 2 ? "portal-ring-reverse" : ""}`}
+          style={{
+            borderColor: hue,
+            color: hue,
+            borderWidth: mix(1, 2.4, i / RINGS),
+            boxShadow: "0 0 60px -6px currentColor",
+            animationDuration: `${13 + i * 3}s`,
+          }}
+        />
+      </div>
     );
   });
 
-  // With reduce-motion on, skip the pinned/scroll-jacked 3D walk-through
-  // entirely (the whole point is fewer forced, hijacked-scroll effects) and
-  // show the same projects as a plain static grid instead. The corner K
+  // With reduce-motion on (or on weak-looking hardware), skip the pinned/
+  // scroll-jacked 3D walk-through entirely and show the same projects as a
+  // plain static grid instead. The corner K
   // mark still has to render here, docked in its final position from the
   // start — the rest of the page (About, Problem, Services, ...) assumes
   // this fixed logo already exists and reads its own background to decide
   // the logo's light/dark colour.
-  if (reducedMotion) {
+  if (useSimpleScene) {
     const markIconVh = isMobile ? 4.6 : 3.4;
     const markTextVw = isMobile ? 2.3 : 1.5;
     return (

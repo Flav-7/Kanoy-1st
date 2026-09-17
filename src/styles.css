@@ -608,21 +608,30 @@ body {
     var(--studio);
 }
 
-/* Centered with inset:0 + margin:auto (plain box layout) rather than the
-   usual left/top:50% + translate(-50%,-50%) trick — these rings resize on
-   every scroll frame via inline width/height, and some WebKit versions
-   don't reliably re-resolve a percentage-based translate() against a box
-   whose size keeps changing while a transform animation runs on it, which
-   was dragging the ring off toward one corner instead of keeping it
-   centered. Plain layout centering has no percentage-transform to get
-   stale, so it tracks the live size correctly every frame. */
-@utility portal-ring {
+/* The ring's *visual* size comes from `transform: scale()` on this wrapper
+   (a compositor-only operation) instead of resizing width/height every
+   scroll frame, which used to force a full-page layout recalculation.
+   The wrapper's own box never changes size, so inset:0 + margin:auto
+   centering (kept from the old width/height approach, since it's still a
+   perfectly fine way to centre a box) never has a moving target to
+   re-resolve against — no percentage-transform to go stale on. */
+@utility portal-ring-wrap {
   position: absolute;
   inset: 0;
   margin: auto;
+  width: 100vmin;
+  height: 100vmin;
+}
+
+/* border-width and box-shadow are corrected per frame (in JS) by dividing
+   out the wrapper's scale, so the ring's line thickness and glow stay a
+   constant on-screen size as it grows/shrinks — exactly how they behaved
+   when width/height changed directly instead of a transform. */
+@utility portal-ring {
+  position: absolute;
+  inset: 0;
   border-style: solid;
   border-radius: 50%;
-  box-shadow: 0 0 60px -6px currentColor;
   animation-name: portalSpin;
   animation-timing-function: linear;
   animation-iteration-count: infinite;
