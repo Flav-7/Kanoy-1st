@@ -20,7 +20,6 @@ export type Dictionary = {
   seo: { title: string; description: string };
   hero: { tagline: string; scrollHint: string };
   studio: { label: string; text: string };
-  portal: { eyebrow: string; line: string };
   entrada: { scrollHint: string; requestPortfolio: string; talkToUs: string };
   nav: {
     services: string;
@@ -98,10 +97,6 @@ export const translations: Record<Language, Dictionary> = {
     studio: {
       label: "Portefólio",
       text: "Cada ecrã que passas é um projeto. Continua a mover-te.",
-    },
-    portal: {
-      eyebrow: "A dobrar a realidade",
-      line: "SOBRE A KANOY",
     },
     entrada: {
       scrollHint: "Desliza para entrar",
@@ -258,10 +253,6 @@ export const translations: Record<Language, Dictionary> = {
       label: "Portafolio",
       text: "Cada pantalla que pasas es un proyecto. Sigue moviéndote.",
     },
-    portal: {
-      eyebrow: "Doblando la realidad",
-      line: "SOBRE KANOY",
-    },
     entrada: {
       scrollHint: "Desliza para entrar",
       requestPortfolio: "Pedir portafolio",
@@ -416,10 +407,6 @@ export const translations: Record<Language, Dictionary> = {
     studio: {
       label: "Portfolio",
       text: "Every screen you pass is a project. Keep moving.",
-    },
-    portal: {
-      eyebrow: "Bending reality",
-      line: "ABOUT KANOY",
     },
     entrada: {
       scrollHint: "Scroll to enter",

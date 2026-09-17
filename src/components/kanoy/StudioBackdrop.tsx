@@ -3,10 +3,9 @@ import studio from "@/assets/branding/studio-depth.webp";
 import studioMobile from "@/assets/branding/studio-depth-mobile.webp";
 import { clamp, mix, useIsMobile } from "./anim";
 
-// Combined scroll distance of the two sections this backdrop sits behind:
-// StudioScene (760vh) + Portal (300vh). Kept in sync with those sections'
-// own h-[...vh] heights.
-const TOTAL_VH = 760 + 300;
+// Scroll distance of the pinned studio walk-through this backdrop sits
+// behind. Kept in sync with that section's own TOTAL_VH.
+const TOTAL_VH = 760;
 
 /**
  * The single, shared office backdrop behind both the studio walk-through

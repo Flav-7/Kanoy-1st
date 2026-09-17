@@ -594,127 +594,6 @@ body {
   animation: miniSlide 6s ease-in-out infinite;
 }
 
-/* portal / wormhole interlude */
-@utility portal-void {
-  position: absolute;
-  inset: 0;
-  background:
-    radial-gradient(
-      circle at 50% 50%,
-      color-mix(in oklab, var(--accent) 24%, transparent) 0%,
-      transparent 34%,
-      color-mix(in oklab, var(--studio) 94%, transparent) 72%
-    ),
-    var(--studio);
-}
-
-/* The ring's *visual* size comes from `transform: scale()` on this wrapper
-   (a compositor-only operation) instead of resizing width/height every
-   scroll frame, which used to force a full-page layout recalculation.
-   The wrapper's own box never changes size, so inset:0 + margin:auto
-   centering (kept from the old width/height approach, since it's still a
-   perfectly fine way to centre a box) never has a moving target to
-   re-resolve against — no percentage-transform to go stale on. */
-@utility portal-ring-wrap {
-  position: absolute;
-  inset: 0;
-  margin: auto;
-  width: 100vmin;
-  height: 100vmin;
-}
-
-/* border-width and box-shadow are corrected per frame (in JS) by dividing
-   out the wrapper's scale, so the ring's line thickness and glow stay a
-   constant on-screen size as it grows/shrinks — exactly how they behaved
-   when width/height changed directly instead of a transform. */
-@utility portal-ring {
-  position: absolute;
-  inset: 0;
-  border-style: solid;
-  border-radius: 50%;
-  animation-name: portalSpin;
-  animation-timing-function: linear;
-  animation-iteration-count: infinite;
-  animation-direction: normal;
-}
-
-@utility portal-ring-reverse {
-  animation-name: portalSpinReverse;
-}
-
-@keyframes portalSpin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-@keyframes portalSpinReverse {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(-360deg);
-  }
-}
-
-@utility portal-k {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  width: 16vmin;
-  filter: saturate(1.3)
-    drop-shadow(0 0 40px color-mix(in oklab, var(--accent) 70%, transparent))
-    drop-shadow(0 0 90px color-mix(in oklab, var(--accent-2) 55%, transparent));
-  pointer-events: none;
-}
-
-/* RGB-split glitch typography */
-.glitch-text {
-  position: relative;
-  display: inline-block;
-}
-.glitch-text::before,
-.glitch-text::after {
-  content: attr(data-text);
-  position: absolute;
-  inset: 0;
-  opacity: 0.7;
-  mix-blend-mode: screen;
-  pointer-events: none;
-}
-.glitch-text::before {
-  color: var(--accent);
-  clip-path: inset(0 0 55% 0);
-  animation: glitchShift 2.6s infinite steps(2, jump-none);
-}
-.glitch-text::after {
-  color: var(--accent-2);
-  clip-path: inset(55% 0 0 0);
-  animation: glitchShift 3.1s infinite reverse steps(2, jump-none);
-}
-@keyframes glitchShift {
-  0%,
-  88%,
-  100% {
-    transform: translate(0, 0);
-  }
-  90% {
-    transform: translate(-3px, 1px);
-  }
-  92% {
-    transform: translate(3px, -1px);
-  }
-  94% {
-    transform: translate(-2px, 2px);
-  }
-  96% {
-    transform: translate(2px, -2px);
-  }
-}
-
 /* entrada: exterior facade + glass door */
 @utility facade-wall {
   position: relative;
@@ -881,10 +760,7 @@ body {
   .scroll-hint,
   .mini-eq,
   .mini-pulse,
-  .mini-slide,
-  .portal-ring,
-  .glitch-text::before,
-  .glitch-text::after {
+  .mini-slide {
     animation: none;
   }
 }
