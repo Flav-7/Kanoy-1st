@@ -36,15 +36,26 @@ function Index() {
   const [showTalkToUs, setShowTalkToUs] = useState(false);
 
   useEffect(() => {
-    const onScroll = () => {
+    let raf = 0;
+    const compute = () => {
+      raf = 0;
       const pastHero = window.scrollY > window.innerHeight * 0.85;
       const contact = document.getElementById("contact");
       const inContact = contact ? contact.getBoundingClientRect().top < window.innerHeight * 0.5 : false;
-      setShowTalkToUs(pastHero && !inContact);
+      setShowTalkToUs((prev) => {
+        const next = pastHero && !inContact;
+        return prev === next ? prev : next;
+      });
     };
-    onScroll();
+    const onScroll = () => {
+      if (!raf) raf = requestAnimationFrame(compute);
+    };
+    compute();
     window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      if (raf) cancelAnimationFrame(raf);
+    };
   }, []);
 
   return (

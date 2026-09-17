@@ -78,7 +78,10 @@ function Screen({
         transform: `translate3d(calc(-50% + ${place.x}vw), calc(-50% + ${place.y + drift * 0.1}vh), ${-depth}px) rotateY(${place.rotY}deg) rotateX(${place.rotX ?? 0}deg)`,
         transformStyle: "preserve-3d",
         opacity,
-        filter: `blur(${blur.toFixed(2)}px)`,
+        // real screenshots (site.image) never blur — blur is always exactly
+        // 0 for them (see `blur` above) — so skip the filter entirely
+        // instead of forcing a `blur(0px)` layer on every scroll frame.
+        filter: site.image ? undefined : `blur(${blur.toFixed(2)}px)`,
         willChange: "transform, opacity",
       }}
     >

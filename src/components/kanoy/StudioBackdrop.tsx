@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef } from "react";
 import studio from "@/assets/branding/studio-depth.webp";
 import studioMobile from "@/assets/branding/studio-depth-mobile.webp";
 import { clamp, mix, useIsMobile } from "./anim";
@@ -15,22 +15,43 @@ const TOTAL_VH = 760 + 300;
  * of the image restarting or a seam where one crop ends and another
  * begins — it's the same photo the whole time, slowly zooming/panning as
  * one continuous camera move across both sections combined.
+ *
+ * The zoom/pan/darken driven by scroll is written straight to the DOM via
+ * refs instead of React state: this element sits behind ~11 screen-heights
+ * of scroll, so it used to re-render (and, worse, resize a full-viewport
+ * background-image — a paint, not just a composite) on every single scroll
+ * frame. Writing `transform`/`opacity` directly and skipping React/layout
+ * entirely keeps this on the compositor thread, which is what makes it
+ * cheap enough to sit under the whole page without costing scroll frames.
  */
 export function StudioBackdrop() {
-  const [t, setT] = useState(0);
   const isMobile = useIsMobile();
+  const imgRef = useRef<HTMLImageElement>(null);
+  const veilRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     let raf = 0;
+    let lastT = -1;
     const compute = () => {
       raf = 0;
       const total = (window.innerHeight * TOTAL_VH) / 100;
-      const next = total <= 0 ? 0 : clamp(window.scrollY / total, 0, 1);
-      setT((prev) => (Math.abs(prev - next) > 0.0008 ? next : prev));
+      const t = total <= 0 ? 0 : clamp(window.scrollY / total, 0, 1);
+      if (Math.abs(t - lastT) <= 0.0008) return;
+      lastT = t;
+
+      const scale = isMobile ? mix(1.4, 2.0, t) : mix(1.12, 1.78, t);
+      const panY = mix(0, -3, t); // vh — same slow drift the old translate3d did
+
+      const img = imgRef.current;
+      if (img) img.style.transform = `translate3d(0, ${panY}vh, 0) scale(${scale})`;
+
+      const veil = veilRef.current;
+      if (veil) veil.style.opacity = String(mix(0.45, 0.28, t));
     };
     const onScroll = () => {
       if (!raf) raf = requestAnimationFrame(compute);
     };
+    lastT = -1; // force one recompute when the mobile/desktop image swaps
     compute();
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", onScroll);
@@ -39,26 +60,19 @@ export function StudioBackdrop() {
       window.removeEventListener("resize", onScroll);
       if (raf) cancelAnimationFrame(raf);
     };
-  }, []);
+  }, [isMobile]);
 
   return (
-    <div
-      aria-hidden
-      className="pointer-events-none fixed inset-0 z-0 overflow-hidden"
-    >
-      {/* the photo itself — no CSS filter here: filtering a huge fixed
-          background can make Chrome rasterize it in tiles and show a
-          faint seam where two tiles meet. Darkening is done below with a
-          plain overlay instead. */}
-      <div
-        className="absolute inset-0"
-        style={{
-          backgroundImage: `url(${isMobile ? studioMobile : studio})`,
-          backgroundSize: isMobile ? `${mix(140, 200, t)}% auto` : `${mix(112, 178, t)}% auto`,
-          backgroundPosition: `50% ${mix(20, 13, t)}%`,
-          backgroundRepeat: "no-repeat",
-          transform: `translate3d(0,${mix(0, -3, t)}vh,0)`,
-        }}
+    <div aria-hidden className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
+      {/* the photo itself — object-fit/object-position stay static (no
+          per-frame paint work); only `transform` (scale + pan) moves, which
+          the compositor handles without repainting the image. */}
+      <img
+        ref={imgRef}
+        src={isMobile ? studioMobile : studio}
+        alt=""
+        className="absolute inset-0 h-full w-full object-cover will-change-transform"
+        style={{ objectPosition: "50% 18%", transformOrigin: "50% 18%" }}
       />
 
       {/* subtle ambient life: the blue LED strips breathe, a couple of
@@ -100,8 +114,9 @@ export function StudioBackdrop() {
       />
 
       <div
+        ref={veilRef}
         className="absolute inset-0"
-        style={{ background: "#0a0f12", opacity: mix(0.45, 0.28, t) }}
+        style={{ background: "#0a0f12", opacity: 0.45 }}
       />
     </div>
   );
