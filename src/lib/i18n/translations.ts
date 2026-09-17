@@ -12,6 +12,12 @@ type ServiceCopy = { title: string; text: string };
 type StepCopy = { t: string; d: string };
 
 export type Dictionary = {
+  /** Browser tab title / meta description, kept in sync with the detected
+   *  language client-side (see routes/index.tsx). Server-rendered HTML and
+   *  link-preview scrapers, which don't run JS, still see the PT default
+   *  baked into the route's head() — this only fixes what an actual visitor
+   *  sees in their own tab. */
+  seo: { title: string; description: string };
   hero: { tagline: string; scrollHint: string };
   studio: { label: string; text: string };
   portal: { eyebrow: string; line: string };
@@ -80,6 +86,11 @@ export type Dictionary = {
 
 export const translations: Record<Language, Dictionary> = {
   pt: {
+    seo: {
+      title: "KANOY — Sites que fazem as pessoas parar de fazer scroll",
+      description:
+        "A KANOY é um estúdio digital que cria websites premium, sistemas de reservas e marcações, e sistemas digitais à medida para negócios reais.",
+    },
     hero: {
       tagline: "Criamos experiências digitais que fazem marcas crescer",
       scrollHint: "Conhece o nosso trabalho",
@@ -234,6 +245,11 @@ export const translations: Record<Language, Dictionary> = {
     },
   },
   es: {
+    seo: {
+      title: "KANOY — Webs que hacen que la gente deje de hacer scroll",
+      description:
+        "KANOY es un estudio digital que crea webs premium, sistemas de reservas y citas, y sistemas digitales a medida para negocios reales.",
+    },
     hero: {
       tagline: "Creamos webs que hacen que la gente deje de hacer scroll.",
       scrollHint: "Desliza para entrar en el estudio",
@@ -388,6 +404,11 @@ export const translations: Record<Language, Dictionary> = {
     },
   },
   en: {
+    seo: {
+      title: "KANOY — Websites that make people stop scrolling",
+      description:
+        "KANOY is a digital studio building premium websites, reservation and booking systems, and custom digital systems for real businesses.",
+    },
     hero: {
       tagline: "We build websites that make people stop scrolling.",
       scrollHint: "Scroll to enter the studio",

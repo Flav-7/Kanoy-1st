@@ -1,7 +1,15 @@
 import { useEffect, useLayoutEffect, useRef } from "react";
 import { MINI_SITES } from "./mini-sites-data";
 import { MiniSite } from "./mini-sites";
-import { clamp, ease, mix, range, useCornerLogoOnLight, useIsMobile } from "./anim";
+import {
+  clamp,
+  ease,
+  mix,
+  range,
+  useCornerLogoOnLight,
+  useIsMobile,
+  usePrefersReducedMotion,
+} from "./anim";
 import kanoyK from "@/assets/branding/kanoy-k.webp";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 
@@ -23,16 +31,16 @@ type Placement = {
 };
 
 const PLACEMENTS: Placement[] = [
-  { x: -32, y: 2, z: 1700, w: 460, rotY: 26, device: "monitor" },
-  { x: 33, y: -6, z: 2450, w: 420, rotY: -24, device: "panel", float: 1 },
-  { x: -38, y: -12, z: 3200, w: 380, rotY: 22, device: "panel", float: -1 },
-  { x: 30, y: 8, z: 3950, w: 480, rotY: -20, device: "monitor" },
-  { x: -26, y: 10, z: 4700, w: 320, rotY: 18, device: "tablet", float: 1 },
-  { x: 36, y: -14, z: 5450, w: 440, rotY: -18, device: "panel", float: -1 },
-  { x: -34, y: -4, z: 6200, w: 470, rotY: 20, device: "monitor" },
-  { x: 28, y: 12, z: 6950, w: 340, rotY: -22, device: "tablet" },
-  { x: -30, y: 14, z: 7700, w: 400, rotY: 16, device: "panel", float: 1 },
-  { x: 32, y: -10, z: 8450, w: 450, rotY: -16, device: "monitor" },
+  { x: -16, y: 1, z: 1700, w: 460, rotY: 26, device: "monitor" },
+  { x: 17, y: -4, z: 2450, w: 420, rotY: -24, device: "panel", float: 1 },
+  { x: -19, y: -7, z: 3200, w: 380, rotY: 22, device: "panel", float: -1 },
+  { x: 15, y: 5, z: 3950, w: 480, rotY: -20, device: "monitor" },
+  { x: -13, y: 6, z: 4700, w: 320, rotY: 18, device: "tablet", float: 1 },
+  { x: 18, y: -8, z: 5450, w: 440, rotY: -18, device: "panel", float: -1 },
+  { x: -17, y: -2, z: 6200, w: 470, rotY: 20, device: "monitor" },
+  { x: 14, y: 7, z: 6950, w: 340, rotY: -22, device: "tablet" },
+  { x: -15, y: 8, z: 7700, w: 400, rotY: 16, device: "panel", float: 1 },
+  { x: 16, y: -6, z: 8450, w: 450, rotY: -16, device: "monitor" },
 ];
 
 const CAMERA_TRAVEL = 9200;
@@ -97,7 +105,18 @@ function Screen({
         <span className="screen-glare" aria-hidden />
       </div>
       <div className="screen-caption" style={{ width: place.w }}>
-        <span>{site.label}</span>
+        {site.url ? (
+          <a
+            href={site.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ color: "inherit", textDecoration: "underline", pointerEvents: "auto" }}
+          >
+            {site.url.replace(/^https?:\/\//, "")}
+          </a>
+        ) : (
+          <span>{site.label}</span>
+        )}
         <span className="text-accent">{site.kind}</span>
       </div>
     </div>
@@ -130,6 +149,7 @@ export function StudioAndPortal() {
   const isMobile = useIsMobile();
   const isMobileRef = useRef(isMobile);
   isMobileRef.current = isMobile;
+  const reducedMotion = usePrefersReducedMotion();
 
   const sectionRef = useRef<HTMLDivElement>(null);
   const lightBeamRef = useRef<HTMLDivElement>(null);
@@ -147,6 +167,7 @@ export function StudioAndPortal() {
   const ringRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   useIsomorphicLayoutEffect(() => {
+    if (reducedMotion) return;
     let raf = 0;
 
     const applyFrame = (p: number) => {
@@ -298,7 +319,7 @@ export function StudioAndPortal() {
       window.removeEventListener("resize", onScroll);
       if (raf) cancelAnimationFrame(raf);
     };
-  }, []);
+  }, [reducedMotion]);
 
   const rings = Array.from({ length: RINGS }).map((_, i) => {
     const hue = i % 2 === 0 ? "var(--accent)" : "var(--accent-2)";
@@ -321,6 +342,113 @@ export function StudioAndPortal() {
       />
     );
   });
+
+  // With reduce-motion on, skip the pinned/scroll-jacked 3D walk-through
+  // entirely (the whole point is fewer forced, hijacked-scroll effects) and
+  // show the same projects as a plain static grid instead. The corner K
+  // mark still has to render here, docked in its final position from the
+  // start — the rest of the page (About, Problem, Services, ...) assumes
+  // this fixed logo already exists and reads its own background to decide
+  // the logo's light/dark colour.
+  if (reducedMotion) {
+    const markIconVh = isMobile ? 4.6 : 3.4;
+    const markTextVw = isMobile ? 2.3 : 1.5;
+    return (
+      <section className="relative bg-studio py-24 md:py-32" aria-label="KANOY studio and portfolio">
+        <div
+          className="pointer-events-none fixed z-40"
+          style={{ left: isMobile ? "11vw" : "2vw", top: "2.4vh" }}
+        >
+          <img
+            src={kanoyK}
+            alt=""
+            aria-hidden
+            width={1024}
+            height={1024}
+            className="k-halo k-glow hero-k-shine absolute"
+            style={{
+              left: 0,
+              top: 0,
+              height: `${markIconVh}vh`,
+              width: "auto",
+              maxWidth: "none",
+              transform: "translate(-100%, -50%)",
+            }}
+          />
+          <span
+            className={`hero-text-shine absolute whitespace-nowrap leading-none tracking-[-0.01em] transition-colors duration-300 ${
+              onLight ? "text-ink" : "text-studio-foreground"
+            }`}
+            style={{
+              left: 0,
+              top: 0,
+              fontFamily: "'Fredoka', sans-serif",
+              fontWeight: 400,
+              fontSize: `${markTextVw}vw`,
+              transform: "translate(0%, -50%)",
+            }}
+          >
+            Kanoy
+          </span>
+        </div>
+
+        <div className="mx-auto max-w-xl px-6 text-center">
+          <p className="whitespace-pre-line text-balance font-body text-[0.78rem] uppercase tracking-[0.32em] text-studio-muted md:text-base">
+            {dict.hero.tagline}
+          </p>
+        </div>
+
+        <div className="mx-auto mt-16 grid max-w-5xl grid-cols-1 justify-items-center gap-x-8 gap-y-14 px-6 sm:grid-cols-2 lg:grid-cols-3">
+          {MINI_SITES.map((site) => (
+            <div key={site.id}>
+              {site.location && (
+                <div
+                  style={{
+                    width: 320,
+                    marginBottom: 6,
+                    textAlign: "left",
+                    color: "var(--studio-muted)",
+                    fontSize: 9,
+                    letterSpacing: "0.22em",
+                    textTransform: "uppercase",
+                    whiteSpace: "nowrap",
+                  }}
+                >
+                  {site.location}
+                </div>
+              )}
+              <div className="screen-shell">
+                <MiniSite site={site} width={320} />
+                <span className="screen-glare" aria-hidden />
+              </div>
+              <div className="screen-caption" style={{ width: 320 }}>
+                {site.url ? (
+                  <a
+                    href={site.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{ color: "inherit", textDecoration: "underline" }}
+                  >
+                    {site.url.replace(/^https?:\/\//, "")}
+                  </a>
+                ) : (
+                  <span>{site.label}</span>
+                )}
+                <span className="text-accent">{site.kind}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div className="mx-auto mt-20 max-w-2xl px-6 text-center">
+          <span className="eyebrow text-accent">{dict.portal.eyebrow}</span>
+          <h2 className="mt-3 text-balance font-display text-3xl font-semibold leading-tight tracking-tight text-studio-foreground md:text-4xl">
+            {dict.portal.line}
+          </h2>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section

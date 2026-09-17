@@ -28,6 +28,9 @@ export type MiniSiteDef = {
   /** A caption line shown above the preview, naming where the project is
    *  based. Rendered outside the image itself, never overlaid on it. */
   location?: string;
+  /** The live site, for a real project. When set, the label under the
+   *  preview links out to it. */
+  url?: string;
 };
 
 const row: CSSProperties = { display: "flex", alignItems: "center" };
@@ -125,6 +128,7 @@ export const MINI_SITES: MiniSiteDef[] = [
     palette: { bg: "#120f0d", ink: "#f4ece1", accent: "#c8a45c", soft: "#ffffff0d" },
     image: tierraYMar,
     location: "Ayamonte (Espanha)",
+    url: "https://tierraymar-ayamonte.es",
     render: (p) => (
       <div style={{ background: p.bg, height: "100%" }}>
         <div style={nav(p)}>

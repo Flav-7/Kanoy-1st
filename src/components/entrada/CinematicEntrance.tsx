@@ -6,12 +6,43 @@ import { MiniSite } from "../kanoy/mini-sites";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import { ContactModal } from "../kanoy/ContactModal";
 
-// corridor-walk.mp4 exported as a 240-frame JPG sequence (30fps, 8s) in
+// corridor-walk.mp4 exported as a 240-frame WebP sequence (30fps, 8s) in
 // public/frames/corridor/ — swapping <img src> is synchronous, unlike
 // video.currentTime (async seek), so scroll-scrubbing is exact and never
 // stalls regardless of scroll speed.
 const TOTAL_FRAMES = 240;
-const frameSrc = (n: number) => `/frames/corridor/ezgif-frame-${String(n).padStart(3, "0")}.jpg`;
+const frameSrc = (n: number) => `/frames/corridor/ezgif-frame-${String(n).padStart(3, "0")}.webp`;
+
+// Preloading all 240 frames synchronously on mount used to fire 240 requests
+// at once, competing with the page's critical CSS/JS/fonts. Instead, preload
+// only enough frames to cover the start of the scroll immediately, then fill
+// in the rest a few at a time once the browser is idle.
+const PRIORITY_FRAMES = 24;
+const IDLE_BATCH_SIZE = 12;
+
+function preloadFrames(start: number, end: number) {
+  for (let i = start; i <= end; i++) {
+    const im = new Image();
+    im.src = frameSrc(i);
+  }
+}
+
+function preloadRemainingWhenIdle(from: number) {
+  let next = from;
+  const scheduleNext =
+    typeof requestIdleCallback === "function"
+      ? (cb: () => void) => requestIdleCallback(cb)
+      : (cb: () => void) => setTimeout(cb, 200);
+
+  const step = () => {
+    if (next > TOTAL_FRAMES) return;
+    const end = Math.min(next + IDLE_BATCH_SIZE - 1, TOTAL_FRAMES);
+    preloadFrames(next, end);
+    next = end + 1;
+    scheduleNext(step);
+  };
+  scheduleNext(step);
+}
 
 const THUMBS = [
   { id: "restaurant", left: "10%", top: "38%", w: 220, rot: -6 },
@@ -47,10 +78,8 @@ export function CinematicEntrance() {
   const currentFrame = useRef(1);
 
   useEffect(() => {
-    for (let i = 1; i <= TOTAL_FRAMES; i++) {
-      const im = new Image();
-      im.src = frameSrc(i);
-    }
+    preloadFrames(1, PRIORITY_FRAMES);
+    preloadRemainingWhenIdle(PRIORITY_FRAMES + 1);
   }, []);
 
   useEffect(() => {

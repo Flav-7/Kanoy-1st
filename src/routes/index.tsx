@@ -35,6 +35,14 @@ function Index() {
   const { dict } = useLanguage();
   const [showTalkToUs, setShowTalkToUs] = useState(false);
 
+  // The head() above only renders the PT-default tab title/description on
+  // the server (and to non-JS link-preview scrapers) — once the visitor's
+  // language is detected client-side, keep what they actually see in sync.
+  useEffect(() => {
+    document.title = dict.seo.title;
+    document.querySelector('meta[name="description"]')?.setAttribute("content", dict.seo.description);
+  }, [dict]);
+
   useEffect(() => {
     let raf = 0;
     const compute = () => {
