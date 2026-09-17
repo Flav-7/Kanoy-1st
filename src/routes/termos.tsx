@@ -14,6 +14,7 @@ export const Route = createFileRoute("/termos")({
       { property: "og:title", content: title },
       { property: "og:description", content: description },
     ],
+    links: [{ rel: "canonical", href: "https://kanoy.pt/termos" }],
   }),
   component: TermosPage,
 });

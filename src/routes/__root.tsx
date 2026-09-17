@@ -91,7 +91,9 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         content: "KANOY builds premium websites and custom booking systems for real businesses.",
       },
       { property: "og:type", content: "website" },
+      { property: "og:image", content: "https://kanoy.pt/og-image.webp" },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:image", content: "https://kanoy.pt/og-image.webp" },
       { name: "twitter:site", content: "@Lovable" },
     ],
     links: [
@@ -111,11 +113,29 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   errorComponent: ErrorComponent,
 });
 
+const ORGANIZATION_SCHEMA = {
+  "@context": "https://schema.org",
+  "@type": "ProfessionalService",
+  name: "KANOY",
+  url: "https://kanoy.pt",
+  logo: "https://kanoy.pt/og-image.webp",
+  image: "https://kanoy.pt/og-image.webp",
+  description:
+    "KANOY builds premium websites and custom booking systems for real businesses.",
+  email: "hello@kanoy.studio",
+  telephone: "+351923250729",
+  sameAs: ["https://www.instagram.com/kanoy.pt/"],
+};
+
 function RootShell({ children }: { children: ReactNode }) {
   return (
     <html lang="pt">
       <head>
         <HeadContent />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(ORGANIZATION_SCHEMA) }}
+        />
       </head>
       <body>
         {children}
