@@ -7,7 +7,6 @@ import {
   mix,
   range,
   useCornerLogoOnLight,
-  useIsLowEndDevice,
   useIsMobile,
   usePrefersReducedMotion,
 } from "./anim";
@@ -138,12 +137,11 @@ export function StudioAndPortal() {
   const isMobile = useIsMobile();
   const isMobileRef = useRef(isMobile);
   isMobileRef.current = isMobile;
-  // Either the visitor asked the OS for less motion, or their hardware
-  // looks weak enough that the full 3D scroll-jacked scene would likely
-  // stutter regardless — both get the same plain static grid below.
-  const prefersReducedMotion = usePrefersReducedMotion();
-  const isLowEndDevice = useIsLowEndDevice();
-  const useSimpleScene = prefersReducedMotion || isLowEndDevice;
+  // Only an explicit OS "reduce motion" request gets the plain static grid
+  // below. Hardware sniffing (deviceMemory / hardwareConcurrency) was
+  // removed: it flagged most phones as "weak", so mobile silently got a
+  // different site from desktop.
+  const useSimpleScene = usePrefersReducedMotion();
 
   const sectionRef = useRef<HTMLDivElement>(null);
   const lightBeamRef = useRef<HTMLDivElement>(null);

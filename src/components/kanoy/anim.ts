@@ -26,25 +26,6 @@ export function usePrefersReducedMotion() {
   return reduced;
 }
 
-type NavigatorWithHints = Navigator & { deviceMemory?: number };
-
-/** Best-effort "is this weak hardware" check, using whatever the browser
- *  exposes (deviceMemory is Chrome-only; hardwareConcurrency is widely
- *  supported). Both are static for the session, so this never changes
- *  after mount — no listener needed. Missing/unsupported signals are
- *  treated as "not low-end" rather than guessed. */
-export function useIsLowEndDevice() {
-  const [lowEnd, setLowEnd] = useState(false);
-  useEffect(() => {
-    const nav = navigator as NavigatorWithHints;
-    const lowMemory = typeof nav.deviceMemory === "number" && nav.deviceMemory <= 4;
-    const lowCores =
-      typeof nav.hardwareConcurrency === "number" && nav.hardwareConcurrency <= 4;
-    setLowEnd(lowMemory || lowCores);
-  }, []);
-  return lowEnd;
-}
-
 /** Scroll progress (0..1) of an element travelling through the viewport. */
 export function useScrollProgress<T extends HTMLElement>() {
   const ref = useRef<T>(null);
