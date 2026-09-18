@@ -1,17 +1,13 @@
 import { useEffect, useRef, useState } from "react";
 
-/** Tracks whether the viewport is at or below a mobile-width breakpoint. */
-export function useIsMobile(breakpoint = 767) {
-  const [isMobile, setIsMobile] = useState(false);
-  useEffect(() => {
-    const mq = window.matchMedia(`(max-width: ${breakpoint}px)`);
-    const update = () => setIsMobile(mq.matches);
-    update();
-    mq.addEventListener("change", update);
-    return () => mq.removeEventListener("change", update);
-  }, [breakpoint]);
-  return isMobile;
-}
+/** The "mobile" viewport: just under Tailwind's `md` breakpoint (768px).
+ *
+ *  The scroll-driven scenes read this straight from `matchMedia` inside their
+ *  own effect instead of from React state. A `useState(false)` flag is only
+ *  corrected in an effect *after* the first render, so anything computed on
+ *  mount — like the hero K's size — used the desktop values on a phone until
+ *  the next scroll. Reading the live query has no such first-frame gap. */
+export const MOBILE_QUERY = "(max-width: 767px)";
 
 /** Scroll progress (0..1) of an element travelling through the viewport. */
 export function useScrollProgress<T extends HTMLElement>() {

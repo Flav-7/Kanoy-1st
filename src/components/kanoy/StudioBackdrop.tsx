@@ -1,11 +1,15 @@
 import { useEffect, useRef } from "react";
 import studio from "@/assets/branding/studio-depth.webp";
 import studioMobile from "@/assets/branding/studio-depth-mobile.webp";
-import { clamp, mix, useIsMobile } from "./anim";
+import { clamp, mix, MOBILE_QUERY } from "./anim";
+import { STUDIO_VH } from "./studio-scene";
 
-// Scroll distance of the pinned studio walk-through this backdrop sits
-// behind. Kept in sync with that section's own TOTAL_VH.
-const TOTAL_VH = 760;
+// The zoom curve below was tuned over the walk-through plus the (since
+// removed) Portal act — 1060vh in all — of which the walk-through was the
+// first 760. So it now runs only up to that point on the curve, which keeps
+// the photo's zoom, pan and darkening at every moment of the walk-through
+// exactly as they looked before the Portal was taken out.
+const CURVE_AT_END_OF_WALK = 760 / 1060;
 
 /**
  * The single, shared office backdrop behind both the studio walk-through
@@ -24,21 +28,21 @@ const TOTAL_VH = 760;
  * cheap enough to sit under the whole page without costing scroll frames.
  */
 export function StudioBackdrop() {
-  const isMobile = useIsMobile();
   const imgRef = useRef<HTMLImageElement>(null);
   const veilRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     let raf = 0;
     let lastT = -1;
+    const mobileQuery = window.matchMedia(MOBILE_QUERY);
     const compute = () => {
       raf = 0;
-      const total = (window.innerHeight * TOTAL_VH) / 100;
-      const t = total <= 0 ? 0 : clamp(window.scrollY / total, 0, 1);
+      const total = (window.innerHeight * STUDIO_VH) / 100;
+      const t = total <= 0 ? 0 : clamp(window.scrollY / total, 0, 1) * CURVE_AT_END_OF_WALK;
       if (Math.abs(t - lastT) <= 0.0008) return;
       lastT = t;
 
-      const scale = isMobile ? mix(1.4, 2.0, t) : mix(1.12, 1.78, t);
+      const scale = mobileQuery.matches ? mix(1.4, 2.0, t) : mix(1.12, 1.78, t);
       const panY = mix(0, -3, t); // vh — same slow drift the old translate3d did
 
       const img = imgRef.current;
@@ -50,29 +54,42 @@ export function StudioBackdrop() {
     const onScroll = () => {
       if (!raf) raf = requestAnimationFrame(compute);
     };
-    lastT = -1; // force one recompute when the mobile/desktop image swaps
+    // Crossing the mobile/desktop breakpoint changes the zoom range without
+    // any scroll, so force the next frame to recompute.
+    const onBreakpoint = () => {
+      lastT = -1;
+      onScroll();
+    };
     compute();
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", onScroll);
+    mobileQuery.addEventListener("change", onBreakpoint);
     return () => {
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onScroll);
+      mobileQuery.removeEventListener("change", onBreakpoint);
       if (raf) cancelAnimationFrame(raf);
     };
-  }, [isMobile]);
+  }, []);
 
   return (
     <div aria-hidden className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
       {/* the photo itself — object-fit/object-position stay static (no
           per-frame paint work); only `transform` (scale + pan) moves, which
           the compositor handles without repainting the image. */}
-      <img
-        ref={imgRef}
-        src={isMobile ? studioMobile : studio}
-        alt=""
-        className="absolute inset-0 h-full w-full object-cover will-change-transform"
-        style={{ objectPosition: "50% 18%", transformOrigin: "50% 18%" }}
-      />
+      {/* <picture> lets the browser choose the phone/desktop photo itself,
+          from the first paint — a JS flag would load the desktop one first
+          and swap it a moment later. */}
+      <picture>
+        <source media={MOBILE_QUERY} srcSet={studioMobile} />
+        <img
+          ref={imgRef}
+          src={studio}
+          alt=""
+          className="absolute inset-0 h-full w-full object-cover will-change-transform"
+          style={{ objectPosition: "50% 18%", transformOrigin: "50% 18%" }}
+        />
+      </picture>
 
       {/* subtle ambient life: the blue LED strips breathe, a couple of
           glass reflections drift a few px — the photo above never moves */}

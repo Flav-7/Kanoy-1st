@@ -6,9 +6,10 @@ import {
   ease,
   mix,
   range,
+  MOBILE_QUERY,
   useCornerLogoOnLight,
-  useIsMobile,
 } from "./anim";
+import { CAMERA_TRAVEL, PLACEMENTS, STUDIO_VH, vhToProgress, type Placement } from "./studio-scene";
 import kanoyK from "@/assets/branding/kanoy-k.webp";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 
@@ -17,39 +18,14 @@ import { useLanguage } from "@/lib/i18n/LanguageContext";
 // meaningful to show until it's running on the client anyway.
 const useIsomorphicLayoutEffect = typeof window !== "undefined" ? useLayoutEffect : useEffect;
 
-/** Placement of a screen inside the studio volume. */
-type Placement = {
-  x: number; // vw offset from centre
-  y: number; // vh offset from centre
-  z: number; // depth in px (larger = deeper in the room)
-  w: number; // screen width in px
-  rotY: number;
-  rotX?: number;
-  float?: number;
-  device?: "monitor" | "panel" | "tablet";
-};
-
-const PLACEMENTS: Placement[] = [
-  { x: -16, y: 1, z: 1700, w: 460, rotY: 26, device: "monitor" },
-  { x: 17, y: -4, z: 2450, w: 420, rotY: -24, device: "panel", float: 1 },
-  { x: -19, y: -7, z: 3200, w: 380, rotY: 22, device: "panel", float: -1 },
-  { x: 15, y: 5, z: 3950, w: 480, rotY: -20, device: "monitor" },
-  { x: -13, y: 6, z: 4700, w: 320, rotY: 18, device: "tablet", float: 1 },
-  { x: 18, y: -8, z: 5450, w: 440, rotY: -18, device: "panel", float: -1 },
-  { x: -17, y: -2, z: 6200, w: 470, rotY: 20, device: "monitor" },
-  { x: 14, y: 7, z: 6950, w: 340, rotY: -22, device: "tablet" },
-  { x: -15, y: 8, z: 7700, w: 400, rotY: 16, device: "panel", float: 1 },
-  { x: 16, y: -6, z: 8450, w: 450, rotY: -16, device: "monitor" },
-];
-
-const CAMERA_TRAVEL = 9200;
-
-// The pinned/scroll-jacked studio walk-through's own scroll distance. There
-// used to be a second "Portal" act sharing this same pin (rings + a glitch
-// title card) — removed, since it was a redundant restatement of the real
-// About section's own heading right after it.
-const STUDIO_VH = 760;
-const TOTAL_VH = STUDIO_VH;
+// Timing of the intro / label / outro, in vh of scroll into the pin. These
+// are absolute distances (not fractions of the section), so the hero's fade
+// and the K's trip to the corner take the same amount of scrolling however
+// long the walk-through itself is. The outro is measured back from the end.
+const REVEAL = [vhToProgress(23), vhToProgress(84)] as const;
+const INTRO_OUT = [vhToProgress(15), vhToProgress(91)] as const;
+const LABEL_IN = [vhToProgress(99), vhToProgress(152)] as const;
+const LABEL_OUT = [vhToProgress(STUDIO_VH - 106), vhToProgress(STUDIO_VH - 30)] as const;
 
 /** One floating portfolio screen. Its own DOM node never unmounts while the
  *  scene is alive — the parent's per-frame loop toggles `display`,
@@ -117,11 +93,11 @@ function Screen({
 }
 
 /**
- * The pinned/scroll-jacked studio walk-through: 10 portfolio screens float
+ * The pinned/scroll-jacked studio walk-through: the portfolio screens float
  * past a 3D camera as the visitor scrolls, then the pin releases straight
  * into the page's normal in-flow content (About, right after this).
  *
- * Every value driven by scroll (camera position, the 10 screens' transform/
+ * Every value driven by scroll (camera position, the screens' transform/
  * opacity/filter, the travelling K mark, ...) used to live in React state,
  * so this whole tree re-rendered on every single scroll frame — the
  * dominant cause of the scroll jank reported on kanoy.pt. It's now one
@@ -133,9 +109,6 @@ function Screen({
 export function StudioAndPortal() {
   const { dict } = useLanguage();
   const onLight = useCornerLogoOnLight();
-  const isMobile = useIsMobile();
-  const isMobileRef = useRef(isMobile);
-  isMobileRef.current = isMobile;
 
   const sectionRef = useRef<HTMLDivElement>(null);
   const lightBeamRef = useRef<HTMLDivElement>(null);
@@ -149,15 +122,18 @@ export function StudioAndPortal() {
 
   useIsomorphicLayoutEffect(() => {
     let raf = 0;
+    const mobileQuery = window.matchMedia(MOBILE_QUERY);
 
     const applyFrame = (p: number) => {
-      const mobile = isMobileRef.current;
+      const mobile = mobileQuery.matches;
       const studioP = clamp(p);
       const camera = studioP * CAMERA_TRAVEL;
-      const reveal = range(studioP, 0.03, 0.11);
-      const introOut = range(studioP, 0.02, 0.12);
+      const reveal = range(studioP, REVEAL[0], REVEAL[1]);
+      const introOut = range(studioP, INTRO_OUT[0], INTRO_OUT[1]);
       const toCorner = ease(introOut);
-      const walkLabel = range(studioP, 0.13, 0.2) * (1 - range(studioP, 0.86, 0.96));
+      const walkLabel =
+        range(studioP, LABEL_IN[0], LABEL_IN[1]) *
+        (1 - range(studioP, LABEL_OUT[0], LABEL_OUT[1]));
 
       if (lightBeamRef.current)
         lightBeamRef.current.style.opacity = String(mix(0.35, 0.8, studioP));
@@ -265,12 +241,21 @@ export function StudioAndPortal() {
       if (!raf) raf = requestAnimationFrame(tick);
     };
 
+    // Crossing the breakpoint (e.g. rotating a tablet) changes the mark's
+    // sizes without any scroll, so force the next tick to re-apply the frame.
+    const onBreakpoint = () => {
+      lastP = -1;
+      onScroll();
+    };
+
     applyFrame(computeP()); // paint the correct frame before the first scroll event
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", onScroll);
+    mobileQuery.addEventListener("change", onBreakpoint);
     return () => {
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onScroll);
+      mobileQuery.removeEventListener("change", onBreakpoint);
       if (raf) cancelAnimationFrame(raf);
     };
   }, []);
@@ -279,7 +264,7 @@ export function StudioAndPortal() {
     <section
       ref={sectionRef}
       className="relative"
-      style={{ height: `${TOTAL_VH}vh` }}
+      style={{ height: `${STUDIO_VH}vh` }}
       aria-label="Entering the KANOY studio"
     >
       <div className="sticky top-0 z-40 h-dvh overflow-hidden">
@@ -314,10 +299,10 @@ export function StudioAndPortal() {
           style={{ opacity: 1, transform: "translate3d(0,0,0) scale(1)", filter: "blur(0px)" }}
         >
           {/* spacer matching the travelling mark's footprint so the tagline/hint below keep their spot */}
-          <div aria-hidden className={isMobile ? "h-[49vh]" : "h-[68vh]"} />
-          <p className="mt-6 max-w-xl whitespace-pre-line text-balance font-body text-[0.78rem] uppercase tracking-[0.32em] text-studio-muted md:text-base">
+          <div aria-hidden className="h-[49vh] md:h-[68vh]" />
+          <h1 className="mt-6 max-w-xl whitespace-pre-line text-balance font-body text-[0.78rem] uppercase tracking-[0.32em] text-studio-muted md:text-base">
             {dict.hero.tagline}
-          </p>
+          </h1>
           <span className="mt-14 text-[10px] uppercase tracking-[0.4em] text-accent scroll-hint md:mt-5">
             {dict.hero.scrollHint}
           </span>
@@ -329,8 +314,7 @@ export function StudioAndPortal() {
             then stays there for the rest of the site */}
         <div
           ref={kMarkWrapRef}
-          className="pointer-events-none fixed z-40"
-          style={{ left: "50vw", top: "46vh" }}
+          className="hero-k-wrap pointer-events-none fixed z-40"
         >
           <img
             ref={kIconRef}
@@ -339,11 +323,10 @@ export function StudioAndPortal() {
             aria-hidden
             width={1024}
             height={1024}
-            className="k-halo k-glow hero-k-shine absolute"
+            className="k-halo k-glow hero-k-shine hero-k-icon absolute"
             style={{
               left: 0,
               top: 0,
-              height: "40vh",
               width: "auto",
               maxWidth: "none",
               transform: "translate(-50%, -100%) translate(0vw, -0.05vw)",
@@ -351,7 +334,7 @@ export function StudioAndPortal() {
           />
           <span
             ref={kTextRef}
-            className={`hero-text-shine absolute whitespace-nowrap leading-none tracking-[-0.01em] transition-colors duration-300 ${
+            className={`hero-text-shine hero-k-text absolute whitespace-nowrap leading-none tracking-[-0.01em] transition-colors duration-300 ${
               onLight ? "text-ink" : "text-studio-foreground"
             }`}
             style={{
@@ -359,7 +342,6 @@ export function StudioAndPortal() {
               top: 0,
               fontFamily: "'Fredoka', sans-serif",
               fontWeight: 400,
-              fontSize: "7vw",
               transform: "translate(-50%, 0%) translate(0vw, 0.05vw)",
             }}
           >

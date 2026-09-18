@@ -512,6 +512,33 @@ body {
   animation: heroKShineOnce 1.6s ease-out 1;
 }
 
+/* The hero K mark's size/position before the scroll loop (StudioAndPortal)
+   first writes its own inline values. These are that loop's scroll-position-0
+   values, kept in CSS so the server-rendered page and the first paint are
+   already right on a phone — inline defaults could only ever be desktop's.
+   The 767px breakpoint matches MOBILE_QUERY in anim.ts. */
+.hero-k-wrap {
+  left: 50vw;
+  top: 46vh;
+}
+.hero-k-icon {
+  height: 40vh;
+}
+.hero-k-text {
+  font-size: 7vw;
+}
+@media (max-width: 767px) {
+  .hero-k-wrap {
+    top: 44vh;
+  }
+  .hero-k-icon {
+    height: 22vh;
+  }
+  .hero-k-text {
+    font-size: 10.5vw;
+  }
+}
+
 @keyframes heroTextShineOnce {
   0% {
     filter: brightness(1)
