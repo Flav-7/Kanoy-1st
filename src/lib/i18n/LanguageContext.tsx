@@ -15,6 +15,18 @@ function detectLanguage(): Language {
   return DEFAULT_LANGUAGE;
 }
 
+/** The visitor's stored choice if there is one, otherwise their browser's
+ *  language. Client-only — reads localStorage/navigator. */
+export function resolveLanguage(): Language {
+  try {
+    const stored = window.localStorage.getItem(STORAGE_KEY);
+    if (stored && SUPPORTED.includes(stored as Language)) return stored as Language;
+  } catch {
+    // storage blocked (private mode, etc.) — fall through to detection
+  }
+  return detectLanguage();
+}
+
 type LanguageContextValue = {
   language: Language;
   setLanguage: (lang: Language) => void;
@@ -29,12 +41,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
   const [language, setLanguageState] = useState<Language>(DEFAULT_LANGUAGE);
 
   useEffect(() => {
-    const stored = window.localStorage.getItem(STORAGE_KEY);
-    if (stored && SUPPORTED.includes(stored as Language)) {
-      setLanguageState(stored as Language);
-    } else {
-      setLanguageState(detectLanguage());
-    }
+    setLanguageState(resolveLanguage());
   }, []);
 
   useEffect(() => {

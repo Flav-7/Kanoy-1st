@@ -9,10 +9,11 @@ import { Problem } from "@/components/kanoy/Problem";
 import { LanguageSwitcher } from "@/components/kanoy/LanguageSwitcher";
 import { QuickNav } from "@/components/kanoy/QuickNav";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
+import { DEFAULT_LANGUAGE, translations } from "@/lib/i18n/translations";
 
-const title = "KANOY — Websites that make people stop scrolling";
-const description =
-  "KANOY is a digital studio building premium websites, reservation and booking systems, and custom digital systems for real businesses.";
+// What the server (and link-preview scrapers) see: the default language.
+// The visitor's own language is applied client-side by the effect below.
+const { title, description } = translations[DEFAULT_LANGUAGE].seo;
 
 export const Route = createFileRoute("/")({
   validateSearch: (search: Record<string, unknown>): { openContact?: boolean } =>

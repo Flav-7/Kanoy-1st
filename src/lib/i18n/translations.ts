@@ -81,6 +81,14 @@ export type Dictionary = {
     decline: string;
     accept: string;
   };
+  errors: {
+    notFoundTitle: string;
+    notFoundText: string;
+    errorTitle: string;
+    errorText: string;
+    home: string;
+    retry: string;
+  };
 };
 
 export const translations: Record<Language, Dictionary> = {
@@ -238,6 +246,14 @@ export const translations: Record<Language, Dictionary> = {
       decline: "Recusar",
       accept: "Aceitar",
     },
+    errors: {
+      notFoundTitle: "Esta página não existe",
+      notFoundText: "O endereço que procura não existe ou foi movido.",
+      errorTitle: "Algo correu mal",
+      errorText: "Não foi possível carregar esta página. Tente novamente ou volte ao início.",
+      home: "Voltar ao início",
+      retry: "Tentar novamente",
+    },
   },
   es: {
     seo: {
@@ -393,6 +409,14 @@ export const translations: Record<Language, Dictionary> = {
       decline: "Rechazar",
       accept: "Aceptar",
     },
+    errors: {
+      notFoundTitle: "Esta página no existe",
+      notFoundText: "La dirección que buscas no existe o ha sido movida.",
+      errorTitle: "Algo ha salido mal",
+      errorText: "No se ha podido cargar esta página. Inténtalo de nuevo o vuelve al inicio.",
+      home: "Volver al inicio",
+      retry: "Intentar de nuevo",
+    },
   },
   en: {
     seo: {
@@ -545,6 +569,14 @@ export const translations: Record<Language, Dictionary> = {
       privacyLink: "Learn more",
       decline: "Decline",
       accept: "Accept",
+    },
+    errors: {
+      notFoundTitle: "This page doesn't exist",
+      notFoundText: "The address you're looking for doesn't exist or has been moved.",
+      errorTitle: "Something went wrong",
+      errorText: "This page couldn't be loaded. Try again, or head back to the start.",
+      home: "Back to home",
+      retry: "Try again",
     },
   },
 };

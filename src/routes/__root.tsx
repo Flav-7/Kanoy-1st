@@ -1,7 +1,6 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
   Outlet,
-  Link,
   createRootRouteWithContext,
   useRouter,
   HeadContent,
@@ -12,28 +11,12 @@ import { useEffect, type ReactNode } from "react";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { LanguageProvider } from "../lib/i18n/LanguageContext";
+import { DEFAULT_LANGUAGE, translations } from "../lib/i18n/translations";
+import { ErrorScreen } from "../components/kanoy/ErrorScreen";
 import { CookieConsent } from "../components/kanoy/CookieConsent";
 
 function NotFoundComponent() {
-  return (
-    <div className="flex min-h-screen items-center justify-center bg-background px-4">
-      <div className="max-w-md text-center">
-        <h1 className="text-7xl font-bold text-foreground">404</h1>
-        <h2 className="mt-4 text-xl font-semibold text-foreground">Page not found</h2>
-        <p className="mt-2 text-sm text-muted-foreground">
-          The page you're looking for doesn't exist or has been moved.
-        </p>
-        <div className="mt-6">
-          <Link
-            to="/"
-            className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
-          >
-            Go home
-          </Link>
-        </div>
-      </div>
-    </div>
-  );
+  return <ErrorScreen kind="notFound" />;
 }
 
 function ErrorComponent({ error, reset }: { error: unknown; reset: () => void }) {
@@ -44,57 +27,33 @@ function ErrorComponent({ error, reset }: { error: unknown; reset: () => void })
   }, [error]);
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background px-4">
-      <div className="max-w-md text-center">
-        <h1 className="text-xl font-semibold tracking-tight text-foreground">
-          This page didn't load
-        </h1>
-        <p className="mt-2 text-sm text-muted-foreground">
-          Something went wrong on our end. You can try refreshing or head back home.
-        </p>
-        <div className="mt-6 flex flex-wrap justify-center gap-2">
-          <button
-            onClick={() => {
-              router.invalidate();
-              reset();
-            }}
-            className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
-          >
-            Try again
-          </button>
-          <a
-            href="/"
-            className="inline-flex items-center justify-center rounded-md border border-input bg-background px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent"
-          >
-            Go home
-          </a>
-        </div>
-      </div>
-    </div>
+    <ErrorScreen
+      kind="error"
+      onRetry={() => {
+        router.invalidate();
+        reset();
+      }}
+    />
   );
 }
+
+// What the server (and link-preview scrapers) see: the default language.
+const seo = translations[DEFAULT_LANGUAGE].seo;
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
   head: () => ({
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "KANOY — Digital studio" },
-      {
-        name: "description",
-        content: "KANOY builds premium websites and custom booking systems for real businesses.",
-      },
+      { title: seo.title },
+      { name: "description", content: seo.description },
       { name: "author", content: "KANOY" },
-      { property: "og:title", content: "KANOY — Digital studio" },
-      {
-        property: "og:description",
-        content: "KANOY builds premium websites and custom booking systems for real businesses.",
-      },
+      { property: "og:title", content: seo.title },
+      { property: "og:description", content: seo.description },
       { property: "og:type", content: "website" },
       { property: "og:image", content: "https://kanoy.pt/og-image.webp" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:image", content: "https://kanoy.pt/og-image.webp" },
-      { name: "twitter:site", content: "@Lovable" },
     ],
     links: [
       // Fonts are self-hosted in src/styles.css (@font-face) — see that file
@@ -120,8 +79,7 @@ const ORGANIZATION_SCHEMA = {
   url: "https://kanoy.pt",
   logo: "https://kanoy.pt/og-image.webp",
   image: "https://kanoy.pt/og-image.webp",
-  description:
-    "KANOY builds premium websites and custom booking systems for real businesses.",
+  description: seo.description,
   email: "hello@kanoy.studio",
   telephone: "+351923250729",
   sameAs: ["https://www.instagram.com/kanoy.pt/"],
