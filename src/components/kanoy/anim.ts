@@ -13,19 +13,6 @@ export function useIsMobile(breakpoint = 767) {
   return isMobile;
 }
 
-/** Tracks the OS/browser "reduce motion" accessibility preference. */
-export function usePrefersReducedMotion() {
-  const [reduced, setReduced] = useState(false);
-  useEffect(() => {
-    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const update = () => setReduced(mq.matches);
-    update();
-    mq.addEventListener("change", update);
-    return () => mq.removeEventListener("change", update);
-  }, []);
-  return reduced;
-}
-
 /** Scroll progress (0..1) of an element travelling through the viewport. */
 export function useScrollProgress<T extends HTMLElement>() {
   const ref = useRef<T>(null);

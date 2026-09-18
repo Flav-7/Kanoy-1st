@@ -8,7 +8,6 @@ import {
   range,
   useCornerLogoOnLight,
   useIsMobile,
-  usePrefersReducedMotion,
 } from "./anim";
 import kanoyK from "@/assets/branding/kanoy-k.webp";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
@@ -137,11 +136,6 @@ export function StudioAndPortal() {
   const isMobile = useIsMobile();
   const isMobileRef = useRef(isMobile);
   isMobileRef.current = isMobile;
-  // Only an explicit OS "reduce motion" request gets the plain static grid
-  // below. Hardware sniffing (deviceMemory / hardwareConcurrency) was
-  // removed: it flagged most phones as "weak", so mobile silently got a
-  // different site from desktop.
-  const useSimpleScene = usePrefersReducedMotion();
 
   const sectionRef = useRef<HTMLDivElement>(null);
   const lightBeamRef = useRef<HTMLDivElement>(null);
@@ -154,7 +148,6 @@ export function StudioAndPortal() {
   const screenRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   useIsomorphicLayoutEffect(() => {
-    if (useSimpleScene) return;
     let raf = 0;
 
     const applyFrame = (p: number) => {
@@ -280,107 +273,7 @@ export function StudioAndPortal() {
       window.removeEventListener("resize", onScroll);
       if (raf) cancelAnimationFrame(raf);
     };
-  }, [useSimpleScene]);
-
-  // With reduce-motion on (or on weak-looking hardware), skip the pinned/
-  // scroll-jacked 3D walk-through entirely and show the same projects as a
-  // plain static grid instead. The corner K
-  // mark still has to render here, docked in its final position from the
-  // start — the rest of the page (About, Problem, Services, ...) assumes
-  // this fixed logo already exists and reads its own background to decide
-  // the logo's light/dark colour.
-  if (useSimpleScene) {
-    const markIconVh = isMobile ? 4.6 : 3.4;
-    const markTextVw = isMobile ? 2.3 : 1.5;
-    return (
-      <section className="relative bg-studio py-24 md:py-32" aria-label="KANOY studio and portfolio">
-        <div
-          className="pointer-events-none fixed z-40"
-          style={{ left: isMobile ? "11vw" : "2vw", top: "2.4vh" }}
-        >
-          <img
-            src={kanoyK}
-            alt=""
-            aria-hidden
-            width={1024}
-            height={1024}
-            className="k-halo k-glow hero-k-shine absolute"
-            style={{
-              left: 0,
-              top: 0,
-              height: `${markIconVh}vh`,
-              width: "auto",
-              maxWidth: "none",
-              transform: "translate(-100%, -50%)",
-            }}
-          />
-          <span
-            className={`hero-text-shine absolute whitespace-nowrap leading-none tracking-[-0.01em] transition-colors duration-300 ${
-              onLight ? "text-ink" : "text-studio-foreground"
-            }`}
-            style={{
-              left: 0,
-              top: 0,
-              fontFamily: "'Fredoka', sans-serif",
-              fontWeight: 400,
-              fontSize: `${markTextVw}vw`,
-              transform: "translate(0%, -50%)",
-            }}
-          >
-            Kanoy
-          </span>
-        </div>
-
-        <div className="mx-auto max-w-xl px-6 text-center">
-          <p className="whitespace-pre-line text-balance font-body text-[0.78rem] uppercase tracking-[0.32em] text-studio-muted md:text-base">
-            {dict.hero.tagline}
-          </p>
-        </div>
-
-        <div className="mx-auto mt-16 grid max-w-5xl grid-cols-1 justify-items-center gap-x-8 gap-y-14 px-6 sm:grid-cols-2 lg:grid-cols-3">
-          {MINI_SITES.map((site) => (
-            <div key={site.id}>
-              {site.location && (
-                <div
-                  style={{
-                    width: 320,
-                    marginBottom: 6,
-                    textAlign: "left",
-                    color: "var(--studio-muted)",
-                    fontSize: 9,
-                    letterSpacing: "0.22em",
-                    textTransform: "uppercase",
-                    whiteSpace: "nowrap",
-                  }}
-                >
-                  {site.location}
-                </div>
-              )}
-              <div className="screen-shell">
-                <MiniSite site={site} width={320} />
-                <span className="screen-glare" aria-hidden />
-              </div>
-              <div className="screen-caption" style={{ width: 320 }}>
-                {site.url ? (
-                  <a
-                    href={site.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    style={{ color: "inherit", textDecoration: "underline" }}
-                  >
-                    {site.url.replace(/^https?:\/\//, "")}
-                  </a>
-                ) : (
-                  <span>{site.label}</span>
-                )}
-                <span className="text-accent">{site.kind}</span>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-    );
-  }
+  }, []);
 
   return (
     <section
