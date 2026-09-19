@@ -20,7 +20,7 @@ export type Dictionary = {
   seo: { title: string; description: string };
   hero: { tagline: string; scrollHint: string };
   studio: { label: string; text: string };
-  entrada: { scrollHint: string; requestPortfolio: string; talkToUs: string };
+  entrada: { talkToUs: string };
   nav: {
     services: string;
     about: string;
@@ -107,8 +107,6 @@ export const translations: Record<Language, Dictionary> = {
       text: "Cada ecrã que passas é um projeto. Continua a mover-te.",
     },
     entrada: {
-      scrollHint: "Desliza para entrar",
-      requestPortfolio: "Pedir portefólio",
       talkToUs: "Fale connosco",
     },
     nav: {
@@ -270,8 +268,6 @@ export const translations: Record<Language, Dictionary> = {
       text: "Cada pantalla que pasas es un proyecto. Sigue moviéndote.",
     },
     entrada: {
-      scrollHint: "Desliza para entrar",
-      requestPortfolio: "Pedir portafolio",
       talkToUs: "Habla con nosotros",
     },
     nav: {
@@ -433,8 +429,6 @@ export const translations: Record<Language, Dictionary> = {
       text: "Every screen you pass is a project. Keep moving.",
     },
     entrada: {
-      scrollHint: "Scroll to enter",
-      requestPortfolio: "Request portfolio",
       talkToUs: "Talk to us",
     },
     nav: {
