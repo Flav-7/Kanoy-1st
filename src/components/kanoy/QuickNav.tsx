@@ -93,16 +93,16 @@ export function QuickNav() {
   return (
     <div
       ref={rootRef}
-      className={`fixed right-2 top-20 z-50 flex flex-col-reverse items-end gap-4 transition-opacity duration-500 md:left-6 md:right-auto md:top-1/2 md:flex-col md:items-start md:-translate-y-1/2 ${
+      className={`fixed right-2 top-20 z-50 flex flex-col-reverse items-end gap-4 transition-opacity duration-500 md:right-6 md:top-1/2 md:flex-col md:items-end md:-translate-y-1/2 ${
         visible ? "opacity-100" : "pointer-events-none opacity-0"
       }`}
       style={{ mixBlendMode: "difference" }}
     >
       {open && (
-        <ul className="flex flex-col items-end gap-3 md:items-start">
+        <ul className="flex flex-col items-end gap-3">
           {items.map((item) => (
             <li key={item.id}>
-              <button type="button" onClick={() => goTo(item)} className="block text-right md:text-left">
+              <button type="button" onClick={() => goTo(item)} className="block text-right">
                 <span className="block text-[11px] font-medium uppercase tracking-[0.2em] text-white">
                   {item.label}
                 </span>

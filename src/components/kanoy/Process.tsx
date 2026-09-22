@@ -5,15 +5,6 @@ import { useLanguage } from "@/lib/i18n/LanguageContext";
 
 const STEP_NUMBERS = ["01", "02", "03", "04", "05", "06"];
 
-// A generous fixed height for the stack, well beyond what the content ever
-// actually needs. Without it the flex container's height tracks its content
-// exactly, so the moment the open step shrinks back down the container's
-// own top edge sweeps down past a mouse that never moved — an instant
-// mouseleave that closes the very step the cursor is still sitting over,
-// which reopens it, which shrinks it again. Extra empty space above the
-// stack means the cursor is always still "inside" while a step transitions.
-const STACK_HEIGHT = 640;
-
 // How far the active folder rises. It's a transform, which never affects
 // layout — so without help, rising folder N visually creeps up into folder
 // N+1's peeking tab above it without actually moving anything (nothing
@@ -35,7 +26,6 @@ function StepFolder({
   isBelowActive,
   widthPct,
   zIndex,
-  onOpen,
   onClick,
 }: {
   step: Step;
@@ -44,7 +34,6 @@ function StepFolder({
   isBelowActive: boolean;
   widthPct: number;
   zIndex: number;
-  onOpen: () => void;
   onClick: () => void;
 }) {
   const { ref, size } = useFolderSize<HTMLDivElement>();
@@ -55,8 +44,6 @@ function StepFolder({
       ref={ref}
       role="button"
       tabIndex={0}
-      onMouseMove={onOpen}
-      onFocus={onOpen}
       onClick={onClick}
       onKeyDown={(e) => {
         if (e.key === "Enter" || e.key === " ") {
@@ -135,35 +122,29 @@ export function Process() {
   const { ref, p } = useScrollProgress<HTMLDivElement>();
   const { dict } = useLanguage();
   const STEPS = dict.process.steps.map((step, i) => ({ n: STEP_NUMBERS[i]!, ...step }));
-  const [hoverIndex, setHoverIndex] = useState<number | null>(null);
-  const activeIndex = hoverIndex ?? 0;
+  const [activeIndex, setActiveIndex] = useState(0);
 
   const openStep = (i: number) => {
-    if (hoverIndex === i) return;
-    setHoverIndex(i);
+    if (activeIndex === i) return;
+    setActiveIndex(i);
   };
-  const closeSteps = () => setHoverIndex(null);
 
   return (
     <section
       id="process"
       ref={ref}
-      className="relative h-screen bg-ink text-studio-foreground"
+      className="relative min-h-screen overflow-hidden bg-ink text-studio-foreground"
       aria-label="How KANOY works"
     >
-      <div className="flex h-screen flex-col items-center justify-end overflow-hidden pb-[18vh] md:pb-[30vh]">
-        <div className="light-beam" style={{ opacity: 0.22 + p * 0.25 }} />
+      <div className="light-beam" style={{ opacity: 0.22 + p * 0.25 }} />
+      <div className="flex min-h-screen flex-col items-center justify-end pb-[18vh] pt-28 md:pb-[30vh] md:pt-36">
         <div className="absolute left-6 top-10 md:left-14">
           <div className="text-[10px] uppercase tracking-[0.42em] text-accent">
             {dict.process.eyebrow}
           </div>
         </div>
 
-        <div
-          className="flex w-[70vw] max-w-lg flex-col-reverse"
-          style={{ height: STACK_HEIGHT }}
-          onMouseLeave={closeSteps}
-        >
+        <div className="flex w-[70vw] max-w-lg flex-col-reverse">
           {STEPS.map((s, i) => (
             <StepFolder
               key={s.n}
@@ -179,7 +160,6 @@ export function Process() {
               // as a block, preserving their relative order, so none of
               // their labels gets buried.
               zIndex={i < activeIndex ? 50 + STEPS.length - i : STEPS.length - i}
-              onOpen={() => openStep(i)}
               onClick={() => openStep(i)}
             />
           ))}
