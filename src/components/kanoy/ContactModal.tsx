@@ -11,12 +11,55 @@ import { LANGUAGES, translations, type Language } from "@/lib/i18n/translations"
 import { sendContactEmail } from "@/lib/contact/send-contact-email";
 import { FLAGS } from "./flags";
 
-const CONTACT_EMAIL = "hello@kanoy.studio";
+const CONTACT_EMAIL = "geral@kanoy.pt";
 
 type Step = "choice" | "form" | "success" | "error";
 
 const fieldClass =
   "w-full border-b border-studio-foreground/20 bg-transparent py-2 text-sm text-studio-foreground placeholder:text-studio-muted/60 focus:border-accent focus:outline-none";
+
+/** A copy-to-clipboard fallback for the mailto link above it — `mailto:`
+ *  silently does nothing if the visitor has no default mail app configured
+ *  (common on a fresh machine/browser profile), so this gives them a way to
+ *  actually get the address without depending on that OS association. */
+function CopyEmailButton({
+  email,
+  label,
+  copiedLabel,
+}: {
+  email: string;
+  label: string;
+  copiedLabel: string;
+}) {
+  const [copied, setCopied] = useState(false);
+
+  useEffect(() => {
+    if (!copied) return;
+    const t = setTimeout(() => setCopied(false), 2000);
+    return () => clearTimeout(t);
+  }, [copied]);
+
+  const onCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(email);
+      setCopied(true);
+    } catch {
+      // Clipboard API unavailable or denied (e.g. insecure context, no
+      // permission) — nothing more we can do here, the address is still
+      // shown as plain selectable text right next to this button.
+    }
+  };
+
+  return (
+    <button
+      type="button"
+      onClick={onCopy}
+      className="shrink-0 text-[10px] uppercase tracking-[0.2em] text-accent transition-colors hover:text-studio-foreground"
+    >
+      {copied ? copiedLabel : label}
+    </button>
+  );
+}
 
 function Field({
   label,
@@ -101,14 +144,20 @@ export function ContactModal({ autoOpen }: { autoOpen?: boolean | undefined }) {
             </DialogTitle>
             <DialogDescription className="sr-only">{m.title}</DialogDescription>
             <div className="mt-8 grid gap-4 md:grid-cols-2">
-              <a
-                href={`mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent("Project enquiry")}`}
-                onClick={() => setOpen(false)}
-                className="flex flex-col gap-2 rounded-lg border border-studio-foreground/15 p-6 text-left transition-colors hover:border-accent"
-              >
-                <span className="font-display text-lg tracking-[-0.01em]">{m.emailTitle}</span>
-                <span className="text-sm leading-relaxed text-studio-muted">{m.emailDesc}</span>
-              </a>
+              <div className="flex flex-col gap-2 rounded-lg border border-studio-foreground/15 p-6 text-left transition-colors hover:border-accent">
+                <a
+                  href={`mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent("Project enquiry")}`}
+                  onClick={() => setOpen(false)}
+                  className="flex flex-col gap-2"
+                >
+                  <span className="font-display text-lg tracking-[-0.01em]">{m.emailTitle}</span>
+                  <span className="text-sm leading-relaxed text-studio-muted">{m.emailDesc}</span>
+                </a>
+                <div className="mt-1 flex items-center justify-between gap-3 border-t border-studio-foreground/10 pt-3">
+                  <span className="truncate text-sm text-studio-foreground/80">{CONTACT_EMAIL}</span>
+                  <CopyEmailButton email={CONTACT_EMAIL} label={m.copyEmail} copiedLabel={m.emailCopied} />
+                </div>
+              </div>
               <button
                 type="button"
                 onClick={() => setStep("form")}

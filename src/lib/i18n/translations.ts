@@ -54,6 +54,8 @@ export type Dictionary = {
       title: string;
       emailTitle: string;
       emailDesc: string;
+      copyEmail: string;
+      emailCopied: string;
       formTitle: string;
       formDesc: string;
       back: string;
@@ -216,6 +218,8 @@ export const translations: Record<Language, Dictionary> = {
         title: "Como prefere falar connosco?",
         emailTitle: "Enviar email direto",
         emailDesc: "Abra o seu email com tudo pronto — escreva e envie.",
+        copyEmail: "Copiar email",
+        emailCopied: "Email copiado",
         formTitle: "Preencher formulário",
         formDesc: "Diga-nos o que precisa, respondemos-lhe por email.",
         back: "Voltar",
@@ -377,6 +381,8 @@ export const translations: Record<Language, Dictionary> = {
         title: "¿Cómo prefieres hablar con nosotros?",
         emailTitle: "Enviar email directo",
         emailDesc: "Abre tu email con todo listo — escribes y envías.",
+        copyEmail: "Copiar email",
+        emailCopied: "Email copiado",
         formTitle: "Rellenar formulario",
         formDesc: "Cuéntanos qué necesitas, te respondemos por email.",
         back: "Volver",
@@ -537,6 +543,8 @@ export const translations: Record<Language, Dictionary> = {
         title: "How would you like to reach us?",
         emailTitle: "Send a direct email",
         emailDesc: "Opens your email app with everything ready — just write and send.",
+        copyEmail: "Copy email",
+        emailCopied: "Email copied",
         formTitle: "Fill out a form",
         formDesc: "Tell us what you need and we'll get back to you by email.",
         back: "Back",

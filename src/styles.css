@@ -399,6 +399,17 @@ body {
   }
 }
 
+/* Hides the native scrollbar on an element that still scrolls normally —
+   used where a custom scroll indicator (e.g. the dialog's progress bar)
+   replaces it, so there isn't a second, redundant one next to it. */
+@utility no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
 @utility hairline {
   height: 1px;
   width: 100%;
