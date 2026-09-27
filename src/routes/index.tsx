@@ -7,6 +7,7 @@ import { Process } from "@/components/kanoy/Process";
 import { About, Contact } from "@/components/kanoy/Closing";
 import { Problem } from "@/components/kanoy/Problem";
 import { LanguageSwitcher } from "@/components/kanoy/LanguageSwitcher";
+import { AccountMenu } from "@/components/kanoy/AccountMenu";
 import { QuickNav } from "@/components/kanoy/QuickNav";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import { DEFAULT_LANGUAGE, translations } from "@/lib/i18n/translations";
@@ -71,7 +72,7 @@ function Index() {
 
   return (
     <main className="bg-background">
-      <LanguageSwitcher>
+      <LanguageSwitcher trailing={<AccountMenu />}>
         <Link
           to="/"
           hash="contact"

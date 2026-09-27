@@ -4,7 +4,14 @@ import { LANGUAGES } from "@/lib/i18n/translations";
 import { FLAGS } from "./flags";
 import { useDismiss } from "./useDismiss";
 
-export function LanguageSwitcher({ children }: { children?: ReactNode }) {
+/** `children` render left of the flags; `trailing` renders right of the active flag. */
+export function LanguageSwitcher({
+  children,
+  trailing,
+}: {
+  children?: ReactNode;
+  trailing?: ReactNode;
+}) {
   const { language, setLanguage } = useLanguage();
   const [open, setOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
@@ -51,6 +58,8 @@ export function LanguageSwitcher({ children }: { children?: ReactNode }) {
       >
         <ActiveFlag className={`${flagClass} ring-2 ring-white/80`} />
       </button>
+
+      {trailing}
     </div>
   );
 }

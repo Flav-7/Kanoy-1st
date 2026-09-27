@@ -11,9 +11,11 @@ import { useEffect, type ReactNode } from "react";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { LanguageProvider } from "../lib/i18n/LanguageContext";
+import { AuthProvider } from "../lib/auth/AuthContext";
 import { DEFAULT_LANGUAGE, translations } from "../lib/i18n/translations";
 import { ErrorScreen } from "../components/kanoy/ErrorScreen";
 import { CookieConsent } from "../components/kanoy/CookieConsent";
+import { ConsentedAnalytics } from "../components/kanoy/ConsentedAnalytics";
 
 function NotFoundComponent() {
   return <ErrorScreen kind="notFound" />;
@@ -124,9 +126,12 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <LanguageProvider>
-        {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-        <Outlet />
-        <CookieConsent />
+        <AuthProvider>
+          {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
+          <Outlet />
+          <CookieConsent />
+          <ConsentedAnalytics />
+        </AuthProvider>
       </LanguageProvider>
     </QueryClientProvider>
   );

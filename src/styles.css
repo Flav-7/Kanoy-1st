@@ -205,6 +205,16 @@
   --color-ink: var(--ink);
 }
 
+/* Radix's dialog scroll lock sets overflow:hidden on body, which hides the
+   scrollbar: the viewport widens and every fixed element and the full-screen
+   studio scene jump sideways (and a reserved gutter would show as a blank
+   strip instead). Keep the scrollbar as it is — the lock still blocks wheel
+   and touch scrolling behind the dialog through its event listeners. */
+html body[data-scroll-locked] {
+  overflow: visible !important;
+  margin-right: 0 !important;
+}
+
 body {
   font-family: var(--font-body);
   background-color: var(--background);

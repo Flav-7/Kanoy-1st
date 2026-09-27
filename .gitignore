@@ -35,3 +35,8 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Local dev database (PGlite)
+.data/
+# Vercel build output / CLI link
+.vercel/

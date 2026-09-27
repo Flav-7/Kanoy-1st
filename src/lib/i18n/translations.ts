@@ -91,6 +91,20 @@ export type Dictionary = {
     home: string;
     retry: string;
   };
+  /** Team-only login (top-right account icon) and its dropdown. */
+  account: {
+    menuLabel: string;
+    loginTitle: string;
+    loginText: string;
+    emailLabel: string;
+    passwordLabel: string;
+    submit: string;
+    signingIn: string;
+    invalid: string;
+    unavailable: string;
+    calendar: string;
+    logout: string;
+  };
 };
 
 export const translations: Record<Language, Dictionary> = {
@@ -256,6 +270,19 @@ export const translations: Record<Language, Dictionary> = {
       home: "Voltar ao início",
       retry: "Tentar novamente",
     },
+    account: {
+      menuLabel: "Conta",
+      loginTitle: "Entrar",
+      loginText: "Área reservada à equipa KANOY.",
+      emailLabel: "Email",
+      passwordLabel: "Palavra-passe",
+      submit: "Entrar",
+      signingIn: "A entrar…",
+      invalid: "Email ou palavra-passe incorretos.",
+      unavailable: "O login ainda não está disponível. Tente mais tarde.",
+      calendar: "Calendário",
+      logout: "Terminar sessão",
+    },
   },
   es: {
     seo: {
@@ -419,6 +446,19 @@ export const translations: Record<Language, Dictionary> = {
       home: "Volver al inicio",
       retry: "Intentar de nuevo",
     },
+    account: {
+      menuLabel: "Cuenta",
+      loginTitle: "Entrar",
+      loginText: "Área reservada al equipo KANOY.",
+      emailLabel: "Email",
+      passwordLabel: "Contraseña",
+      submit: "Entrar",
+      signingIn: "Entrando…",
+      invalid: "Email o contraseña incorrectos.",
+      unavailable: "El acceso todavía no está disponible. Inténtalo más tarde.",
+      calendar: "Calendario",
+      logout: "Cerrar sesión",
+    },
   },
   en: {
     seo: {
@@ -579,6 +619,19 @@ export const translations: Record<Language, Dictionary> = {
       errorText: "This page couldn't be loaded. Try again, or head back to the start.",
       home: "Back to home",
       retry: "Try again",
+    },
+    account: {
+      menuLabel: "Account",
+      loginTitle: "Sign in",
+      loginText: "KANOY team area.",
+      emailLabel: "Email",
+      passwordLabel: "Password",
+      submit: "Sign in",
+      signingIn: "Signing in…",
+      invalid: "Wrong email or password.",
+      unavailable: "Sign-in isn't available yet. Please try again later.",
+      calendar: "Calendar",
+      logout: "Sign out",
     },
   },
 };
