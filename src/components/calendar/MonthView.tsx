@@ -3,7 +3,7 @@ import { Plus } from "lucide-react";
 import { formatPlainDate, type PlainDate } from "@/lib/calendar/dates";
 import { occurrencesByDay } from "@/lib/calendar/grouping";
 import type { Occurrence } from "@/lib/calendar/types";
-import { swatch } from "./calendar-colors";
+import { eventSwatch } from "./calendar-colors";
 import { useCalendarUi } from "./CalendarContext";
 import { EventChip } from "./EventCard";
 
@@ -91,7 +91,10 @@ export function MonthView({
                       key={o.key}
                       className="h-1.5 w-1.5 rounded-full"
                       style={{
-                        background: swatch(ui.calendarsById.get(o.event.calendarId)?.color),
+                        background: eventSwatch(
+                          o.event,
+                          ui.calendarsById.get(o.event.calendarId)?.color,
+                        ),
                       }}
                     />
                   ))}

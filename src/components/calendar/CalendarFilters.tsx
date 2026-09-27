@@ -1,8 +1,13 @@
 import type { ReactNode } from "react";
 import { Check } from "lucide-react";
 import { toggleFilter, type CalendarFilters as Filters } from "@/lib/calendar/filters";
-import { CATEGORIES, type CalendarSummary, type TeamMember } from "@/lib/calendar/types";
-import { CATEGORY_ICONS, swatch } from "./calendar-colors";
+import {
+  CATEGORIES,
+  displayName,
+  type CalendarSummary,
+  type TeamMember,
+} from "@/lib/calendar/types";
+import { CATEGORY_ICONS, CATEGORY_SWATCHES, swatch } from "./calendar-colors";
 import { useCalendarUi } from "./CalendarContext";
 
 function Option({
@@ -126,7 +131,7 @@ export function CalendarFilters({
             >
               {p.name.charAt(0)}
             </span>
-            <span className="truncate">{p.name}</span>
+            <span className="truncate">{displayName(p)}</span>
           </Option>
         ))}
       </Section>
@@ -150,7 +155,11 @@ export function CalendarFilters({
                 })
               }
             >
-              <Icon className="h-3.5 w-3.5 shrink-0 text-studio-muted" aria-hidden />
+              <Icon
+                className="h-3.5 w-3.5 shrink-0 text-studio-muted"
+                aria-hidden
+                style={CATEGORY_SWATCHES[cat] ? { color: CATEGORY_SWATCHES[cat] } : undefined}
+              />
               <span>{ui.copy.categoryNames[cat]}</span>
             </Option>
           );

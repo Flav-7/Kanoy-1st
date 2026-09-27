@@ -15,8 +15,8 @@ import {
 import { addDays, formatPlainDate, instantToPlainDate } from "@/lib/calendar/dates";
 import { eventToInput } from "@/lib/calendar/form";
 import { canEditEvents } from "@/lib/calendar/permissions";
-import type { CalendarEvent, Occurrence } from "@/lib/calendar/types";
-import { CATEGORY_ICONS, swatch } from "./calendar-colors";
+import { displayName, type CalendarEvent, type Occurrence } from "@/lib/calendar/types";
+import { CATEGORY_ICONS, eventSwatch } from "./calendar-colors";
 import { useCalendarUi, type CalendarUi } from "./CalendarContext";
 import { formatTime } from "./EventCard";
 import { useEventActions, type ActionResult } from "./useCalendarData";
@@ -128,7 +128,7 @@ export function EventDrawer({
                 <span
                   aria-hidden
                   className="mt-2 h-3 w-3 shrink-0 rounded-full"
-                  style={{ background: swatch(calendar?.color) }}
+                  style={{ background: eventSwatch(event, calendar?.color) }}
                 />
                 <div className="min-w-0 flex-1">
                   <DialogPrimitive.Title
@@ -189,7 +189,7 @@ export function EventDrawer({
                   ) : (
                     <ul className="space-y-1">
                       {event.participants.map((id) => (
-                        <li key={id}>{ui.teamById.get(id)?.name ?? "—"}</li>
+                        <li key={id}>{displayName(ui.teamById.get(id))}</li>
                       ))}
                     </ul>
                   )}
@@ -208,7 +208,7 @@ export function EventDrawer({
                   </Row>
                 )}
                 <p className="text-xs text-studio-muted">
-                  {ui.copy.details.createdBy} {ui.teamById.get(event.createdBy)?.name ?? "—"}
+                  {ui.copy.details.createdBy} {displayName(ui.teamById.get(event.createdBy))}
                 </p>
               </div>
 

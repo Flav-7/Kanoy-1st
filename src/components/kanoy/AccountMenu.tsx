@@ -1,7 +1,9 @@
 import { useRef, useState, type FormEvent } from "react";
 import { Link } from "@tanstack/react-router";
-import { CalendarDays, LogOut, UserRound } from "lucide-react";
+import { CalendarDays, IdCard, LogOut, UserRound } from "lucide-react";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
+import { ProfileDialog } from "@/components/team/ProfileDialog";
+import { TEAM_COPY } from "@/components/team/team-i18n";
 import { useAuth } from "@/lib/auth/AuthContext";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import { useDismiss } from "./useDismiss";
@@ -19,11 +21,12 @@ const itemClass =
  */
 export function AccountMenu() {
   const { user, ready, logout } = useAuth();
-  const { dict } = useLanguage();
+  const { dict, language } = useLanguage();
   const t = dict.account;
 
   const [menuOpen, setMenuOpen] = useState(false);
   const [loginOpen, setLoginOpen] = useState(false);
+  const [profileOpen, setProfileOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
 
   useDismiss(menuOpen, rootRef, () => setMenuOpen(false));
@@ -74,6 +77,18 @@ export function AccountMenu() {
               role="menuitem"
               onClick={() => {
                 setMenuOpen(false);
+                setProfileOpen(true);
+              }}
+              className={itemClass}
+            >
+              <IdCard className="h-4 w-4 text-studio-muted" />
+              {TEAM_COPY[language].profile.title}
+            </button>
+            <button
+              type="button"
+              role="menuitem"
+              onClick={() => {
+                setMenuOpen(false);
                 void logout();
               }}
               className={itemClass}
@@ -86,8 +101,23 @@ export function AccountMenu() {
       )}
 
       <LoginDialog open={loginOpen} onOpenChange={setLoginOpen} />
+      {user && <ProfileDialog open={profileOpen} onOpenChange={setProfileOpen} />}
     </div>
   );
+}
+
+/**
+ * The login never navigates, so browsers can't always tell it succeeded.
+ * Where supported (Chrome, Edge, Android) hand the credentials to the
+ * browser's password manager explicitly so it offers "Save password" and
+ * autofills them next time; elsewhere the name/autocomplete attributes on
+ * the fields do the job. Nothing is stored by the site itself.
+ */
+function offerToSavePassword(id: string, password: string, name: string) {
+  const Ctor = (window as { PasswordCredential?: new (data: object) => Credential })
+    .PasswordCredential;
+  if (!Ctor || !navigator.credentials) return;
+  navigator.credentials.store(new Ctor({ id, password, name })).catch(() => {});
 }
 
 export function LoginDialog({
@@ -103,6 +133,7 @@ export function LoginDialog({
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [remember, setRemember] = useState(true);
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -119,12 +150,19 @@ export function LoginDialog({
     setPending(true);
     setError(null);
     try {
-      const result = await login(email, password);
+      const result = await login(email, password, remember);
       if (result.ok) {
+        offerToSavePassword(email, password, result.user.name);
         setEmail("");
         handleOpenChange(false);
       } else {
-        setError(result.reason === "invalid" ? t.invalid : t.unavailable);
+        setError(
+          result.reason === "invalid"
+            ? t.invalid
+            : result.reason === "rate_limited"
+              ? t.rateLimited
+              : t.unavailable,
+        );
       }
     } catch (err) {
       console.error(err);
@@ -149,6 +187,7 @@ export function LoginDialog({
             <input
               required
               type="email"
+              name="email"
               autoComplete="username"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -162,6 +201,7 @@ export function LoginDialog({
             <input
               required
               type="password"
+              name="password"
               autoComplete="current-password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -173,13 +213,25 @@ export function LoginDialog({
               {error}
             </p>
           )}
-          <button
-            type="submit"
-            disabled={pending}
-            className="btn-kanoy mt-2 self-end bg-accent text-ink disabled:opacity-60"
-          >
-            {pending ? t.signingIn : t.submit}
-          </button>
+          <div className="mt-2 flex flex-wrap items-center justify-between gap-4">
+            <label className="flex cursor-pointer items-center gap-2 text-sm text-studio-muted">
+              <input
+                type="checkbox"
+                name="remember"
+                checked={remember}
+                onChange={(e) => setRemember(e.target.checked)}
+                className="h-4 w-4 accent-[var(--accent)]"
+              />
+              {t.rememberMe}
+            </label>
+            <button
+              type="submit"
+              disabled={pending}
+              className="btn-kanoy bg-accent text-ink disabled:opacity-60"
+            >
+              {pending ? t.signingIn : t.submit}
+            </button>
+          </div>
         </form>
       </DialogContent>
     </Dialog>

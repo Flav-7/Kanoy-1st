@@ -65,7 +65,7 @@ describe("event form", () => {
       endAt: "2026-09-28T09:00:00.000Z",
       timezone: "Europe/Lisbon",
       allDay: false,
-      category: "meeting",
+      category: "proposal_meeting",
       status: "tentative",
       recurrence: null,
       exdates: [],
@@ -79,7 +79,7 @@ describe("event form", () => {
       startDate: "2026-09-28",
       startTime: "09:00",
       endTime: "10:00",
-      category: "meeting",
+      category: "proposal_meeting",
     });
   });
 });
@@ -99,9 +99,9 @@ describe("filters", () => {
 
   it("filters by calendar, category (incl. none) and person involved", () => {
     const list = [
-      occ("a", "meeting", ["u1"]),
+      occ("a", "proposal_meeting", ["u1"]),
       occ("b", null, ["u2", "u3"]),
-      occ("a", "call", ["u2"]),
+      occ("a", "photo_visit", ["u2"]),
     ];
     expect(applyFilters(list, { calendars: ["a"], people: null, categories: null })).toHaveLength(
       2,

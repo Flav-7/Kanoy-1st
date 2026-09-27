@@ -5,15 +5,20 @@ import { currentUser } from "@/server/session.server";
 import {
   createEvent,
   deleteEvent,
+  getEvent,
   listCalendars,
   listOccurrences,
   listTeam,
   updateEvent,
 } from "@/server/calendar";
 import type { Db } from "@/server/db";
+import { notifyArea, type ChangeKind } from "@/server/push";
+import { isManager } from "@/server/team";
+import { webPushSender } from "@/server/web-push.server";
 import {
   eventInputSchema,
   rangeSchema,
+  type CalendarEvent,
   type CalendarSummary,
   type MutationResult,
   type Occurrence,
@@ -36,8 +41,40 @@ async function asUser<T>(
   return run(await getDb(), user.id);
 }
 
+/**
+ * Pushes the change to the area's other members. Best effort: a failure
+ * here is logged and never turns a saved change into an error for the user.
+ * Awaited (bounded) because a serverless function may be frozen as soon as
+ * it has answered.
+ */
+async function notify(
+  db: Db,
+  userId: string,
+  event: CalendarEvent,
+  kind: ChangeKind,
+  occurrenceStart?: string,
+): Promise<void> {
+  const send = webPushSender();
+  if (!send) return;
+  try {
+    await Promise.race([
+      notifyArea(db, send, event, userId, kind, occurrenceStart),
+      new Promise((resolve) => setTimeout(resolve, 5000)),
+    ]);
+  } catch (err) {
+    console.error("push notification failed", err);
+  }
+}
+
 export type CalendarBootstrap =
-  { ok: true; calendars: CalendarSummary[]; team: TeamMember[] } | Unauthenticated;
+  | {
+      ok: true;
+      calendars: CalendarSummary[];
+      team: TeamMember[];
+      /** May open the team page (create areas, add people). */
+      canManageTeam: boolean;
+    }
+  | Unauthenticated;
 
 export const getCalendarBootstrap = createServerFn({ method: "GET" }).handler(
   (): Promise<CalendarBootstrap> =>
@@ -45,6 +82,7 @@ export const getCalendarBootstrap = createServerFn({ method: "GET" }).handler(
       ok: true as const,
       calendars: await listCalendars(db, userId),
       team: await listTeam(db, userId),
+      canManageTeam: await isManager(db, userId),
     })),
 );
 
@@ -66,7 +104,11 @@ export const getEvents = createServerFn({ method: "GET" })
 export const createEventFn = createServerFn({ method: "POST" })
   .validator((data: unknown) => eventInputSchema.parse(data))
   .handler(({ data }): Promise<MutationResult> =>
-    asUser((db, userId) => createEvent(db, userId, data)),
+    asUser(async (db, userId) => {
+      const result = await createEvent(db, userId, data);
+      if (result.ok && result.event) await notify(db, userId, result.event, "created");
+      return result;
+    }),
   );
 
 const updateSchema = z.object({
@@ -78,7 +120,14 @@ const updateSchema = z.object({
 export const updateEventFn = createServerFn({ method: "POST" })
   .validator((data: unknown) => updateSchema.parse(data))
   .handler(({ data }): Promise<MutationResult> =>
-    asUser((db, userId) => updateEvent(db, userId, data.id, data.expectedVersion, data.input)),
+    asUser(async (db, userId) => {
+      const result = await updateEvent(db, userId, data.id, data.expectedVersion, data.input);
+      if (result.ok && result.event) {
+        const kind = result.event.status === "cancelled" ? "cancelled" : "updated";
+        await notify(db, userId, result.event, kind);
+      }
+      return result;
+    }),
   );
 
 const deleteSchema = z.object({
@@ -91,7 +140,19 @@ const deleteSchema = z.object({
 export const deleteEventFn = createServerFn({ method: "POST" })
   .validator((data: unknown) => deleteSchema.parse(data))
   .handler(({ data }): Promise<MutationResult> =>
-    asUser((db, userId) =>
-      deleteEvent(db, userId, data.id, data.expectedVersion, data.occurrenceStart),
-    ),
+    asUser(async (db, userId) => {
+      // Read first: after a full delete there's nothing left to describe.
+      const before = await getEvent(db, userId, data.id);
+      const result = await deleteEvent(
+        db,
+        userId,
+        data.id,
+        data.expectedVersion,
+        data.occurrenceStart,
+      );
+      if (result.ok && before) {
+        await notify(db, userId, before, "deleted", data.occurrenceStart ?? undefined);
+      }
+      return result;
+    }),
   );

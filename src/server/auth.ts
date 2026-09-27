@@ -3,7 +3,10 @@ import type { Db } from "./db";
 
 export type SessionUser = { id: string; name: string; email: string };
 
+/** "Keep me signed in": the session survives browser restarts for this long. */
 export const SESSION_DAYS = 30;
+/** Otherwise the cookie dies with the browser, and the server gives up after this anyway. */
+export const SHORT_SESSION_HOURS = 12;
 const PASSWORD_TOKEN_HOURS = 72;
 
 // Brute-force brake: this many failed logins for one email within the window
@@ -80,9 +83,11 @@ export async function authenticate(
 export async function createSession(
   db: Db,
   userId: string,
+  remember = true,
 ): Promise<{ token: string; expiresAt: Date }> {
   const token = randomBytes(32).toString("base64url");
-  const expiresAt = new Date(Date.now() + SESSION_DAYS * 86_400_000);
+  const lifetimeMs = remember ? SESSION_DAYS * 86_400_000 : SHORT_SESSION_HOURS * 3_600_000;
+  const expiresAt = new Date(Date.now() + lifetimeMs);
   await db.query("insert into sessions (token_hash, user_id, expires_at) values ($1, $2, $3)", [
     tokenHash(token),
     userId,

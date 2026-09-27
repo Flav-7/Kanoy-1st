@@ -42,7 +42,7 @@ export async function seedDevData(db: Db): Promise<void> {
     allDay: false,
     start: at(0, "09:30"),
     end: at(0, "09:45"),
-    category: "meeting",
+    category: "production_meeting",
     participants: [ana!, bruno!, carla!],
     recurrence: { freq: "DAILY", interval: 1, until: addDays(monday, 4) },
   });
@@ -54,7 +54,7 @@ export async function seedDevData(db: Db): Promise<void> {
     allDay: false,
     start: at(2, "14:00"),
     end: at(2, "16:00"),
-    category: "delivery",
+    category: "closing_meeting",
     participants: [bruno!, carla!],
   });
   await createEvent(db, ana!, {
@@ -64,7 +64,7 @@ export async function seedDevData(db: Db): Promise<void> {
     allDay: false,
     start: at(3, "11:00"),
     end: at(3, "12:30"),
-    category: "internal",
+    category: "photo_visit",
     participants: [ana!],
   });
   await createEvent(db, carla!, {

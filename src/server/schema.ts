@@ -89,4 +89,21 @@ export const MIGRATIONS: { id: string; statements: string[] }[] = [
       `create index event_participants_user_idx on event_participants (user_id)`,
     ],
   },
+  {
+    id: "002_job_titles_and_push",
+    statements: [
+      // Shown instead of the person's name across the calendar when set.
+      `alter table users add column job_title text check (char_length(job_title) <= 60)`,
+      // One row per browser/phone that accepted notifications. The endpoint
+      // is unique per device; the keys encrypt the payload for that device.
+      `create table push_subscriptions (
+        endpoint text primary key,
+        user_id uuid not null references users(id) on delete cascade,
+        p256dh text not null,
+        auth text not null,
+        created_at timestamptz not null default now()
+      )`,
+      `create index push_subscriptions_user_idx on push_subscriptions (user_id)`,
+    ],
+  },
 ];

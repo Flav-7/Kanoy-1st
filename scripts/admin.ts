@@ -1,5 +1,7 @@
 /**
- * Team accounts and calendars (there is no sign-up page and no admin UI yet).
+ * Team accounts and calendars from the command line (day to day, areas and
+ * people are managed on the site's /equipa page; this is for bootstrap and
+ * password resets).
  *
  *   npm run admin -- migrate
  *   npm run admin -- add-user --email ana@kanoy.pt --name "Ana" [--calendar Geral] [--role editor]
@@ -8,8 +10,11 @@
  *   npm run admin -- add-member --email bruno@kanoy.pt --calendar Marketing --role viewer
  *   npm run admin -- list
  *
- * Runs against DATABASE_URL (the Neon database), or with --local against the
- * dev server's embedded database in .data/pglite (stop `npm run dev` first).
+ * Runs against DATABASE_URL (the Neon database), read from .env.vercel.local
+ * (`npx vercel env pull .env.vercel.local`) — deliberately not .env.local, which
+ * the dev server would load and so point local testing at production data.
+ * With --local it uses the dev server's embedded database in .data/pglite
+ * instead (stop `npm run dev` first).
  * add-user / reset-password print a one-time link (valid 72 h) where the
  * person sets their own password — passwords never pass through here.
  */

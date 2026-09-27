@@ -6,12 +6,13 @@ import {
   type LoginResult,
   type SessionUser,
 } from "./auth.functions";
+import { disablePush } from "@/lib/team/push-client";
 
 type AuthState = {
   user: SessionUser | null;
   /** False until the first session check has come back from the server. */
   ready: boolean;
-  login: (email: string, password: string) => Promise<LoginResult>;
+  login: (email: string, password: string, remember: boolean) => Promise<LoginResult>;
   logout: () => Promise<void>;
   /** Re-reads the session cookie (e.g. after a set-password link signed the user in). */
   refresh: () => Promise<void>;
@@ -36,13 +37,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     void refresh();
   }, [refresh]);
 
-  const login = useCallback(async (email: string, password: string) => {
-    const result = await loginFn({ data: { email, password } });
+  const login = useCallback(async (email: string, password: string, remember: boolean) => {
+    const result = await loginFn({ data: { email, password, remember } });
     if (result.ok) setUser(result.user);
     return result;
   }, []);
 
   const logout = useCallback(async () => {
+    // Stop this device's notifications first, so a shared computer doesn't
+    // keep getting the previous person's area updates.
+    await disablePush().catch(() => {});
     await logoutFn();
     setUser(null);
   }, []);

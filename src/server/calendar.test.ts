@@ -41,7 +41,7 @@ function input(overrides: Partial<EventInput> = {}): EventInput {
     timezone: LISBON,
     start: "2026-09-28T14:00",
     end: "2026-09-28T15:00",
-    category: "meeting",
+    category: "proposal_meeting",
     status: "confirmed",
     participants: [],
     recurrence: null,

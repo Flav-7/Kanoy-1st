@@ -73,7 +73,10 @@ export function StudioBackdrop() {
   }, []);
 
   return (
-    <div aria-hidden className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
+    // bg-studio: dark from the first paint, so while the photo is still
+    // loading (e.g. opening the installed app) there's no flash of the light
+    // page background between the dark splash screen and the scene.
+    <div aria-hidden className="pointer-events-none fixed inset-0 z-0 overflow-hidden bg-studio">
       {/* the photo itself — object-fit/object-position stay static (no
           per-frame paint work); only `transform` (scale + pan) moves, which
           the compositor handles without repainting the image. */}

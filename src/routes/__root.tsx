@@ -71,7 +71,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         href: appCss,
       },
       { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
-      { rel: "icon", href: "/favicon.png", type: "image/png" },
+      // Google's result favicon wants a square image in multiples of 48px.
+      { rel: "icon", href: "/favicon.png", type: "image/png", sizes: "512x512" },
       { rel: "manifest", href: "/manifest.webmanifest" },
       { rel: "apple-touch-icon", href: "/apple-touch-icon.png", sizes: "180x180" },
     ],
@@ -87,7 +88,8 @@ const ORGANIZATION_SCHEMA = {
   "@type": "ProfessionalService",
   name: "KANOY",
   url: "https://kanoy.pt",
-  logo: "https://kanoy.pt/og-image.webp",
+  // Square logo for Google (the og-image is a wide share card).
+  logo: "https://kanoy.pt/icon-512.png",
   image: "https://kanoy.pt/og-image.webp",
   description: seo.description,
   email: "hello@kanoy.studio",

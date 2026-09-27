@@ -1,8 +1,10 @@
 import { useCallback, useEffect, useMemo, useState, type ReactNode } from "react";
 import { Link } from "@tanstack/react-router";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
-import { ArrowLeft, CalendarDays, Lock, Plus, X } from "lucide-react";
+import { ArrowLeft, CalendarDays, Lock, Plus, Users, X } from "lucide-react";
 import { AccountMenu, LoginDialog } from "@/components/kanoy/AccountMenu";
+import { NotificationsButton } from "@/components/team/NotificationsButton";
+import { TEAM_COPY } from "@/components/team/team-i18n";
 import { useAuth } from "@/lib/auth/AuthContext";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import {
@@ -49,7 +51,7 @@ function useIsMobile(): boolean {
 
 function useCopy() {
   const { language } = useLanguage();
-  return { copy: CALENDAR_COPY[language], locale: DATE_LOCALES[language] };
+  return { copy: CALENDAR_COPY[language], locale: DATE_LOCALES[language], language };
 }
 
 /** /calendario: team-only. Logged-out visitors get a sign-in prompt, never data. */
@@ -121,7 +123,7 @@ function SignInPrompt() {
 }
 
 function CalendarWorkspace() {
-  const { copy, locale } = useCopy();
+  const { copy, locale, language } = useCopy();
   const tz = useMemo(() => viewerTimeZone(), []);
   const today = todayIn(tz);
   const isMobile = useIsMobile();
@@ -288,20 +290,33 @@ function CalendarWorkspace() {
     <CalendarUiContext.Provider value={ui}>
       <Shell
         actions={
-          editableCalendars.length > 0 && (
-            <button
-              type="button"
-              onClick={() =>
-                openCreate({ date: view === "month" && isMobile ? selectedDay : anchor })
-              }
-              className="btn-kanoy inline-flex items-center gap-2 bg-accent text-ink"
-              style={{ padding: "10px 14px" }}
-              aria-label={copy.newEvent}
-            >
-              <Plus className="h-3.5 w-3.5" aria-hidden />
-              <span className="hidden sm:inline">{copy.newEvent}</span>
-            </button>
-          )
+          <>
+            {boot?.canManageTeam && (
+              <Link
+                to="/equipa"
+                aria-label={TEAM_COPY[language].teamLink}
+                title={TEAM_COPY[language].teamLink}
+                className="flex h-8 w-8 items-center justify-center rounded-md border border-white/15 text-studio-muted transition-colors hover:border-accent hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+              >
+                <Users className="h-4 w-4" />
+              </Link>
+            )}
+            <NotificationsButton />
+            {editableCalendars.length > 0 && (
+              <button
+                type="button"
+                onClick={() =>
+                  openCreate({ date: view === "month" && isMobile ? selectedDay : anchor })
+                }
+                className="btn-kanoy inline-flex items-center gap-2 bg-accent text-ink"
+                style={{ padding: "10px 14px" }}
+                aria-label={copy.newEvent}
+              >
+                <Plus className="h-3.5 w-3.5" aria-hidden />
+                <span className="hidden sm:inline">{copy.newEvent}</span>
+              </button>
+            )}
+          </>
         }
       >
         <div className="flex min-h-0 flex-1">

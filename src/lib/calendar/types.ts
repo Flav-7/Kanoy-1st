@@ -3,8 +3,23 @@ import { z } from "zod";
 export const ROLES = ["viewer", "editor", "admin"] as const;
 export type Role = (typeof ROLES)[number];
 
-export const CATEGORIES = ["meeting", "call", "delivery", "deadline", "internal", "other"] as const;
+/**
+ * Activity types (stored in the `category` column). Each has a fixed colour
+ * by project stage — see CATEGORY_SWATCHES — except "other", which takes its
+ * area's colour. Add a type here plus its name, colour and icon.
+ */
+export const CATEGORIES = [
+  "proposal_meeting",
+  "production_meeting",
+  "closing_meeting",
+  "photo_visit",
+  "other",
+] as const;
 export type Category = (typeof CATEGORIES)[number];
+
+export function asCategory(value: unknown): Category | null {
+  return CATEGORIES.includes(value as Category) ? (value as Category) : null;
+}
 
 export const STATUSES = ["confirmed", "tentative", "cancelled"] as const;
 export type EventStatus = (typeof STATUSES)[number];
@@ -23,7 +38,12 @@ export type Recurrence = {
   until: string | null;
 };
 
-export type TeamMember = { id: string; name: string };
+/** `jobTitle`, when set, is shown instead of the name (see displayName). */
+export type TeamMember = { id: string; name: string; jobTitle: string | null };
+
+export function displayName(person: { name: string; jobTitle: string | null } | undefined): string {
+  return person ? person.jobTitle || person.name : "—";
+}
 
 export type CalendarSummary = {
   id: string;
@@ -31,6 +51,8 @@ export type CalendarSummary = {
   color: CalendarColor;
   role: Role;
   memberIds: string[];
+  /** Members who work on activities (editors/admins); offered as participants. */
+  editorIds: string[];
 };
 
 /** A stored event (for a recurring one: the series). Instants are UTC ISO strings. */

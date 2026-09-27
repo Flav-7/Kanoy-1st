@@ -22,6 +22,7 @@ export type SetPasswordResult =
 const loginSchema = z.object({
   email: z.string().trim().email().max(200),
   password: z.string().min(1).max(200),
+  remember: z.boolean().default(true),
 });
 
 const setPasswordSchema = z.object({
@@ -53,8 +54,8 @@ export const login = createServerFn({ method: "POST" })
     }
     const result = await authenticate(db, data.email, data.password);
     if (!result.ok) return result;
-    const session = await createSession(db, result.user.id);
-    setSessionCookie(session.token, session.expiresAt);
+    const session = await createSession(db, result.user.id, data.remember);
+    setSessionCookie(session.token, session.expiresAt, data.remember);
     return { ok: true, user: result.user };
   });
 
@@ -77,7 +78,8 @@ export const setPassword = createServerFn({ method: "POST" })
     }
     const user = await setPasswordWithToken(db, data.token, data.password);
     if (!user) return { ok: false, reason: "invalid_link" };
-    const session = await createSession(db, user.id);
-    setSessionCookie(session.token, session.expiresAt);
+    // Setting a password happens on the person's own device: keep them signed in.
+    const session = await createSession(db, user.id, true);
+    setSessionCookie(session.token, session.expiresAt, true);
     return { ok: true, user };
   });

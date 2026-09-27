@@ -101,7 +101,9 @@ export type Dictionary = {
     submit: string;
     signingIn: string;
     invalid: string;
+    rateLimited: string;
     unavailable: string;
+    rememberMe: string;
     calendar: string;
     logout: string;
   };
@@ -195,8 +197,7 @@ export const translations: Record<Language, Dictionary> = {
       eyebrow: "O problema",
       titleLine1: "A maioria dos websites",
       titleLine2: "não está a cumprir o seu papel.",
-      subtitle:
-        "Problemas simples que afastam visitantes e limitam o crescimento do teu negócio.",
+      subtitle: "Problemas simples que afastam visitantes e limitam o crescimento do teu negócio.",
       items: [
         { title: "Lentos", text: "Visitantes desistem ao esperar demasiado." },
         { title: "Não adaptados a mobile", text: "Má experiência em telemóvel." },
@@ -279,7 +280,9 @@ export const translations: Record<Language, Dictionary> = {
       submit: "Entrar",
       signingIn: "A entrar…",
       invalid: "Email ou palavra-passe incorretos.",
+      rateLimited: "Demasiadas tentativas falhadas. Aguarde 15 minutos e tente de novo.",
       unavailable: "O login ainda não está disponível. Tente mais tarde.",
+      rememberMe: "Manter sessão iniciada",
       calendar: "Calendário",
       logout: "Terminar sessão",
     },
@@ -379,7 +382,10 @@ export const translations: Record<Language, Dictionary> = {
         { title: "Diseño desactualizado", text: "Transmite poco profesionalismo." },
         { title: "Falta de claridad", text: "Los visitantes no entienden qué haces." },
         { title: "No generan resultados", text: "Muchas visitas, pero pocas conversiones." },
-        { title: "Difíciles de gestionar", text: "Actualizaciones simples se vuelven complicadas." },
+        {
+          title: "Difíciles de gestionar",
+          text: "Actualizaciones simples se vuelven complicadas.",
+        },
       ],
       badges: {
         slow: "Webs lentas",
@@ -455,7 +461,9 @@ export const translations: Record<Language, Dictionary> = {
       submit: "Entrar",
       signingIn: "Entrando…",
       invalid: "Email o contraseña incorrectos.",
+      rateLimited: "Demasiados intentos fallidos. Espera 15 minutos e inténtalo de nuevo.",
       unavailable: "El acceso todavía no está disponible. Inténtalo más tarde.",
+      rememberMe: "Mantener la sesión iniciada",
       calendar: "Calendario",
       logout: "Cerrar sesión",
     },
@@ -607,7 +615,8 @@ export const translations: Record<Language, Dictionary> = {
       },
     },
     cookies: {
-      message: "We use analytics cookies to understand how the site is used. We only turn them on with your consent.",
+      message:
+        "We use analytics cookies to understand how the site is used. We only turn them on with your consent.",
       privacyLink: "Learn more",
       decline: "Decline",
       accept: "Accept",
@@ -629,7 +638,9 @@ export const translations: Record<Language, Dictionary> = {
       submit: "Sign in",
       signingIn: "Signing in…",
       invalid: "Wrong email or password.",
+      rateLimited: "Too many failed attempts. Wait 15 minutes and try again.",
       unavailable: "Sign-in isn't available yet. Please try again later.",
+      rememberMe: "Keep me signed in",
       calendar: "Calendar",
       logout: "Sign out",
     },

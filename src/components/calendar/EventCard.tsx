@@ -3,7 +3,7 @@ import { format } from "date-fns";
 import { Repeat, UserRound } from "lucide-react";
 import { toZoned } from "@/lib/calendar/dates";
 import type { Occurrence } from "@/lib/calendar/types";
-import { CATEGORY_ICONS, chipStyle, swatch } from "./calendar-colors";
+import { CATEGORY_ICONS, chipStyle, eventSwatch } from "./calendar-colors";
 import { useCalendarUi, type CalendarUi } from "./CalendarContext";
 
 export function formatTime(iso: string, tz: string): string {
@@ -40,7 +40,7 @@ const focusRing = "focus-visible:outline-none focus-visible:ring-2 focus-visible
 /** One-line chip for month cells and the all-day row. */
 export function EventChip({ occ, showTime = true }: { occ: Occurrence; showTime?: boolean }) {
   const ui = useCalendarUi();
-  const color = ui.calendarsById.get(occ.event.calendarId)?.color;
+  const color = eventSwatch(occ.event, ui.calendarsById.get(occ.event.calendarId)?.color);
   return (
     <button
       type="button"
@@ -73,7 +73,7 @@ export function EventBlock({
   compact: boolean;
 }) {
   const ui = useCalendarUi();
-  const color = ui.calendarsById.get(occ.event.calendarId)?.color;
+  const color = eventSwatch(occ.event, ui.calendarsById.get(occ.event.calendarId)?.color);
   const count = occ.event.participants.length;
   return (
     <button
@@ -121,7 +121,7 @@ export function EventRow({ occ }: { occ: Occurrence }) {
       <span
         aria-hidden
         className="mt-1.5 h-2.5 w-2.5 shrink-0 rounded-full"
-        style={{ background: swatch(calendar?.color) }}
+        style={{ background: eventSwatch(occ.event, calendar?.color) }}
       />
       <span className="min-w-0 flex-1">
         <span

@@ -8,17 +8,17 @@ import {
   serializeRule,
 } from "@/lib/calendar/recurrence";
 import { canEditEvents } from "@/lib/calendar/permissions";
-import type {
-  CalendarColor,
-  CalendarEvent,
-  CalendarSummary,
-  Category,
-  EventInput,
-  EventStatus,
-  MutationResult,
-  Occurrence,
-  Role,
-  TeamMember,
+import {
+  asCategory,
+  type CalendarColor,
+  type CalendarEvent,
+  type CalendarSummary,
+  type EventInput,
+  type EventStatus,
+  type MutationResult,
+  type Occurrence,
+  type Role,
+  type TeamMember,
 } from "@/lib/calendar/types";
 
 /**
@@ -51,7 +51,7 @@ function mapEvent(row: Row): CalendarEvent {
     endAt: toIso(row["end_at"]),
     timezone: String(row["timezone"]),
     allDay: Boolean(row["all_day"]),
-    category: (row["category"] as Category | null) ?? null,
+    category: asCategory(row["category"]),
     status: row["status"] as EventStatus,
     recurrence: parseRule((row["recurrence_rule"] as string | null) ?? null),
     exdates: ((row["exdates"] as unknown[] | null) ?? []).map(toIso),
@@ -100,7 +100,9 @@ export async function getEvent(
 export async function listCalendars(db: Db, userId: string): Promise<CalendarSummary[]> {
   const rows = await db.query(
     `select c.id, c.name, c.color, m.role,
-            (select json_agg(cm.user_id) from calendar_members cm where cm.calendar_id = c.id) as member_ids
+            (select json_agg(cm.user_id) from calendar_members cm where cm.calendar_id = c.id) as member_ids,
+            (select json_agg(cm.user_id) from calendar_members cm
+              where cm.calendar_id = c.id and cm.role in ('editor', 'admin')) as editor_ids
        from calendars c
        join calendar_members m on m.calendar_id = c.id and m.user_id = $1
       order by c.created_at, c.name`,
@@ -112,20 +114,21 @@ export async function listCalendars(db: Db, userId: string): Promise<CalendarSum
     color: r["color"] as CalendarColor,
     role: r["role"] as Role,
     memberIds: ((r["member_ids"] as unknown[] | null) ?? []).map(String),
+    editorIds: ((r["editor_ids"] as unknown[] | null) ?? []).map(String),
   }));
 }
 
 /** Everyone who shares at least one calendar with the user. */
 export async function listTeam(db: Db, userId: string): Promise<TeamMember[]> {
-  const rows = await db.query<TeamMember>(
-    `select distinct u.id, u.name
+  const rows = await db.query<{ id: string; name: string; job_title: string | null }>(
+    `select distinct u.id, u.name, u.job_title
        from users u
        join calendar_members cm on cm.user_id = u.id
       where cm.calendar_id in (select calendar_id from calendar_members where user_id = $1)
       order by u.name`,
     [userId],
   );
-  return rows.map((r) => ({ id: String(r.id), name: r.name }));
+  return rows.map((r) => ({ id: String(r.id), name: r.name, jobTitle: r.job_title ?? null }));
 }
 
 export class InvalidRangeError extends Error {

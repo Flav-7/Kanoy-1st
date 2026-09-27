@@ -1,17 +1,22 @@
 import { deleteCookie, getCookie, setCookie } from "@tanstack/react-start/server";
 import { getDb } from "./db.server";
-import { SESSION_DAYS, userForSession, type SessionUser } from "./auth";
+import { userForSession, type SessionUser } from "./auth";
 
 const COOKIE = "kanoy_session";
 
-export function setSessionCookie(token: string, expiresAt: Date): void {
+/**
+ * `persistent`: the cookie lives until the session expires ("keep me signed
+ * in"). Otherwise it's a browser-session cookie, gone when the browser closes.
+ */
+export function setSessionCookie(token: string, expiresAt: Date, persistent: boolean): void {
   setCookie(COOKIE, token, {
     httpOnly: true,
     secure: !import.meta.env.DEV,
     sameSite: "lax",
     path: "/",
-    expires: expiresAt,
-    maxAge: SESSION_DAYS * 86_400,
+    ...(persistent
+      ? { expires: expiresAt, maxAge: Math.floor((+expiresAt - Date.now()) / 1000) }
+      : {}),
   });
 }
 

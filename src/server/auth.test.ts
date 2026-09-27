@@ -84,6 +84,18 @@ describe("sessions", () => {
   });
 });
 
+describe("keep me signed in", () => {
+  it("lasts 30 days when remembered and 12 hours otherwise", async () => {
+    const hoursLeft = (d: Date) => (+d - Date.now()) / 3_600_000;
+    const long = await createSession(db, userId, true);
+    const short = await createSession(db, userId, false);
+    expect(hoursLeft(long.expiresAt)).toBeGreaterThan(30 * 24 - 1);
+    expect(hoursLeft(short.expiresAt)).toBeGreaterThan(11.9);
+    expect(hoursLeft(short.expiresAt)).toBeLessThanOrEqual(12);
+    expect(await userForSession(db, short.token)).toMatchObject({ id: userId });
+  });
+});
+
 describe("set-password links", () => {
   it("work once, set the password and sign out existing sessions", async () => {
     const { token: session } = await createSession(db, userId);

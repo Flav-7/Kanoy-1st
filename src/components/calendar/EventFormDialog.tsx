@@ -8,8 +8,14 @@ import {
   type EventFormState,
 } from "@/lib/calendar/form";
 import { canEditEvents } from "@/lib/calendar/permissions";
-import { CATEGORIES, FREQUENCIES, STATUSES, type CalendarEvent } from "@/lib/calendar/types";
-import { swatch } from "./calendar-colors";
+import {
+  CATEGORIES,
+  FREQUENCIES,
+  STATUSES,
+  displayName,
+  type CalendarEvent,
+} from "@/lib/calendar/types";
+import { CATEGORY_ICONS, eventSwatch, swatch } from "./calendar-colors";
 import { useCalendarUi } from "./CalendarContext";
 import { useEventActions } from "./useCalendarData";
 
@@ -75,7 +81,10 @@ export function EventFormDialog({
     () => [...ui.calendarsById.values()].filter((c) => canEditEvents(c.role)),
     [ui.calendarsById],
   );
-  const members = form ? (ui.calendarsById.get(form.calendarId)?.memberIds ?? []) : [];
+  // "Só comigo / contigo / os dois": the people who work on activities. Read-only
+  // members (people associated to an area) are notified, not assigned.
+  const editorIds = form ? (ui.calendarsById.get(form.calendarId)?.editorIds ?? []) : [];
+  const members = form ? [...new Set([...editorIds, ...form.participants])] : [];
 
   if (!form) return null;
 
@@ -144,6 +153,41 @@ export function EventFormDialog({
             />
           </Field>
 
+          <fieldset>
+            <legend className="mb-1.5 text-[10px] uppercase tracking-[0.3em] text-studio-muted">
+              {t.category}
+            </legend>
+            <div className="flex flex-wrap gap-2">
+              {CATEGORIES.map((c) => {
+                const on = form.category === c;
+                const Icon = CATEGORY_ICONS[c];
+                const color = eventSwatch(
+                  { category: c },
+                  ui.calendarsById.get(form.calendarId)?.color,
+                );
+                return (
+                  <button
+                    key={c}
+                    type="button"
+                    aria-pressed={on}
+                    onClick={() => set({ category: on ? "" : c })}
+                    style={
+                      on
+                        ? { background: color, borderColor: color }
+                        : { borderColor: `color-mix(in oklab, ${color} 55%, transparent)` }
+                    }
+                    className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent ${
+                      on ? "font-medium text-ink" : "text-studio-foreground hover:bg-white/[0.06]"
+                    }`}
+                  >
+                    <Icon className="h-3.5 w-3.5" aria-hidden style={on ? undefined : { color }} />
+                    {ui.copy.categoryNames[c]}
+                  </button>
+                );
+              })}
+            </div>
+          </fieldset>
+
           <label className="flex items-center gap-2 text-sm">
             <input
               type="checkbox"
@@ -207,15 +251,15 @@ export function EventFormDialog({
             </p>
           )}
 
-          <div className="grid gap-3 sm:grid-cols-3">
+          <div className="grid gap-3 sm:grid-cols-2">
             <Field label={t.calendar}>
               <select
                 value={form.calendarId}
                 onChange={(e) => {
-                  const memberIds = ui.calendarsById.get(e.target.value)?.memberIds ?? [];
+                  const editorIds = ui.calendarsById.get(e.target.value)?.editorIds ?? [];
                   set({
                     calendarId: e.target.value,
-                    participants: form.participants.filter((p) => memberIds.includes(p)),
+                    participants: form.participants.filter((p) => editorIds.includes(p)),
                   });
                 }}
                 className={inputClass}
@@ -223,20 +267,6 @@ export function EventFormDialog({
                 {editableCalendars.map((c) => (
                   <option key={c.id} value={c.id}>
                     {c.name}
-                  </option>
-                ))}
-              </select>
-            </Field>
-            <Field label={t.category}>
-              <select
-                value={form.category}
-                onChange={(e) => set({ category: e.target.value as EventFormState["category"] })}
-                className={inputClass}
-              >
-                <option value="">{t.noCategory}</option>
-                {CATEGORIES.map((c) => (
-                  <option key={c} value={c}>
-                    {ui.copy.categoryNames[c]}
                   </option>
                 ))}
               </select>
@@ -282,7 +312,7 @@ export function EventFormDialog({
                         : "border-white/20 text-studio-muted hover:text-studio-foreground"
                     }`}
                   >
-                    {person?.name ?? "—"}
+                    {displayName(person)}
                   </button>
                 );
               })}
