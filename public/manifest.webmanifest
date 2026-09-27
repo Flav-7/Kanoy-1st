@@ -1,0 +1,23 @@
+{
+  "id": "/",
+  "name": "KANOY",
+  "short_name": "KANOY",
+  "description": "A KANOY é um estúdio digital que cria websites premium, sistemas de reservas e marcações, e sistemas digitais à medida para negócios reais.",
+  "lang": "pt",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#060c10",
+  "theme_color": "#060c10",
+  "icons": [
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    {
+      "src": "/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

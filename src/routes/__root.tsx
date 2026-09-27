@@ -54,6 +54,12 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:image", content: "https://kanoy.pt/og-image.webp" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:image", content: "https://kanoy.pt/og-image.webp" },
+      // Installable app (PWA) — see public/manifest.webmanifest and public/sw.js.
+      { name: "theme-color", content: "#060c10" },
+      { name: "mobile-web-app-capable", content: "yes" },
+      { name: "apple-mobile-web-app-capable", content: "yes" },
+      { name: "apple-mobile-web-app-title", content: "KANOY" },
+      { name: "apple-mobile-web-app-status-bar-style", content: "black" },
     ],
     links: [
       // Fonts are self-hosted in src/styles.css (@font-face) — see that file
@@ -64,6 +70,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       },
       { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
       { rel: "icon", href: "/favicon.png", type: "image/png" },
+      { rel: "manifest", href: "/manifest.webmanifest" },
+      { rel: "apple-touch-icon", href: "/apple-touch-icon.png", sizes: "180x180" },
     ],
   }),
   shellComponent: RootShell,
@@ -105,6 +113,13 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+
+  // Production only: in dev a service worker would cache Vite's modules and fight HMR.
+  useEffect(() => {
+    if (import.meta.env.PROD && "serviceWorker" in navigator) {
+      navigator.serviceWorker.register("/sw.js").catch(() => {});
+    }
+  }, []);
 
   return (
     <QueryClientProvider client={queryClient}>
