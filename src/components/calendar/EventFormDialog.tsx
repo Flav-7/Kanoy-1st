@@ -143,7 +143,6 @@ export function EventFormDialog({
         <form onSubmit={submit} className="mt-2 flex flex-col gap-4" noValidate>
           <Field label={t.title}>
             <input
-              autoFocus
               required
               maxLength={200}
               value={form.title}

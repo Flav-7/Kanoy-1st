@@ -206,7 +206,6 @@ function NewArea() {
             {t.areaName}
           </span>
           <input
-            autoFocus
             maxLength={80}
             value={name}
             placeholder={t.areaNamePlaceholder}

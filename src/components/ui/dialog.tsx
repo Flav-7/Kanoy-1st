@@ -84,7 +84,7 @@ function ScrollProgressBar({ scrollRef }: { scrollRef: React.RefObject<HTMLDivEl
 const DialogContent = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Content>,
   React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content>
->(({ className, children, ...props }, ref) => {
+>(({ className, children, onOpenAutoFocus, ...props }, ref) => {
   const scrollRef = React.useRef<HTMLDivElement>(null);
 
   return (
@@ -92,6 +92,17 @@ const DialogContent = React.forwardRef<
       <DialogOverlay />
       <DialogPrimitive.Content
         ref={ref}
+        onOpenAutoFocus={(e) => {
+          onOpenAutoFocus?.(e);
+          // On touch screens, focusing the first field would throw the
+          // on-screen keyboard over the dialog before it's even been read.
+          // Focus the dialog box itself instead (screen readers still land in
+          // it); desktop keeps focusing the first field.
+          if (!e.defaultPrevented && window.matchMedia("(pointer: coarse)").matches) {
+            e.preventDefault();
+            (e.currentTarget as HTMLElement | null)?.focus();
+          }
+        }}
         className={cn(
           // max-h keeps the box within the viewport when its content (e.g.
           // the contact form) is taller than the screen — without this, the
