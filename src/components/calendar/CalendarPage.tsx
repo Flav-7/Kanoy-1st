@@ -92,7 +92,7 @@ function Shell({ children, actions }: { children: ReactNode; actions?: ReactNode
   const { copy } = useCopy();
   return (
     <div className="flex h-dvh flex-col bg-studio text-studio-foreground">
-      <header className="flex items-center gap-3 border-b border-white/10 px-4 py-3 md:px-6">
+      <header className="app-topbar flex items-center gap-3 border-b border-white/10 px-4 py-3 md:px-6">
         <Link
           to="/"
           aria-label={copy.backToSite}

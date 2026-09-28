@@ -35,6 +35,9 @@ export const APP_SPLASH_CSS = `
   @media (prefers-reduced-motion: reduce) {
     #app-splash .app-splash-bar::after { animation: none; width: 100%; opacity: 0.6; }
   }
+  /* iOS 26 blurs the top of the page under the status bar unless it finds a
+     sticky/fixed bar there, whose colour it then extends instead. */
+  .app-topbar { position: sticky; top: 0; z-index: 30; background-color: var(--studio); }
 }
 @keyframes app-splash-load { 0% { transform: translateX(-100%); } 100% { transform: translateX(250%); } }
 @keyframes app-splash-giveup { to { visibility: hidden; } }

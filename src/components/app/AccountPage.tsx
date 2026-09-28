@@ -77,7 +77,7 @@ export function AccountPage() {
 
   return (
     <div className="min-h-dvh bg-studio text-studio-foreground">
-      <header className="flex items-center gap-3 border-b border-white/10 px-4 py-3 md:px-6">
+      <header className="app-topbar flex items-center gap-3 border-b border-white/10 px-4 py-3 md:px-6">
         <Link
           to="/calendario"
           className="flex items-center gap-2 rounded text-xs uppercase tracking-[0.2em] text-studio-muted hover:text-studio-foreground"
