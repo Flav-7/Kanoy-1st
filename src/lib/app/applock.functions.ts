@@ -18,7 +18,9 @@ import {
   unlockWithPin,
   verifyPasskeyRegistration,
   type PasskeyInfo,
+  sessionState,
   type RelyingParty,
+  type SessionState,
 } from "@/server/applock";
 
 /**
@@ -53,15 +55,20 @@ async function withUnlockedUser<T>(
   return run(user.id, token, user);
 }
 
-export const makeAppSessionFn = createServerFn({ method: "POST" }).handler(async () =>
-  withToken(async (token) => ({ ok: await makeAppSession(await getDb(), token) })),
-);
-
-export const lockAppSession = createServerFn({ method: "POST" }).handler(async () =>
-  withToken(async (token) => {
-    await lockSession(await getDb(), token);
-    return { ok: true as const };
-  }),
+/**
+ * Everything the installed app does when it starts, in one round trip:
+ * put an inherited browser session under the lock (Android), lock it, and
+ * return the resulting state for the launch screen to hand over to.
+ */
+export const startAppFn = createServerFn({ method: "POST" }).handler(
+  async (): Promise<SessionState | null> => {
+    const token = readSessionToken();
+    if (!token) return null;
+    const db = await getDb();
+    await makeAppSession(db, token);
+    await lockSession(db, token);
+    return sessionState(db, token);
+  },
 );
 
 const pinSchema = z.object({ pin: z.string().max(12) });

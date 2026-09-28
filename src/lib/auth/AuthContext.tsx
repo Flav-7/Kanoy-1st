@@ -16,7 +16,7 @@ import {
   type LoginResult,
   type SessionUser,
 } from "./auth.functions";
-import { lockAppSession, makeAppSessionFn } from "@/lib/app/applock.functions";
+import { startAppFn } from "@/lib/app/applock.functions";
 import { isInstalledTouchApp } from "@/lib/app/app-mode";
 import { rememberUser } from "@/lib/app/remembered-user";
 import { disablePush } from "@/lib/team/push-client";
@@ -62,18 +62,28 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const app = isInstalledTouchApp();
     setAppMode(app);
+    if (!app) {
+      void refresh();
+      return;
+    }
+    // Every start of the app begins locked (a browser session inherited on
+    // Android is put under the lock first) — one round trip, while the
+    // launch screen is up.
     void (async () => {
-      if (app) {
-        // Every start of the app begins locked. A session inherited from the
-        // browser (Android shares Chrome's cookies) is put under the lock first.
-        const current = await getSession().catch(() => null);
-        if (current && !current.appSession && !current.locked)
-          await makeAppSessionFn().catch(() => {});
-        if (current) await lockAppSession().catch(() => {});
-      }
-      await refresh();
+      const state = await startAppFn().catch(() => null);
+      wasLocked.current = Boolean(state?.locked);
+      if (state) rememberUser(state.user);
+      setSession(state);
+      setReady(true);
     })();
   }, [refresh]);
+
+  // The installed app's launch screen (#app-splash, CSS-only) stays up until
+  // the first session check is in: by this commit the sign-in or lock screen
+  // is already rendered on top, so the site never flashes by first.
+  useEffect(() => {
+    if (ready) document.documentElement.dataset["appReady"] = "1";
+  }, [ready]);
 
   // Back from the background: the unlock window may have run out meanwhile.
   useEffect(() => {

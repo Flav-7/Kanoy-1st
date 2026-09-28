@@ -109,6 +109,16 @@ function RootShell({ children }: { children: ReactNode }) {
         />
       </head>
       <body>
+        {/* Launch screen of the installed phone/tablet app. Server-rendered and
+            shown purely by CSS (styles.css, #app-splash), so it's there from
+            the very first paint — before any JavaScript — and the site never
+            flashes by. Hidden everywhere else (browsers, desktop). AuthProvider
+            removes it once it knows whether to show the sign-in, the lock or
+            the unlocked site. */}
+        <div id="app-splash" aria-hidden="true">
+          <img src="/favicon.png" alt="" width={512} height={512} />
+          <span className="app-splash-bar" />
+        </div>
         {children}
         <Scripts />
       </body>
