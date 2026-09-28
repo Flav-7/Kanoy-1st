@@ -1,8 +1,19 @@
+# Team-only pages (sign-in required) stay out of search results.
 User-agent: Googlebot
 Allow: /
+Disallow: /calendario
+Disallow: /conta
+Disallow: /equipa
+Disallow: /erros
+Disallow: /definir-password
 
 User-agent: Bingbot
 Allow: /
+Disallow: /calendario
+Disallow: /conta
+Disallow: /equipa
+Disallow: /erros
+Disallow: /definir-password
 
 User-agent: Twitterbot
 Allow: /
@@ -12,5 +23,10 @@ Allow: /
 
 User-agent: *
 Allow: /
+Disallow: /calendario
+Disallow: /conta
+Disallow: /equipa
+Disallow: /erros
+Disallow: /definir-password
 
 Sitemap: https://kanoy.pt/sitemap.xml

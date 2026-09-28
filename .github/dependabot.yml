@@ -1,0 +1,16 @@
+# Security alerts and update PRs for the site's npm packages. Security fixes
+# arrive as soon as GitHub knows of them; routine updates once a week,
+# bundled into one PR so they're quick to review. Every PR gets a Vercel
+# preview deployment to try before merging.
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      timezone: Europe/Lisbon
+    open-pull-requests-limit: 5
+    groups:
+      minor-and-patch:
+        update-types: [minor, patch]

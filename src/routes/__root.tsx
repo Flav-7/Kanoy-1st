@@ -9,7 +9,7 @@ import {
 import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
-import { reportLovableError } from "../lib/lovable-error-reporting";
+import { installErrorReporting, reportClientError } from "../lib/errors/report-client";
 import { LanguageProvider } from "../lib/i18n/LanguageContext";
 import { AuthProvider } from "../lib/auth/AuthContext";
 import { DEFAULT_LANGUAGE, translations } from "../lib/i18n/translations";
@@ -27,7 +27,7 @@ function ErrorComponent({ error, reset }: { error: unknown; reset: () => void })
   console.error(error);
   const router = useRouter();
   useEffect(() => {
-    reportLovableError(error, { boundary: "tanstack_root_error_component" });
+    reportClientError(error);
   }, [error]);
 
   return (
@@ -161,6 +161,8 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+
+  useEffect(installErrorReporting, []);
 
   // Production only: in dev a service worker would cache Vite's modules and fight HMR.
   useEffect(() => {

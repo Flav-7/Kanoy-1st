@@ -54,6 +54,8 @@ export type SessionState = {
   unlockMethods: UnlockMethod[];
   hasPin: boolean;
   passkeyCount: number;
+  /** May open the "Erros" page. */
+  canSeeErrors: boolean;
 };
 
 /** Everything the app needs to decide what to show, without unlocking anything. */
@@ -67,11 +69,13 @@ export async function sessionState(db: Db, token: string): Promise<SessionState 
     unlock_methods: UnlockMethod[];
     has_pin: boolean;
     passkeys: number;
+    can_see_errors: boolean;
   }>(
     `select u.id, u.name, u.email, s.app_lock,
             coalesce(s.unlocked_until > now(), false) as unlocked,
             to_json(u.unlock_methods) as unlock_methods, (u.pin_hash is not null) as has_pin,
-            (select count(*)::int from passkeys p where p.user_id = u.id) as passkeys
+            (select count(*)::int from passkeys p where p.user_id = u.id) as passkeys,
+            u.can_see_errors
        from sessions s join users u on u.id = s.user_id
       where s.token_hash = $1 and s.expires_at > now()`,
     [tokenHash(token)],
@@ -84,6 +88,7 @@ export async function sessionState(db: Db, token: string): Promise<SessionState 
     unlockMethods: row.unlock_methods,
     hasPin: Boolean(row.has_pin),
     passkeyCount: Number(row.passkeys),
+    canSeeErrors: Boolean(row.can_see_errors),
   };
 }
 

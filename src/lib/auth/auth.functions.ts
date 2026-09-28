@@ -21,6 +21,8 @@ export type AuthSession = {
   unlockMethods: UnlockMethod[];
   hasPin: boolean;
   passkeyCount: number;
+  /** May open the "Erros" page. */
+  canSeeErrors: boolean;
 };
 
 export type LoginResult =

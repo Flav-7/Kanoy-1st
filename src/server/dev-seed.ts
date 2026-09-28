@@ -29,6 +29,7 @@ export async function seedDevData(db: Db): Promise<void> {
   await setMember(db, geral, bruno!, "editor");
   await setMember(db, geral, carla!, "editor");
   await setMember(db, marketing, bruno!, "viewer");
+  await db.query("update users set can_see_errors = true where id = $1", [ana!]);
 
   const tz = "Europe/Lisbon";
   const monday = startOfWeek(todayIn(tz));

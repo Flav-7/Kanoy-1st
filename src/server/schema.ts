@@ -151,4 +151,28 @@ export const MIGRATIONS: { id: string; statements: string[] }[] = [
       `update users set unlock_methods = array[unlock_method]`,
     ],
   },
+  {
+    id: "005_error_log",
+    statements: [
+      // Who sees the "Erros" page (set with `npm run admin -- error-viewer`).
+      `alter table users add column can_see_errors boolean not null default false`,
+      // Errors from visitors' browsers and from the server, one row per
+      // distinct error (same fingerprint = same place in the code), counted.
+      `create table error_reports (
+        id uuid primary key default gen_random_uuid(),
+        fingerprint text not null unique,
+        source text not null check (source in ('browser', 'server')),
+        message text not null,
+        detail text,
+        url text,
+        user_agent text,
+        count integer not null default 1,
+        first_seen timestamptz not null default now(),
+        last_seen timestamptz not null default now(),
+        last_user_id uuid references users(id) on delete set null,
+        resolved boolean not null default false
+      )`,
+      `create index error_reports_last_seen_idx on error_reports (last_seen desc)`,
+    ],
+  },
 ];

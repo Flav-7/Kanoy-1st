@@ -1,6 +1,6 @@
 import { useRef, useState, type FormEvent } from "react";
 import { Link } from "@tanstack/react-router";
-import { CalendarDays, Globe, IdCard, LogOut, UserRound } from "lucide-react";
+import { Bug, CalendarDays, Globe, IdCard, LogOut, UserRound } from "lucide-react";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 import { APP_COPY } from "@/components/app/app-i18n";
 import { useAuth } from "@/lib/auth/AuthContext";
@@ -19,7 +19,7 @@ const itemClass =
  * site, the calendar, the account page and sign-out. Signing in keeps the visitor on the page they're on.
  */
 export function AccountMenu() {
-  const { user, ready, logout } = useAuth();
+  const { user, session, ready, logout } = useAuth();
   const { dict, language } = useLanguage();
   const t = dict.account;
   const menu = APP_COPY[language].menu;
@@ -84,6 +84,17 @@ export function AccountMenu() {
               <IdCard className="h-4 w-4 text-studio-muted" />
               {menu.account}
             </Link>
+            {session?.canSeeErrors && (
+              <Link
+                to="/erros"
+                role="menuitem"
+                onClick={() => setMenuOpen(false)}
+                className={itemClass}
+              >
+                <Bug className="h-4 w-4 text-studio-muted" />
+                {menu.errors}
+              </Link>
+            )}
             <button
               type="button"
               role="menuitem"

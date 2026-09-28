@@ -45,7 +45,7 @@ type AppCopy = {
     skipCode: string;
     done: string;
   };
-  menu: { site: string; calendar: string; account: string; signOut: string };
+  menu: { site: string; calendar: string; account: string; signOut: string; errors: string };
   account: {
     title: string;
     profile: string;
@@ -134,6 +134,7 @@ const PT: AppCopy = {
     calendar: "Calendário",
     account: "Minha conta",
     signOut: "Terminar sessão",
+    errors: "Erros",
   },
   account: {
     title: "Minha conta",
@@ -232,6 +233,7 @@ const ES: AppCopy = {
     calendar: "Calendario",
     account: "Mi cuenta",
     signOut: "Cerrar sesión",
+    errors: "Errores",
   },
   account: {
     ...PT.account,
@@ -325,7 +327,13 @@ const EN: AppCopy = {
     skipCode: "I'd rather use my password",
     done: "Done",
   },
-  menu: { site: "View site", calendar: "Calendar", account: "My account", signOut: "Sign out" },
+  menu: {
+    site: "View site",
+    calendar: "Calendar",
+    account: "My account",
+    signOut: "Sign out",
+    errors: "Errors",
+  },
   account: {
     ...PT.account,
     title: "My account",

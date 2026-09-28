@@ -9,6 +9,7 @@
  *   npm run admin -- add-calendar --name Marketing --color violet --owner ana@kanoy.pt
  *   npm run admin -- add-member --email bruno@kanoy.pt --calendar Marketing --role viewer
  *   npm run admin -- list
+ *   npm run admin -- error-viewer --email ana@kanoy.pt [--off]   (the "Erros" page)
  *
  * Runs against DATABASE_URL (the Neon database), read from .env.vercel.local
  * (`npx vercel env pull .env.vercel.local`) — deliberately not .env.local, which
@@ -28,6 +29,7 @@ import {
   findUserByEmail,
   setMember,
 } from "../src/server/admin";
+import { setErrorViewer } from "../src/server/errors";
 import { CALENDAR_COLORS, ROLES, type CalendarColor, type Role } from "../src/lib/calendar/types";
 
 const { positionals, values } = parseArgs({
@@ -40,6 +42,7 @@ const { positionals, values } = parseArgs({
     color: { type: "string" },
     owner: { type: "string" },
     local: { type: "boolean", default: false },
+    off: { type: "boolean", default: false },
   },
 });
 
@@ -157,9 +160,16 @@ async function main() {
         break;
       }
 
+      case "error-viewer": {
+        const email = need(values.email, "email");
+        if (!(await setErrorViewer(db, email, !values.off))) throw new Error(`No user ${email}`);
+        console.log(`${email}: ${values.off ? "no longer sees" : "now sees"} the Erros page`);
+        break;
+      }
+
       default:
         console.log(
-          "Commands: migrate | add-user | reset-password | add-calendar | add-member | list",
+          "Commands: migrate | add-user | reset-password | add-calendar | add-member | list | error-viewer",
         );
         process.exitCode = 1;
     }
