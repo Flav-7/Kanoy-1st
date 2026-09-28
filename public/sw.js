@@ -1,10 +1,43 @@
 // KANOY service worker — makes the site installable and usable offline.
-// Pages: network-first (fresh when online; cached copy when offline or the network is slow).
+// Pages: network-first (fresh when online; cached copy when offline or the network is slow),
+// except in the installed phone/tablet app, which opens instantly on the saved copy while the
+// fresh one is fetched for next time (see "Installed app" below).
 // Build assets, fonts and icons: cache-first (their URLs are hashed or stable).
 // Bump CACHE when this strategy changes; old caches are dropped on activate.
 const CACHE = "kanoy-v1";
 const NAV_TIMEOUT_MS = 2500;
-const PRECACHE = ["/", "/manifest.webmanifest", "/favicon.png", "/icon-192.png", "/icon-512.png"];
+const PRECACHE = [
+  "/",
+  "/calendario",
+  "/manifest.webmanifest",
+  "/favicon.png",
+  "/icon-192.png",
+  "/icon-512.png",
+];
+
+// ── Installed app ──
+// The app tells this worker it runs as the installed phone/tablet app (the
+// page knows its display mode; a worker doesn't). From then on, page loads
+// are served from the saved copy at once — no white screen while the server
+// answers — and refreshed in the background, so the next launch is current.
+// On iOS the installed app has its own storage, so this never reaches Safari
+// or a computer; on Android it only affects that phone. Saved pages hold no
+// personal data (everything personal is fetched after the page opens).
+const META = "kanoy-meta";
+const APP_FLAG = "/__kanoy-app-mode";
+
+self.addEventListener("message", (event) => {
+  if (event.data?.type === "app-mode") {
+    event.waitUntil(caches.open(META).then((c) => c.put(APP_FLAG, new Response("1"))));
+  }
+});
+
+function isInstalledApp() {
+  return caches
+    .open(META)
+    .then((c) => c.match(APP_FLAG))
+    .then(Boolean);
+}
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
@@ -19,7 +52,9 @@ self.addEventListener("activate", (event) => {
   event.waitUntil(
     caches
       .keys()
-      .then((keys) => Promise.all(keys.filter((k) => k !== CACHE).map((k) => caches.delete(k))))
+      .then((keys) =>
+        Promise.all(keys.filter((k) => k !== CACHE && k !== META).map((k) => caches.delete(k))),
+      )
       .then(() => self.clients.claim()),
   );
 });
@@ -54,8 +89,9 @@ self.addEventListener("fetch", (event) => {
     });
     event.waitUntil(network.catch(() => {}));
     event.respondWith(
-      caches.match(request).then((cached) => {
+      Promise.all([caches.match(request), isInstalledApp()]).then(([cached, app]) => {
         if (!cached) return network.catch(() => caches.match("/"));
+        if (app) return cached; // installed app: open instantly, fresh copy lands for next time
         const slow = new Promise((resolve) => setTimeout(() => resolve(cached), NAV_TIMEOUT_MS));
         return Promise.race([network, slow]).catch(() => cached);
       }),

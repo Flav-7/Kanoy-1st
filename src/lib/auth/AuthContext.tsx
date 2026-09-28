@@ -66,6 +66,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       void refresh();
       return;
     }
+    // Let the service worker know this device runs the installed app, so it
+    // opens the next launches instantly from the saved page (public/sw.js).
+    navigator.serviceWorker?.ready
+      .then((reg) => reg.active?.postMessage({ type: "app-mode" }))
+      .catch(() => {});
     // Every start of the app begins locked (a browser session inherited on
     // Android is put under the lock first) — one round trip, while the
     // launch screen is up.
