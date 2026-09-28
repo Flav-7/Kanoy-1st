@@ -1,10 +1,8 @@
-<!-- LOVABLE:BEGIN -->
 > [!IMPORTANT]
-> This project is connected to [Lovable](https://lovable.dev). Avoid rewriting
-> published git history — force pushing, or rebasing/amending/squashing commits
-> that are already pushed — as it rewrites history on Lovable's side and the
-> user will likely lose their project history.
+> Every push to `main` deploys kanoy.pt to production (Vercel), and the repo
+> is edited from several machines. Keep `main` working, fetch and merge
+> before starting work, and never rewrite published history (no force
+> pushing, rebasing, amending or squashing pushed commits).
 >
-> Commits you push to the connected branch sync back to Lovable and show up in
-> the editor, so keep the branch in a working state.
-<!-- LOVABLE:END -->
+> See CLAUDE.md for the full workflow, the local vs. production database,
+> and where secrets live.
