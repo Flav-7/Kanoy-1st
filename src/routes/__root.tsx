@@ -16,6 +16,7 @@ import { DEFAULT_LANGUAGE, translations } from "../lib/i18n/translations";
 import { ErrorScreen } from "../components/kanoy/ErrorScreen";
 import { CookieConsent } from "../components/kanoy/CookieConsent";
 import { ConsentedAnalytics } from "../components/kanoy/ConsentedAnalytics";
+import { AppLockGate } from "../components/app/AppLockGate";
 
 function NotFoundComponent() {
   return <ErrorScreen kind="notFound" />;
@@ -133,6 +134,7 @@ function RootComponent() {
           <Outlet />
           <CookieConsent />
           <ConsentedAnalytics />
+          <AppLockGate />
         </AuthProvider>
       </LanguageProvider>
     </QueryClientProvider>

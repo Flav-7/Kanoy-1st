@@ -1,9 +1,8 @@
 import { useRef, useState, type FormEvent } from "react";
 import { Link } from "@tanstack/react-router";
-import { CalendarDays, IdCard, LogOut, UserRound } from "lucide-react";
+import { CalendarDays, Globe, IdCard, LogOut, UserRound } from "lucide-react";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
-import { ProfileDialog } from "@/components/team/ProfileDialog";
-import { TEAM_COPY } from "@/components/team/team-i18n";
+import { APP_COPY } from "@/components/app/app-i18n";
 import { useAuth } from "@/lib/auth/AuthContext";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import { useDismiss } from "./useDismiss";
@@ -17,16 +16,16 @@ const itemClass =
 /**
  * Top-right account button, sitting next to the language flags. Logged out it
  * opens the team sign-in dialog; logged in it drops down a menu with the
- * calendar and sign-out. Signing in keeps the visitor on the page they're on.
+ * site, the calendar, the account page and sign-out. Signing in keeps the visitor on the page they're on.
  */
 export function AccountMenu() {
   const { user, ready, logout } = useAuth();
   const { dict, language } = useLanguage();
   const t = dict.account;
+  const menu = APP_COPY[language].menu;
 
   const [menuOpen, setMenuOpen] = useState(false);
   const [loginOpen, setLoginOpen] = useState(false);
-  const [profileOpen, setProfileOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
 
   useDismiss(menuOpen, rootRef, () => setMenuOpen(false));
@@ -63,6 +62,10 @@ export function AccountMenu() {
             <p className="truncate text-xs text-studio-muted">{user.email}</p>
           </div>
           <div className="pt-1.5">
+            <Link to="/" role="menuitem" onClick={() => setMenuOpen(false)} className={itemClass}>
+              <Globe className="h-4 w-4 text-studio-muted" />
+              {menu.site}
+            </Link>
             <Link
               to="/calendario"
               role="menuitem"
@@ -70,20 +73,17 @@ export function AccountMenu() {
               className={itemClass}
             >
               <CalendarDays className="h-4 w-4 text-accent" />
-              {t.calendar}
+              {menu.calendar}
             </Link>
-            <button
-              type="button"
+            <Link
+              to="/conta"
               role="menuitem"
-              onClick={() => {
-                setMenuOpen(false);
-                setProfileOpen(true);
-              }}
+              onClick={() => setMenuOpen(false)}
               className={itemClass}
             >
               <IdCard className="h-4 w-4 text-studio-muted" />
-              {TEAM_COPY[language].profile.title}
-            </button>
+              {menu.account}
+            </Link>
             <button
               type="button"
               role="menuitem"
@@ -94,14 +94,13 @@ export function AccountMenu() {
               className={itemClass}
             >
               <LogOut className="h-4 w-4 text-studio-muted" />
-              {t.logout}
+              {menu.signOut}
             </button>
           </div>
         </div>
       )}
 
       <LoginDialog open={loginOpen} onOpenChange={setLoginOpen} />
-      {user && <ProfileDialog open={profileOpen} onOpenChange={setProfileOpen} />}
     </div>
   );
 }

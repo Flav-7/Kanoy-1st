@@ -34,14 +34,6 @@ type TeamCopy = {
   inviteHelp: string;
   noAreas: string;
   errors: Record<TeamError | "UNAUTHENTICATED" | "UNKNOWN", string>;
-  profile: {
-    title: string;
-    text: string;
-    name: string;
-    jobTitle: string;
-    jobTitlePlaceholder: string;
-    saved: string;
-  };
   notifications: {
     label: string;
     on: string;
@@ -98,14 +90,6 @@ const PT: TeamCopy = {
     INVALID_INPUT: "Verifique os campos (email válido; nome obrigatório para pessoas novas).",
     UNAUTHENTICATED: "A sua sessão terminou. Entre novamente.",
     UNKNOWN: "Algo correu mal. Tente outra vez.",
-  },
-  profile: {
-    title: "O meu perfil",
-    text: "A função aparece no calendário em vez do seu nome.",
-    name: "Nome",
-    jobTitle: "Função na empresa",
-    jobTitlePlaceholder: "Ex.: Web Designer",
-    saved: "Perfil guardado.",
   },
   notifications: {
     label: "Notificações",
@@ -165,14 +149,6 @@ const ES: TeamCopy = {
     UNAUTHENTICATED: "Tu sesión ha terminado. Vuelve a entrar.",
     UNKNOWN: "Algo ha salido mal. Inténtalo de nuevo.",
   },
-  profile: {
-    title: "Mi perfil",
-    text: "Tu función aparece en el calendario en lugar de tu nombre.",
-    name: "Nombre",
-    jobTitle: "Función en la empresa",
-    jobTitlePlaceholder: "P. ej.: Diseñador web",
-    saved: "Perfil guardado.",
-  },
   notifications: {
     label: "Notificaciones",
     on: "Notificaciones activas en este dispositivo",
@@ -230,14 +206,6 @@ const EN: TeamCopy = {
     INVALID_INPUT: "Check the fields (valid email; name required for new people).",
     UNAUTHENTICATED: "Your session has ended. Please sign in again.",
     UNKNOWN: "Something went wrong. Please try again.",
-  },
-  profile: {
-    title: "My profile",
-    text: "Your job title is shown in the calendar instead of your name.",
-    name: "Name",
-    jobTitle: "Job title",
-    jobTitlePlaceholder: "e.g. Web Designer",
-    saved: "Profile saved.",
   },
   notifications: {
     label: "Notifications",

@@ -43,7 +43,7 @@ export async function verifyPassword(password: string, stored: string): Promise<
 let dummyHash: Promise<string> | undefined;
 
 /** Only the SHA-256 of a session/password token is stored, never the token. */
-function tokenHash(token: string): string {
+export function tokenHash(token: string): string {
   return createHash("sha256").update(token).digest("hex");
 }
 
@@ -80,27 +80,50 @@ export async function authenticate(
   return { ok: true, user: { id: row.id, name: row.name, email: row.email } };
 }
 
+/**
+ * How long an installed-app session stays unlocked without being used. Every
+ * request slides it forward, so it only runs out once the app has been left
+ * alone (in the background) for about this long.
+ */
+export const UNLOCK_WINDOW_MINUTES = 5;
+
+/**
+ * `appLock`: a session of the installed phone/tablet app. It only serves
+ * data while unlocked (code / Face ID / password, see applock.ts) and starts
+ * unlocked, since the person has just typed their password.
+ */
 export async function createSession(
   db: Db,
   userId: string,
   remember = true,
+  appLock = false,
 ): Promise<{ token: string; expiresAt: Date }> {
   const token = randomBytes(32).toString("base64url");
   const lifetimeMs = remember ? SESSION_DAYS * 86_400_000 : SHORT_SESSION_HOURS * 3_600_000;
   const expiresAt = new Date(Date.now() + lifetimeMs);
-  await db.query("insert into sessions (token_hash, user_id, expires_at) values ($1, $2, $3)", [
-    tokenHash(token),
-    userId,
-    expiresAt,
-  ]);
+  await db.query(
+    `insert into sessions (token_hash, user_id, expires_at, app_lock, unlocked_until)
+     values ($1, $2, $3, $4, case when $4 then now() + make_interval(mins => $5) end)`,
+    [tokenHash(token), userId, expiresAt, appLock, UNLOCK_WINDOW_MINUTES],
+  );
   return { token, expiresAt };
 }
 
+/**
+ * The user behind a session, for serving data. A locked app session counts
+ * as no session at all here; an unlocked one has its window slid forward.
+ */
 export async function userForSession(db: Db, token: string): Promise<SessionUser | null> {
   const [row] = await db.query<SessionUser>(
-    `select u.id, u.name, u.email from sessions s join users u on u.id = s.user_id
-      where s.token_hash = $1 and s.expires_at > now()`,
-    [tokenHash(token)],
+    `update sessions s
+        set unlocked_until = case when s.app_lock
+                                  then now() + make_interval(mins => $2)
+                                  else s.unlocked_until end
+       from users u
+      where s.token_hash = $1 and u.id = s.user_id and s.expires_at > now()
+        and (not s.app_lock or s.unlocked_until > now())
+      returning u.id, u.name, u.email`,
+    [tokenHash(token), UNLOCK_WINDOW_MINUTES],
   );
   return row ?? null;
 }

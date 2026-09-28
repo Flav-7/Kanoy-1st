@@ -106,4 +106,37 @@ export const MIGRATIONS: { id: string; statements: string[] }[] = [
       `create index push_subscriptions_user_idx on push_subscriptions (user_id)`,
     ],
   },
+  {
+    id: "003_app_lock",
+    statements: [
+      // Installed-app lock (see server/applock.ts): a 6-digit code (hashed)
+      // and how each person prefers to unlock.
+      `alter table users add column pin_hash text`,
+      `alter table users add column pin_failures integer not null default 0`,
+      `alter table users add column unlock_method text not null default 'pin'
+         check (unlock_method in ('pin', 'passkey', 'password'))`,
+      // App sessions only serve data while unlocked; the window slides forward
+      // with every request, so ~5 minutes away from the app locks it again.
+      `alter table sessions add column app_lock boolean not null default false`,
+      `alter table sessions add column unlocked_until timestamptz`,
+      // Face ID / fingerprint: one WebAuthn credential per device.
+      `create table passkeys (
+        id text primary key,
+        user_id uuid not null references users(id) on delete cascade,
+        public_key text not null,
+        counter bigint not null default 0,
+        transports text,
+        device_name text,
+        created_at timestamptz not null default now(),
+        last_used_at timestamptz
+      )`,
+      `create index passkeys_user_idx on passkeys (user_id)`,
+      // The pending WebAuthn challenge of a session (one at a time).
+      `create table webauthn_challenges (
+        session_hash text primary key references sessions(token_hash) on delete cascade,
+        challenge text not null,
+        expires_at timestamptz not null
+      )`,
+    ],
+  },
 ];

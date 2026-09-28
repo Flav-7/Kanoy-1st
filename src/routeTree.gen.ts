@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as CalendarioRouteImport } from './routes/calendario'
+import { Route as ContaRouteImport } from './routes/conta'
 import { Route as DefinirPasswordRouteImport } from './routes/definir-password'
 import { Route as EquipaRouteImport } from './routes/equipa'
 import { Route as PrivacidadeRouteImport } from './routes/privacidade'
@@ -24,6 +25,11 @@ const IndexRoute = IndexRouteImport.update({
 const CalendarioRoute = CalendarioRouteImport.update({
   id: '/calendario',
   path: '/calendario',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ContaRoute = ContaRouteImport.update({
+  id: '/conta',
+  path: '/conta',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DefinirPasswordRoute = DefinirPasswordRouteImport.update({
@@ -50,6 +56,7 @@ const TermosRoute = TermosRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/calendario': typeof CalendarioRoute
+  '/conta': typeof ContaRoute
   '/definir-password': typeof DefinirPasswordRoute
   '/equipa': typeof EquipaRoute
   '/privacidade': typeof PrivacidadeRoute
@@ -58,6 +65,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/calendario': typeof CalendarioRoute
+  '/conta': typeof ContaRoute
   '/definir-password': typeof DefinirPasswordRoute
   '/equipa': typeof EquipaRoute
   '/privacidade': typeof PrivacidadeRoute
@@ -67,6 +75,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/calendario': typeof CalendarioRoute
+  '/conta': typeof ContaRoute
   '/definir-password': typeof DefinirPasswordRoute
   '/equipa': typeof EquipaRoute
   '/privacidade': typeof PrivacidadeRoute
@@ -77,6 +86,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/calendario'
+    | '/conta'
     | '/definir-password'
     | '/equipa'
     | '/privacidade'
@@ -85,6 +95,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/calendario'
+    | '/conta'
     | '/definir-password'
     | '/equipa'
     | '/privacidade'
@@ -93,6 +104,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/calendario'
+    | '/conta'
     | '/definir-password'
     | '/equipa'
     | '/privacidade'
@@ -102,6 +114,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   CalendarioRoute: typeof CalendarioRoute
+  ContaRoute: typeof ContaRoute
   DefinirPasswordRoute: typeof DefinirPasswordRoute
   EquipaRoute: typeof EquipaRoute
   PrivacidadeRoute: typeof PrivacidadeRoute
@@ -122,6 +135,13 @@ declare module '@tanstack/react-router' {
       path: '/calendario'
       fullPath: '/calendario'
       preLoaderRoute: typeof CalendarioRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/conta': {
+      id: '/conta'
+      path: '/conta'
+      fullPath: '/conta'
+      preLoaderRoute: typeof ContaRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/definir-password': {
@@ -158,6 +178,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   CalendarioRoute: CalendarioRoute,
+  ContaRoute: ContaRoute,
   DefinirPasswordRoute: DefinirPasswordRoute,
   EquipaRoute: EquipaRoute,
   PrivacidadeRoute: PrivacidadeRoute,

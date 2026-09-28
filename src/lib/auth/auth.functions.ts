@@ -2,15 +2,22 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { getDb } from "@/server/db.server";
 import { authenticate, createSession, deleteSession, setPasswordWithToken } from "@/server/auth";
+import { sessionState, type UnlockMethod } from "@/server/applock";
 import { MIN_PASSWORD_LENGTH } from "./password-policy";
-import {
-  clearSessionCookie,
-  currentUser,
-  readSessionToken,
-  setSessionCookie,
-} from "@/server/session.server";
+import { clearSessionCookie, readSessionToken, setSessionCookie } from "@/server/session.server";
 
 export type SessionUser = { id: string; name: string; email: string };
+
+/** The signed-in person plus the state of the installed-app lock. */
+export type AuthSession = {
+  user: SessionUser;
+  /** Session of the installed app (the code/Face ID lock applies to it). */
+  appSession: boolean;
+  locked: boolean;
+  unlockMethod: UnlockMethod;
+  hasPin: boolean;
+  passkeyCount: number;
+};
 
 export type LoginResult =
   | { ok: true; user: SessionUser }
@@ -23,6 +30,8 @@ const loginSchema = z.object({
   email: z.string().trim().email().max(200),
   password: z.string().min(1).max(200),
   remember: z.boolean().default(true),
+  /** Signing in from the installed phone/tablet app: the session gets the app lock. */
+  appLock: z.boolean().default(false),
 });
 
 const setPasswordSchema = z.object({
@@ -31,9 +40,10 @@ const setPasswordSchema = z.object({
 });
 
 export const getSession = createServerFn({ method: "GET" }).handler(
-  async (): Promise<SessionUser | null> => {
+  async (): Promise<AuthSession | null> => {
     try {
-      return await currentUser();
+      const token = readSessionToken();
+      return token ? await sessionState(await getDb(), token) : null;
     } catch (err) {
       // No database configured (yet): everyone is simply logged out.
       console.error(err);
@@ -54,8 +64,10 @@ export const login = createServerFn({ method: "POST" })
     }
     const result = await authenticate(db, data.email, data.password);
     if (!result.ok) return result;
-    const session = await createSession(db, result.user.id, data.remember);
-    setSessionCookie(session.token, session.expiresAt, data.remember);
+    // The app keeps its session (behind the lock); the browser follows the checkbox.
+    const remember = data.appLock || data.remember;
+    const session = await createSession(db, result.user.id, remember, data.appLock);
+    setSessionCookie(session.token, session.expiresAt, remember);
     return { ok: true, user: result.user };
   });
 
