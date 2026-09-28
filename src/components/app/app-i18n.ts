@@ -1,6 +1,7 @@
 import type { Language } from "@/lib/i18n/translations";
 
 type AppCopy = {
+  login: { welcome: string; text: string; email: string; submit: string; continueToSite: string };
   greeting: { morning: string; afternoon: string; evening: string };
   enterCode: string;
   enterPassword: string;
@@ -64,6 +65,13 @@ type AppCopy = {
 };
 
 const PT: AppCopy = {
+  login: {
+    welcome: "Bem-vindo à KANOY",
+    text: "Entre com a sua conta da equipa.",
+    email: "Email",
+    submit: "Entrar",
+    continueToSite: "Continuar para o site",
+  },
   greeting: { morning: "Bom dia", afternoon: "Boa tarde", evening: "Boa noite" },
   enterCode: "Introduza o seu código KANOY",
   enterPassword: "Introduza a sua palavra-passe",
@@ -141,6 +149,13 @@ const PT: AppCopy = {
 
 const ES: AppCopy = {
   ...PT,
+  login: {
+    welcome: "Bienvenido a KANOY",
+    text: "Entra con tu cuenta del equipo.",
+    email: "Email",
+    submit: "Entrar",
+    continueToSite: "Continuar al sitio",
+  },
   greeting: { morning: "Buenos días", afternoon: "Buenas tardes", evening: "Buenas noches" },
   enterCode: "Introduce tu código KANOY",
   enterPassword: "Introduce tu contraseña",
@@ -216,6 +231,13 @@ const ES: AppCopy = {
 
 const EN: AppCopy = {
   ...PT,
+  login: {
+    welcome: "Welcome to KANOY",
+    text: "Sign in with your team account.",
+    email: "Email",
+    submit: "Sign in",
+    continueToSite: "Continue to the site",
+  },
   greeting: { morning: "Good morning", afternoon: "Good afternoon", evening: "Good evening" },
   enterCode: "Enter your KANOY code",
   enterPassword: "Enter your password",

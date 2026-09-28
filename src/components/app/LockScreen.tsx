@@ -1,14 +1,13 @@
 import { useCallback, useEffect, useRef, useState, type FormEvent } from "react";
 import { Fingerprint, ScanFace } from "lucide-react";
-import kanoyK from "@/assets/branding/kanoy-k.webp";
 import { useAuth } from "@/lib/auth/AuthContext";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
-import { LANGUAGES } from "@/lib/i18n/translations";
 import { unlockWithPasswordFn, unlockWithPinFn } from "@/lib/app/applock.functions";
 import { biometricsLabel, canUseBiometrics } from "@/lib/app/app-mode";
 import { unlockWithBiometrics } from "@/lib/app/passkey-client";
 import { PIN_LENGTH } from "@/lib/app/pin";
 import { APP_COPY } from "./app-i18n";
+import { AppScreen } from "./AppScreen";
 import { PinPad } from "./PinPad";
 
 function greetingKey(hour: number): "morning" | "afternoon" | "evening" {
@@ -32,7 +31,7 @@ export function initials(name: string): string {
  */
 export function LockScreen({ onRecovered }: { onRecovered: () => void }) {
   const { session, refresh, logout } = useAuth();
-  const { language, setLanguage } = useLanguage();
+  const { language } = useLanguage();
   const t = APP_COPY[language];
   const bio = biometricsLabel();
 
@@ -138,35 +137,7 @@ export function LockScreen({ onRecovered }: { onRecovered: () => void }) {
   ) : null;
 
   return (
-    <div
-      role="dialog"
-      aria-modal="true"
-      aria-label={t.enterCode}
-      className="fixed inset-0 z-[100] flex flex-col overflow-y-auto bg-studio text-studio-foreground"
-      style={{
-        backgroundImage:
-          "radial-gradient(90% 55% at 0% 0%, color-mix(in oklab, var(--accent) 16%, transparent), transparent 70%), linear-gradient(to bottom, #07131c, #04080b)",
-        paddingTop: "max(env(safe-area-inset-top), 1rem)",
-        paddingBottom: "max(env(safe-area-inset-bottom), 1rem)",
-      }}
-    >
-      <header className="flex items-center justify-between px-6 pt-2">
-        <img src={kanoyK} alt="KANOY" width={1024} height={1024} className="h-9 w-auto" />
-        <div className="flex rounded-full bg-white/[0.06] p-1 text-sm">
-          {LANGUAGES.map(({ code, label }) => (
-            <button
-              key={code}
-              type="button"
-              onClick={() => setLanguage(code)}
-              aria-pressed={language === code}
-              className={`rounded-full px-3 py-1.5 ${language === code ? "bg-white/10 font-medium" : "text-studio-muted"}`}
-            >
-              {label}
-            </button>
-          ))}
-        </div>
-      </header>
-
+    <AppScreen label={mode === "pin" ? t.enterCode : t.enterPassword}>
       <div className="flex flex-1 flex-col items-center px-6 pt-8 text-center">
         <div className="flex h-24 w-24 items-center justify-center rounded-full border-4 border-white/10 bg-[#e8f3ff] text-3xl font-medium text-[#3b9cff]">
           {initials(name)}
@@ -286,6 +257,6 @@ export function LockScreen({ onRecovered }: { onRecovered: () => void }) {
           {t.notYou(firstName)} <span className="underline">{t.signOut}</span>
         </button>
       </div>
-    </div>
+    </AppScreen>
   );
 }
