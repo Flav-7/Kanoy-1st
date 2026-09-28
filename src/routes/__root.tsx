@@ -10,6 +10,11 @@ import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { installErrorReporting, reportClientError } from "../lib/errors/report-client";
+import { installStaleBuildRecovery, recoverIfStaleBuild } from "../lib/app/stale-build";
+
+// Before hydration: an old saved page failing to load a part of the site
+// must be caught as early as possible (see lib/app/stale-build.ts).
+installStaleBuildRecovery();
 import { LanguageProvider } from "../lib/i18n/LanguageContext";
 import { AuthProvider } from "../lib/auth/AuthContext";
 import { DEFAULT_LANGUAGE, translations } from "../lib/i18n/translations";
@@ -27,6 +32,8 @@ function ErrorComponent({ error, reset }: { error: unknown; reset: () => void })
   console.error(error);
   const router = useRouter();
   useEffect(() => {
+    // An old saved page after a deploy: reload onto the current version.
+    if (recoverIfStaleBuild(error)) return;
     reportClientError(error);
   }, [error]);
 

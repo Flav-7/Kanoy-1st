@@ -17,6 +17,10 @@ export default defineConfig({
   // allows one run a day and may fire any time within that hour.
   nitro: {
     vercel: {
+      // Run the server next to the database (Neon, eu-central-1 = Frankfurt)
+      // and the team (Portugal). Left to Vercel's default (Washington), every
+      // query crossed the Atlantic and opening the app took seconds.
+      functions: { regions: ["fra1"] },
       config: { crons: [{ path: "/api/cron/lembretes", schedule: "5 7 * * *" }] },
     },
   } as Record<string, unknown>,

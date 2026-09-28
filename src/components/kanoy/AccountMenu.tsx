@@ -55,7 +55,7 @@ export function AccountMenu() {
       {user && menuOpen && (
         <div
           role="menu"
-          className="absolute right-0 top-full mt-3 w-56 rounded-lg border border-white/10 bg-ink p-1.5 shadow-2xl"
+          className="absolute right-0 top-full z-50 mt-3 w-56 rounded-lg border border-white/10 bg-ink p-1.5 shadow-2xl"
         >
           <div className="border-b border-white/10 px-3 pb-2.5 pt-2">
             <p className="truncate text-sm font-medium text-studio-foreground">{user.name}</p>
