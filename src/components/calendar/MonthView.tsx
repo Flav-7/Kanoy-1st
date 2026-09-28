@@ -80,16 +80,16 @@ export function MonthView({
                 aria-label={
                   list.length ? `${fullDate}, ${ui.copy.eventsCount(list.length)}` : fullDate
                 }
-                className={`flex min-h-12 flex-col items-center gap-1 border-b border-r border-white/[0.06] pt-1.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-accent ${
-                  selected ? "bg-white/[0.08]" : ""
-                }`}
+                className={`flex min-h-14 flex-col items-center gap-1.5 border-b border-r border-white/[0.06] pt-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-accent ${
+                  selected ? "bg-accent/15 ring-2 ring-inset ring-accent" : ""
+                } ${inMonth ? "" : "bg-black/20"}`}
               >
                 {dayNumber}
-                <span className="flex gap-0.5" aria-hidden>
-                  {list.slice(0, 3).map((o) => (
+                <span className="flex flex-wrap justify-center gap-1 px-0.5" aria-hidden>
+                  {list.slice(0, 4).map((o) => (
                     <span
                       key={o.key}
-                      className="h-1.5 w-1.5 rounded-full"
+                      className="h-2.5 w-2.5 rounded-full"
                       style={{
                         background: eventSwatch(
                           o.event,

@@ -30,6 +30,9 @@ type CalendarCopy = {
   retry: string;
   noEvents: string;
   noEventsHint: string;
+  createActivity: string;
+  nothingThisDay: string;
+  legend: string;
   noCalendars: string;
   signInTitle: string;
   signInText: string;
@@ -126,6 +129,9 @@ const PT: CalendarCopy = {
   retry: "Tentar novamente",
   noEvents: "Sem eventos neste período.",
   noEventsHint: "Use “Novo evento” para marcar alguma coisa.",
+  createActivity: "Criar atividade",
+  nothingThisDay: "Nada marcado neste dia.",
+  legend: "Legenda",
   noCalendars: "Ainda não tem acesso a nenhum calendário. Peça a um admin para o adicionar.",
   signInTitle: "Área reservada",
   signInText: "Entre com a sua conta da equipa para ver o calendário.",
@@ -237,6 +243,9 @@ const ES: CalendarCopy = {
   retry: "Reintentar",
   noEvents: "No hay eventos en este periodo.",
   noEventsHint: "Usa “Nuevo evento” para crear uno.",
+  createActivity: "Crear actividad",
+  nothingThisDay: "Nada programado este día.",
+  legend: "Leyenda",
   noCalendars: "Todavía no tienes acceso a ningún calendario. Pide a un admin que te añada.",
   signInTitle: "Área reservada",
   signInText: "Entra con tu cuenta del equipo para ver el calendario.",
@@ -350,6 +359,9 @@ const EN: CalendarCopy = {
   retry: "Try again",
   noEvents: "No events in this period.",
   noEventsHint: "Use “New event” to add one.",
+  createActivity: "Create activity",
+  nothingThisDay: "Nothing scheduled this day.",
+  legend: "Legend",
   noCalendars: "You don't have access to any calendar yet. Ask an admin to add you.",
   signInTitle: "Team area",
   signInText: "Sign in with your team account to see the calendar.",

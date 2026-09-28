@@ -9,6 +9,7 @@ import { useAuth } from "@/lib/auth/AuthContext";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import {
   VIEWS,
+  formatPlainDate,
   shiftAnchor,
   todayIn,
   viewDays,
@@ -22,9 +23,15 @@ import { newEventForm } from "@/lib/calendar/form";
 import { occurrencesByDay } from "@/lib/calendar/grouping";
 import { canEditEvents } from "@/lib/calendar/permissions";
 import type { CalendarEvent, Occurrence } from "@/lib/calendar/types";
-import { AgendaView, EmptyState } from "./AgendaView";
+import { AgendaView } from "./AgendaView";
+import { CATEGORY_SWATCHES } from "./calendar-colors";
 import { CALENDAR_COPY, DATE_LOCALES } from "./calendar-i18n";
-import { CalendarUiContext, type CalendarUi, type CreateRequest } from "./CalendarContext";
+import {
+  CalendarUiContext,
+  useCalendarUi,
+  type CalendarUi,
+  type CreateRequest,
+} from "./CalendarContext";
 import { CalendarFilters } from "./CalendarFilters";
 import { CalendarToolbar } from "./CalendarToolbar";
 import { EventRow } from "./EventCard";
@@ -36,6 +43,12 @@ import { useCalendarBootstrap, useOccurrences } from "./useCalendarData";
 
 const MOBILE_QUERY = "(max-width: 767px)";
 const MOBILE_VIEWS: View[] = ["agenda", "day", "month"];
+const LEGEND_CATEGORIES = [
+  "proposal_meeting",
+  "production_meeting",
+  "closing_meeting",
+  "photo_visit",
+] as const;
 
 function useIsMobile(): boolean {
   const [mobile, setMobile] = useState(false);
@@ -130,13 +143,7 @@ function CalendarWorkspace() {
 
   const [chosenView, setChosenView] = useState<View | null>(null);
   const view: View =
-    chosenView === null
-      ? isMobile
-        ? "agenda"
-        : "month"
-      : isMobile && chosenView === "week"
-        ? "day"
-        : chosenView;
+    chosenView === null ? "month" : isMobile && chosenView === "week" ? "day" : chosenView;
   const [anchor, setAnchor] = useState<PlainDate>(today);
   const [selectedDay, setSelectedDay] = useState<PlainDate>(today);
   const [filters, setFilters] = useState<Filters>(NO_FILTERS);
@@ -265,6 +272,7 @@ function CalendarWorkspace() {
             onSelectDay={setSelectedDay}
           />
         </div>
+        <CategoryLegend />
         <SelectedDayList day={selectedDay} occurrences={visible} tz={tz} />
       </div>
     ) : (
@@ -407,6 +415,29 @@ function CalendarWorkspace() {
   );
 }
 
+/** Phone month view: what each dot colour means (the activity types). */
+function CategoryLegend() {
+  const ui = useCalendarUi();
+  return (
+    <ul
+      aria-label={ui.copy.legend}
+      className="mx-3 mt-3 grid shrink-0 grid-cols-2 gap-x-3 gap-y-1.5 rounded-xl border border-white/10 px-3 py-2.5"
+    >
+      {LEGEND_CATEGORIES.map((c) => (
+        <li key={c} className="flex min-w-0 items-center gap-2 text-xs text-studio-muted">
+          <span
+            className="h-2.5 w-2.5 shrink-0 rounded-full"
+            style={{ background: CATEGORY_SWATCHES[c] ?? undefined }}
+            aria-hidden
+          />
+          <span className="truncate">{ui.copy.categoryNames[c]}</span>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+/** Phone month view: the tapped day's activities, and creating one on that day. */
 function SelectedDayList({
   day,
   occurrences,
@@ -416,19 +447,40 @@ function SelectedDayList({
   occurrences: Occurrence[];
   tz: string;
 }) {
+  const ui = useCalendarUi();
   const list = useMemo(
     () => occurrencesByDay(occurrences, [day], tz).get(day) ?? [],
     [occurrences, day, tz],
   );
-  if (list.length === 0) return <EmptyState />;
   return (
-    <ul className="px-2 py-3">
-      {list.map((o) => (
-        <li key={o.key}>
-          <EventRow occ={o} />
-        </li>
-      ))}
-    </ul>
+    <section aria-label={formatPlainDate(day, "PPPP", ui.locale)} className="px-2 pb-6 pt-4">
+      <div className="flex items-center justify-between gap-3 px-2">
+        <h2 className="min-w-0 truncate text-sm font-medium first-letter:uppercase">
+          {formatPlainDate(day, "EEEE, d MMMM", ui.locale)}
+        </h2>
+        {ui.canCreate && (
+          <button
+            type="button"
+            onClick={() => ui.openCreate({ date: day })}
+            className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-accent px-3.5 py-2 text-xs font-medium text-ink"
+          >
+            <Plus className="h-3.5 w-3.5" aria-hidden />
+            {ui.copy.createActivity}
+          </button>
+        )}
+      </div>
+      {list.length === 0 ? (
+        <p className="px-2 py-6 text-center text-sm text-studio-muted">{ui.copy.nothingThisDay}</p>
+      ) : (
+        <ul className="mt-2">
+          {list.map((o) => (
+            <li key={o.key}>
+              <EventRow occ={o} />
+            </li>
+          ))}
+        </ul>
+      )}
+    </section>
   );
 }
 
