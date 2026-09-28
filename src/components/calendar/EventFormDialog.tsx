@@ -23,7 +23,7 @@ export type FormRequest =
   { kind: "create"; form: EventFormState } | { kind: "edit"; event: CalendarEvent };
 
 const inputClass =
-  "w-full rounded-md border border-white/15 bg-white/[0.04] px-3 py-2 text-sm text-studio-foreground placeholder:text-studio-muted/60 focus:border-accent focus:outline-none [color-scheme:dark]";
+  "w-full min-w-0 rounded-md border border-white/15 bg-white/[0.04] px-3 py-2 text-sm text-studio-foreground placeholder:text-studio-muted/60 focus:border-accent focus:outline-none [color-scheme:dark]";
 
 function Field({
   label,
@@ -35,7 +35,7 @@ function Field({
   className?: string;
 }) {
   return (
-    <label className={`flex flex-col gap-1.5 ${className}`}>
+    <label className={`flex min-w-0 flex-col gap-1.5 ${className}`}>
       <span className="text-[10px] uppercase tracking-[0.3em] text-studio-muted">{label}</span>
       {children}
     </label>

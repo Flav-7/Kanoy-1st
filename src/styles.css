@@ -215,6 +215,25 @@ html body[data-scroll-locked] {
   margin-right: 0 !important;
 }
 
+/* Phones/tablets: iOS sizes date and time fields by their content and ignores
+   width: 100% while they keep the native look, so a two-column row of them
+   ends up wider than the screen and the form slides sideways. Without the
+   native frame they fill their column like any other field (the picker
+   still opens on tap). Touch screens only; desktop keeps its pickers. */
+@media (pointer: coarse) {
+  input[type="date"],
+  input[type="time"],
+  input[type="datetime-local"] {
+    -webkit-appearance: none;
+    appearance: none;
+    min-width: 0;
+    min-height: 2.5rem;
+  }
+  input::-webkit-date-and-time-value {
+    text-align: left;
+  }
+}
+
 body {
   font-family: var(--font-body);
   background-color: var(--background);

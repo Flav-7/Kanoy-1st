@@ -110,13 +110,15 @@ const DialogContent = React.forwardRef<
           // near its top, like the close button below. The actual scrolling
           // happens in the inner div, not here, so this box's own edge
           // content (close button, progress bar) never scrolls away.
-          "fixed left-[50%] top-[50%] z-50 grid max-h-[85vh] w-full max-w-lg grid-rows-[minmax(0,1fr)] translate-x-[-50%] translate-y-[-50%] overflow-hidden border bg-background p-6 shadow-lg duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 sm:rounded-lg",
+          "fixed left-[50%] top-[50%] z-50 grid max-h-[85vh] w-full max-w-lg grid-cols-[minmax(0,1fr)] grid-rows-[minmax(0,1fr)] translate-x-[-50%] translate-y-[-50%] overflow-hidden border bg-background p-6 shadow-lg duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 sm:rounded-lg",
           className,
         )}
         {...props}
       >
-        <div ref={scrollRef} className="no-scrollbar overflow-y-auto">
-          <div className="grid gap-4">{children}</div>
+        {/* Scrolls up and down only: with overflow-y alone, browsers also let
+            the box slide sideways whenever a field is a hair too wide. */}
+        <div ref={scrollRef} className="no-scrollbar overflow-y-auto overflow-x-hidden">
+          <div className="grid min-w-0 grid-cols-[minmax(0,1fr)] gap-4">{children}</div>
         </div>
         <ScrollProgressBar scrollRef={scrollRef} />
         <DialogPrimitive.Close className="absolute right-4 top-5 rounded-sm opacity-70 ring-offset-background cursor-pointer transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground">
