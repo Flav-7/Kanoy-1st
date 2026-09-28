@@ -39,7 +39,11 @@ export function ErrorScreen({ kind, onRetry }: { kind: "notFound" | "error"; onR
         <p className="mt-4 text-sm leading-relaxed text-studio-muted md:text-base">
           {isNotFound ? t.notFoundText : t.errorText}
         </p>
-        <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
+        {/* No flex-wrap: btn-kanoy widens its letter-spacing on hover, which
+            used to push a side-by-side pair past the line and make the
+            buttons jump onto separate lines under the cursor. Stacked on
+            small screens, side by side (with room to spare) from sm up. */}
+        <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
           {onRetry && (
             <button
               type="button"
