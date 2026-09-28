@@ -175,4 +175,16 @@ export const MIGRATIONS: { id: string; statements: string[] }[] = [
       `create index error_reports_last_seen_idx on error_reports (last_seen desc)`,
     ],
   },
+  {
+    id: "006_reminder_runs",
+    statements: [
+      // One row per day the morning reminders went out, so a repeated cron
+      // call (Vercel may retry) never sends them twice.
+      `create table reminder_runs (
+        day date primary key,
+        sent_at timestamptz not null default now(),
+        notified integer not null default 0
+      )`,
+    ],
+  },
 ];

@@ -12,6 +12,14 @@ export default defineConfig({
     // nitro/vite builds from this
     server: { entry: "server" },
   },
+  // Vercel Cron: morning reminders (src/routes/api/cron/lembretes.ts) at
+  // 07:05 UTC = 08:05 in Lisbon in summer, 07:05 in winter. The Hobby plan
+  // allows one run a day and may fire any time within that hour.
+  nitro: {
+    vercel: {
+      config: { crons: [{ path: "/api/cron/lembretes", schedule: "5 7 * * *" }] },
+    },
+  } as Record<string, unknown>,
   // Lets the dev server be reached through a Cloudflare quick tunnel (trycloudflare.com)
   // for sharing a preview link — Vite otherwise rejects requests with an unrecognized Host header.
   vite: {

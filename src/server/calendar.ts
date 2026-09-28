@@ -163,6 +163,29 @@ export async function listOccurrences(
     .sort((a, b) => a.start.localeCompare(b.start) || a.end.localeCompare(b.end));
 }
 
+/**
+ * Every occurrence overlapping [from, to) across all calendars. For server
+ * jobs (the morning reminders); never hand this to a user as is.
+ */
+export async function listAllOccurrences(
+  db: Db,
+  range: { from: Date; to: Date },
+): Promise<Occurrence[]> {
+  const rows = await db.query(
+    `select ${EVENT_COLUMNS}
+       from events e
+      where e.start_at < $2
+        and (
+          (e.recurrence_rule is null and e.end_at > $1)
+          or (e.recurrence_rule is not null and (e.recurrence_until is null or e.recurrence_until > $1))
+        )`,
+    [range.from, range.to],
+  );
+  return rows
+    .flatMap((r) => expandOccurrences(mapEvent(r), range.from, range.to))
+    .sort((a, b) => a.start.localeCompare(b.start) || a.end.localeCompare(b.end));
+}
+
 // ── Mutations ────────────────────────────────────────────────────────────
 
 type Prepared = {

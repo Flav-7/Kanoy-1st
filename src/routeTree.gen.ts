@@ -17,6 +17,7 @@ import { Route as EquipaRouteImport } from './routes/equipa'
 import { Route as ErrosRouteImport } from './routes/erros'
 import { Route as PrivacidadeRouteImport } from './routes/privacidade'
 import { Route as TermosRouteImport } from './routes/termos'
+import { Route as ApiCronLembretesRouteImport } from './routes/api/cron/lembretes'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -58,6 +59,11 @@ const TermosRoute = TermosRouteImport.update({
   path: '/termos',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiCronLembretesRoute = ApiCronLembretesRouteImport.update({
+  id: '/api/cron/lembretes',
+  path: '/api/cron/lembretes',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -68,6 +74,7 @@ export interface FileRoutesByFullPath {
   '/erros': typeof ErrosRoute
   '/privacidade': typeof PrivacidadeRoute
   '/termos': typeof TermosRoute
+  '/api/cron/lembretes': typeof ApiCronLembretesRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -78,6 +85,7 @@ export interface FileRoutesByTo {
   '/erros': typeof ErrosRoute
   '/privacidade': typeof PrivacidadeRoute
   '/termos': typeof TermosRoute
+  '/api/cron/lembretes': typeof ApiCronLembretesRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -89,6 +97,7 @@ export interface FileRoutesById {
   '/erros': typeof ErrosRoute
   '/privacidade': typeof PrivacidadeRoute
   '/termos': typeof TermosRoute
+  '/api/cron/lembretes': typeof ApiCronLembretesRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -101,6 +110,7 @@ export interface FileRouteTypes {
     | '/erros'
     | '/privacidade'
     | '/termos'
+    | '/api/cron/lembretes'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -111,6 +121,7 @@ export interface FileRouteTypes {
     | '/erros'
     | '/privacidade'
     | '/termos'
+    | '/api/cron/lembretes'
   id:
     | '__root__'
     | '/'
@@ -121,6 +132,7 @@ export interface FileRouteTypes {
     | '/erros'
     | '/privacidade'
     | '/termos'
+    | '/api/cron/lembretes'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -132,6 +144,7 @@ export interface RootRouteChildren {
   ErrosRoute: typeof ErrosRoute
   PrivacidadeRoute: typeof PrivacidadeRoute
   TermosRoute: typeof TermosRoute
+  ApiCronLembretesRoute: typeof ApiCronLembretesRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -192,6 +205,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TermosRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/cron/lembretes': {
+      id: '/api/cron/lembretes'
+      path: '/api/cron/lembretes'
+      fullPath: '/api/cron/lembretes'
+      preLoaderRoute: typeof ApiCronLembretesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -204,6 +224,7 @@ const rootRouteChildren: RootRouteChildren = {
   ErrosRoute: ErrosRoute,
   PrivacidadeRoute: PrivacidadeRoute,
   TermosRoute: TermosRoute,
+  ApiCronLembretesRoute: ApiCronLembretesRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
