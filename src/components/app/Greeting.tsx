@@ -25,11 +25,11 @@ export function Greeting({ name, subtitle }: { name: string | null; subtitle: st
   return (
     <>
       {name && (
-        <div className="flex h-24 w-24 items-center justify-center rounded-full border-4 border-white/10 bg-[#e8f3ff] text-3xl font-medium text-[#3b9cff]">
+        <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full border-4 border-white/10 bg-[#e8f3ff] text-xl font-medium text-[#3b9cff]">
           {initials(name)}
         </div>
       )}
-      <h1 className={`${name ? "mt-6" : "mt-16"} text-2xl font-semibold`}>
+      <h1 className={`${name ? "mt-3" : "mt-0"} text-2xl font-semibold`}>
         {firstName
           ? `${t.greeting[greetingKey(new Date().getHours())]}, ${firstName}`
           : t.login.welcome}

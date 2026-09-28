@@ -4,7 +4,7 @@
   "short_name": "KANOY",
   "description": "A KANOY é um estúdio digital que cria websites premium, sistemas de reservas e marcações, e sistemas digitais à medida para negócios reais.",
   "lang": "pt",
-  "start_url": "/",
+  "start_url": "/calendario",
   "scope": "/",
   "display": "standalone",
   "orientation": "portrait",

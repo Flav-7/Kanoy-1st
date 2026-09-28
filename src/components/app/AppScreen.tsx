@@ -15,7 +15,7 @@ export function AppScreen({ label, children }: { label: string; children: ReactN
       role="dialog"
       aria-modal="true"
       aria-label={label}
-      className="fixed inset-0 z-[100] flex flex-col overflow-y-auto bg-studio text-studio-foreground"
+      className="fixed inset-0 z-[100] flex h-dvh flex-col overflow-hidden bg-studio text-studio-foreground"
       style={{
         backgroundImage:
           "radial-gradient(90% 55% at 0% 0%, color-mix(in oklab, var(--accent) 16%, transparent), transparent 70%), linear-gradient(to bottom, #07131c, #04080b)",

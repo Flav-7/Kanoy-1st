@@ -118,7 +118,7 @@ export function LockScreen({ onRecovered }: { onRecovered: () => void }) {
   };
 
   const secondaryButton =
-    "w-full rounded-full bg-[#12324a] py-4 text-base font-medium text-[#3aa0ff]";
+    "w-full rounded-full bg-[#12324a] py-3.5 text-base font-medium text-[#3aa0ff]";
   const signOutLink = (
     <button
       type="button"
@@ -168,13 +168,13 @@ export function LockScreen({ onRecovered }: { onRecovered: () => void }) {
 
   return (
     <AppScreen label={mode === "code" ? t.enterCode : t.unlockWithBiometrics[bio]}>
-      <div className="flex flex-1 flex-col items-center px-6 pt-8 text-center">
+      <div className="flex min-h-0 flex-1 flex-col items-center justify-center px-6 text-center">
         <Greeting
           name={name}
           subtitle={mode === "code" ? t.enterCode : t.unlockWithBiometrics[bio]}
         />
 
-        <div className="mt-10 flex w-full flex-1 flex-col items-center">
+        <div className="mt-6 flex w-full flex-col items-center">
           {mode === "code" ? (
             <>
               <PinPad
@@ -191,7 +191,7 @@ export function LockScreen({ onRecovered }: { onRecovered: () => void }) {
                       onClick={() => void tryBiometrics()}
                       disabled={busy}
                       aria-label={t.unlockWithBiometrics[bio]}
-                      className="flex h-[4.25rem] w-[4.25rem] items-center justify-center rounded-full bg-white/[0.07] text-studio-foreground active:bg-white/20 disabled:opacity-40 sm:h-20 sm:w-20"
+                      className="flex h-14 w-14 items-center justify-center rounded-full bg-white/[0.07] text-studio-foreground active:bg-white/20 disabled:opacity-40 sm:h-[4.5rem] sm:w-[4.5rem]"
                     >
                       <BioIcon className="h-7 w-7" strokeWidth={1.5} />
                     </button>
@@ -204,7 +204,7 @@ export function LockScreen({ onRecovered }: { onRecovered: () => void }) {
               <button
                 type="button"
                 onClick={() => toEmail(true)}
-                className="mt-6 text-xs text-studio-muted underline"
+                className="mt-3 text-xs text-studio-muted underline"
               >
                 {t.email.forgotCode}
               </button>
@@ -214,27 +214,27 @@ export function LockScreen({ onRecovered }: { onRecovered: () => void }) {
               type="button"
               onClick={() => void tryBiometrics()}
               disabled={busy}
-              className="flex w-full max-w-sm flex-col items-center gap-3 rounded-2xl bg-white/[0.07] px-6 py-8 text-sm active:bg-white/15 disabled:opacity-50"
+              className="flex w-full max-w-sm flex-col items-center gap-3 rounded-2xl bg-white/[0.07] px-6 py-6 text-sm active:bg-white/15 disabled:opacity-50"
             >
-              <BioIcon className="h-12 w-12" strokeWidth={1.25} />
+              <BioIcon className="h-10 w-10" strokeWidth={1.25} />
               {t.email.useBiometrics[bio]}
             </button>
           )}
           {error && (
-            <p role="alert" className="mt-6 max-w-sm text-sm text-[#ff8a8a]">
+            <p role="alert" className="mt-3 max-w-sm text-sm text-[#ff8a8a]">
               {error}
             </p>
           )}
         </div>
       </div>
 
-      <div className="mx-auto mt-8 flex w-full max-w-md flex-col gap-3 px-6">
+      <div className="mx-auto mt-4 flex w-full max-w-md flex-col gap-2.5 px-6">
         {mode === "code" && (
           <button
             type="button"
             disabled={busy || pin.length !== PIN_LENGTH}
             onClick={() => void submitPin(pin)}
-            className="w-full rounded-full bg-[#3aa0ff] py-4 text-base font-medium text-ink disabled:opacity-60"
+            className="w-full rounded-full bg-[#3aa0ff] py-3.5 text-base font-medium text-ink disabled:opacity-60"
           >
             {t.enter}
           </button>

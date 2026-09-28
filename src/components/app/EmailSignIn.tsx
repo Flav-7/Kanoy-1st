@@ -60,14 +60,14 @@ export function EmailSignIn({
   };
 
   const field =
-    "w-full rounded-2xl border border-white/25 bg-transparent px-5 py-4 text-base text-studio-foreground placeholder:text-studio-muted focus:border-accent focus:outline-none";
+    "w-full rounded-2xl border border-white/25 bg-transparent px-5 py-3.5 text-base text-studio-foreground placeholder:text-studio-muted focus:border-accent focus:outline-none";
   const disabled = busy || pending;
 
   return (
     <form onSubmit={submit} className="flex flex-1 flex-col px-6" noValidate>
-      <div className="flex flex-1 flex-col items-center pt-8 text-center">
+      <div className="flex min-h-0 flex-1 flex-col items-center justify-center text-center">
         <Greeting name={name} subtitle={t.email.credentials} />
-        <div className="mt-10 flex w-full max-w-sm flex-col gap-4">
+        <div className="mt-6 flex w-full max-w-sm flex-col gap-3">
           <input
             type="email"
             name="email"
@@ -104,9 +104,9 @@ export function EmailSignIn({
               type="button"
               onClick={onBiometrics}
               disabled={disabled}
-              className="mt-4 flex flex-col items-center gap-3 rounded-2xl bg-white/[0.07] px-6 py-6 text-sm text-studio-foreground active:bg-white/15 disabled:opacity-50"
+              className="mt-1 flex flex-col items-center gap-2 rounded-2xl bg-white/[0.07] px-6 py-4 text-sm text-studio-foreground active:bg-white/15 disabled:opacity-50"
             >
-              <BioIcon className="h-10 w-10" strokeWidth={1.25} />
+              <BioIcon className="h-8 w-8" strokeWidth={1.25} />
               {t.email.useBiometrics[bio]}
             </button>
           )}
@@ -122,18 +122,18 @@ export function EmailSignIn({
           )}
         </div>
       </div>
-      <div className="mx-auto mt-8 flex w-full max-w-md flex-col gap-3">
+      <div className="mx-auto mt-4 flex w-full max-w-md flex-col gap-2.5">
         <button
           type="submit"
           disabled={disabled || !email || !password}
-          className="w-full rounded-full bg-[#3aa0ff] py-4 text-base font-medium text-ink disabled:opacity-60"
+          className="w-full rounded-full bg-[#3aa0ff] py-3.5 text-base font-medium text-ink disabled:opacity-60"
         >
           {t.enter}
         </button>
         <button
           type="button"
           onClick={() => void forgot()}
-          className="w-full rounded-full bg-[#12324a] py-4 text-base font-medium text-[#3aa0ff]"
+          className="w-full rounded-full bg-[#12324a] py-3.5 text-base font-medium text-[#3aa0ff]"
         >
           {t.email.forgotPassword}
         </button>

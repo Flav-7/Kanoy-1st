@@ -42,7 +42,7 @@ export function PinPad({
   });
 
   const key =
-    "flex h-[4.25rem] w-[4.25rem] items-center justify-center rounded-full bg-white/[0.07] text-2xl font-light text-studio-foreground transition-colors active:bg-white/20 disabled:opacity-40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent sm:h-20 sm:w-20";
+    "flex h-14 w-14 items-center justify-center rounded-full bg-white/[0.07] text-2xl font-light text-studio-foreground transition-colors active:bg-white/20 disabled:opacity-40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent sm:h-[4.5rem] sm:w-[4.5rem]";
 
   return (
     <div className="flex flex-col items-center">
@@ -50,7 +50,7 @@ export function PinPad({
         key={shake}
         role="status"
         aria-label={`${value.length}/${PIN_LENGTH}`}
-        className={`mb-10 flex gap-4 ${shake ? "animate-[pin-shake_0.4s_ease-in-out]" : ""}`}
+        className={`mb-5 flex gap-4 ${shake ? "animate-[pin-shake_0.4s_ease-in-out]" : ""}`}
       >
         {Array.from({ length: PIN_LENGTH }, (_, i) => (
           <span
@@ -61,7 +61,7 @@ export function PinPad({
           />
         ))}
       </div>
-      <div className="grid grid-cols-3 gap-x-7 gap-y-4 sm:gap-x-9">
+      <div className="grid grid-cols-3 gap-x-7 gap-y-2.5 sm:gap-x-9 sm:gap-y-3">
         {["1", "2", "3", "4", "5", "6", "7", "8", "9"].map((d) => (
           <button
             key={d}

@@ -17,6 +17,7 @@ import { ErrorScreen } from "../components/kanoy/ErrorScreen";
 import { CookieConsent } from "../components/kanoy/CookieConsent";
 import { ConsentedAnalytics } from "../components/kanoy/ConsentedAnalytics";
 import { AppLockGate } from "../components/app/AppLockGate";
+import { APP_SPLASH_CSS } from "../lib/app/app-splash";
 
 function NotFoundComponent() {
   return <ErrorScreen kind="notFound" />;
@@ -102,6 +103,9 @@ function RootShell({ children }: { children: ReactNode }) {
   return (
     <html lang="pt">
       <head>
+        {/* First in <head>: the installed app's launch styles must not wait
+            for the stylesheet (see lib/app/app-splash.ts). */}
+        <style id="app-splash-css" dangerouslySetInnerHTML={{ __html: APP_SPLASH_CSS }} />
         <HeadContent />
         <script
           type="application/ld+json"
