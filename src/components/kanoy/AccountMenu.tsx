@@ -1,5 +1,5 @@
 import { useRef, useState, type FormEvent } from "react";
-import { Link } from "@tanstack/react-router";
+import { Link, useRouterState } from "@tanstack/react-router";
 import { Bug, CalendarDays, Globe, IdCard, LogOut, UserRound } from "lucide-react";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 import { APP_COPY } from "@/components/app/app-i18n";
@@ -9,6 +9,17 @@ import { useDismiss } from "./useDismiss";
 
 const fieldClass =
   "w-full border-b border-studio-foreground/20 bg-transparent py-2 text-sm text-studio-foreground placeholder:text-studio-muted/60 focus:border-accent focus:outline-none";
+
+type Section = "site" | "calendar" | "account" | "errors" | null;
+
+/** Which menu entry the current page belongs to (the team page has none). */
+function sectionOf(pathname: string): Section {
+  if (pathname.startsWith("/calendario")) return "calendar";
+  if (pathname.startsWith("/conta")) return "account";
+  if (pathname.startsWith("/erros")) return "errors";
+  if (pathname.startsWith("/equipa") || pathname.startsWith("/definir-password")) return null;
+  return "site";
+}
 
 const itemClass =
   "flex w-full items-center gap-3 rounded-md px-3 py-2.5 text-left text-sm text-studio-foreground transition-colors hover:bg-white/10";
@@ -23,6 +34,11 @@ export function AccountMenu() {
   const { dict, language } = useLanguage();
   const t = dict.account;
   const menu = APP_COPY[language].menu;
+  const current = sectionOf(useRouterState({ select: (st) => st.location.pathname }));
+  // The page you are on shows its icon in the accent colour.
+  const iconClass = (section: Section) =>
+    `h-4 w-4 ${section === current ? "text-accent" : "text-studio-muted"}`;
+  const here = (section: Section) => (section === current ? ("page" as const) : undefined);
 
   const [menuOpen, setMenuOpen] = useState(false);
   const [loginOpen, setLoginOpen] = useState(false);
@@ -62,36 +78,45 @@ export function AccountMenu() {
             <p className="truncate text-xs text-studio-muted">{user.email}</p>
           </div>
           <div className="pt-1.5">
-            <Link to="/" role="menuitem" onClick={() => setMenuOpen(false)} className={itemClass}>
-              <Globe className="h-4 w-4 text-studio-muted" />
+            <Link
+              to="/"
+              role="menuitem"
+              aria-current={here("site")}
+              onClick={() => setMenuOpen(false)}
+              className={itemClass}
+            >
+              <Globe className={iconClass("site")} />
               {menu.site}
             </Link>
             <Link
               to="/calendario"
               role="menuitem"
+              aria-current={here("calendar")}
               onClick={() => setMenuOpen(false)}
               className={itemClass}
             >
-              <CalendarDays className="h-4 w-4 text-accent" />
+              <CalendarDays className={iconClass("calendar")} />
               {menu.calendar}
             </Link>
             <Link
               to="/conta"
               role="menuitem"
+              aria-current={here("account")}
               onClick={() => setMenuOpen(false)}
               className={itemClass}
             >
-              <IdCard className="h-4 w-4 text-studio-muted" />
+              <IdCard className={iconClass("account")} />
               {menu.account}
             </Link>
             {session?.canSeeErrors && (
               <Link
                 to="/erros"
                 role="menuitem"
+                aria-current={here("errors")}
                 onClick={() => setMenuOpen(false)}
                 className={itemClass}
               >
-                <Bug className="h-4 w-4 text-studio-muted" />
+                <Bug className={iconClass("errors")} />
                 {menu.errors}
               </Link>
             )}
