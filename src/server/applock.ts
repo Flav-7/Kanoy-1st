@@ -1,15 +1,12 @@
-import {
-  generateAuthenticationOptions,
-  generateRegistrationOptions,
-  verifyAuthenticationResponse,
-  verifyRegistrationResponse,
-  type AuthenticationResponseJSON,
-  type PublicKeyCredentialCreationOptionsJSON,
-  type PublicKeyCredentialRequestOptionsJSON,
-  type RegistrationResponseJSON,
+import type {
+  AuthenticationResponseJSON,
+  PublicKeyCredentialCreationOptionsJSON,
+  PublicKeyCredentialRequestOptionsJSON,
+  RegistrationResponseJSON,
 } from "@simplewebauthn/server";
 import { toIso, type Db } from "./db";
 import { pinProblem } from "@/lib/app/pin";
+import { loadWebAuthn } from "./webauthn";
 
 import {
   authenticate,
@@ -300,6 +297,7 @@ export async function passkeyRegistrationOptions(
     "select id, transports from passkeys where user_id = $1",
     [user.id],
   );
+  const { generateRegistrationOptions } = await loadWebAuthn();
   const options = await generateRegistrationOptions({
     rpName: "KANOY",
     rpID: rp.rpID,
@@ -333,6 +331,7 @@ export async function verifyPasskeyRegistration(
   if (!challenge) return { ok: false, reason: "expired" };
   let verification;
   try {
+    const { verifyRegistrationResponse } = await loadWebAuthn();
     verification = await verifyRegistrationResponse({
       response,
       expectedChallenge: challenge,
@@ -380,6 +379,7 @@ export async function passkeyUnlockOptions(
     [state.user.id],
   );
   if (creds.length === 0) return null;
+  const { generateAuthenticationOptions } = await loadWebAuthn();
   const options = await generateAuthenticationOptions({
     rpID: rp.rpID,
     userVerification: "required",
@@ -418,6 +418,7 @@ export async function unlockWithPasskey(
 
   let verification;
   try {
+    const { verifyAuthenticationResponse } = await loadWebAuthn();
     verification = await verifyAuthenticationResponse({
       response,
       expectedChallenge: challenge,
