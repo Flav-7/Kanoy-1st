@@ -41,6 +41,34 @@ function ErrorComponent({ error, reset }: { error: unknown; reset: () => void })
   );
 }
 
+/**
+ * iPhone launch images (public/splash): iOS shows the matching one while the
+ * installed app starts, instead of its own black-then-white screen, and our
+ * #app-splash takes over with the same picture. [CSS width, height, pixel
+ * ratio] per screen size; iOS reads these when the app is added to the home
+ * screen.
+ */
+const IOS_SCREENS: [number, number, number][] = [
+  [440, 956, 3],
+  [430, 932, 3],
+  [428, 926, 3],
+  [420, 912, 3],
+  [414, 896, 3],
+  [414, 896, 2],
+  [414, 736, 3],
+  [402, 874, 3],
+  [393, 852, 3],
+  [390, 844, 3],
+  [375, 812, 3],
+  [375, 667, 2],
+  [320, 568, 2],
+];
+const IOS_STARTUP_IMAGES = IOS_SCREENS.map(([w, h, r]) => ({
+  rel: "apple-touch-startup-image",
+  href: `/splash/splash-${w * r}x${h * r}.png`,
+  media: `(device-width: ${w}px) and (device-height: ${h}px) and (-webkit-device-pixel-ratio: ${r}) and (orientation: portrait)`,
+}));
+
 // What the server (and link-preview scrapers) see: the default language.
 const seo = translations[DEFAULT_LANGUAGE].seo;
 
@@ -77,6 +105,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "icon", href: "/favicon.png", type: "image/png", sizes: "512x512" },
       { rel: "manifest", href: "/manifest.webmanifest" },
       { rel: "apple-touch-icon", href: "/apple-touch-icon.png", sizes: "180x180" },
+      ...IOS_STARTUP_IMAGES,
     ],
   }),
   shellComponent: RootShell,

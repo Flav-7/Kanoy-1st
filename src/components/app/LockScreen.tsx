@@ -4,7 +4,7 @@ import { useAuth } from "@/lib/auth/AuthContext";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import { unlockWithPasswordFn, unlockWithPinFn } from "@/lib/app/applock.functions";
 import { biometricsLabel, canUseBiometrics } from "@/lib/app/app-mode";
-import { unlockWithBiometrics } from "@/lib/app/passkey-client";
+import { hasLocalPasskey, unlockWithBiometrics } from "@/lib/app/passkey-client";
 import { PIN_LENGTH } from "@/lib/app/pin";
 import { APP_COPY } from "./app-i18n";
 import { AppScreen } from "./AppScreen";
@@ -43,22 +43,27 @@ export function LockScreen({ onRecovered }: { onRecovered: () => void }) {
 
   const name = session?.user.name ?? null;
 
-  const tryBiometrics = useCallback(async () => {
-    setBusy(true);
-    setError(null);
-    const ok = await unlockWithBiometrics();
-    setBusy(false);
-    if (ok) await refresh();
-    else setError(t.biometricsFailed);
-  }, [refresh, t.biometricsFailed]);
+  /** `auto`: the attempt made on opening — if it doesn't work, just stay on this screen. */
+  const tryBiometrics = useCallback(
+    async (auto = false) => {
+      setBusy(true);
+      setError(null);
+      const result = await unlockWithBiometrics();
+      setBusy(false);
+      if (result === "ok") await refresh();
+      else if (result === "failed" && !auto) setError(t.biometricsFailed);
+    },
+    [refresh, t.biometricsFailed],
+  );
 
   useEffect(() => {
     void canUseBiometrics().then((can) => {
       setBioAvailable(can && bioOn);
-      // Face ID on: ask right away, once per opening of the app.
-      if (can && bioOn && !autoTried.current && mode !== "email") {
+      // Face ID on and this phone has its own key: ask right away, once per
+      // opening of the app.
+      if (can && bioOn && hasLocalPasskey() && !autoTried.current && mode !== "email") {
         autoTried.current = true;
-        void tryBiometrics();
+        void tryBiometrics(true);
       }
     });
   }, [bioOn, mode, tryBiometrics]);
