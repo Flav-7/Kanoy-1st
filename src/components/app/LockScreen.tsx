@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState, type FormEvent } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Fingerprint, ScanFace } from "lucide-react";
 import { useAuth } from "@/lib/auth/AuthContext";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
@@ -8,49 +8,40 @@ import { unlockWithBiometrics } from "@/lib/app/passkey-client";
 import { PIN_LENGTH } from "@/lib/app/pin";
 import { APP_COPY } from "./app-i18n";
 import { AppScreen } from "./AppScreen";
+import { EmailSignIn } from "./EmailSignIn";
+import { Greeting } from "./Greeting";
 import { PinPad } from "./PinPad";
 
-function greetingKey(hour: number): "morning" | "afternoon" | "evening" {
-  if (hour >= 6 && hour < 12) return "morning";
-  if (hour >= 12 && hour < 20) return "afternoon";
-  return "evening";
-}
-
-export function initials(name: string): string {
-  const words = name.trim().split(/\s+/).filter(Boolean);
-  const first = words[0]?.charAt(0) ?? "";
-  const last = words.length > 1 ? (words[words.length - 1]?.charAt(0) ?? "") : "";
-  return (first + last).toUpperCase();
-}
+type Mode = "code" | "biometrics" | "email";
 
 /**
- * Full-screen lock of the installed app ("Boa noite, Dinis" + keypad), shown
- * while the app session is locked. The server refuses data until one of the
- * unlocks below succeeds; "Recuperar código" unlocks with the password and
- * then asks for a new code (via onRecovered).
+ * Full-screen lock of the installed app, shown while its session is locked.
+ * It opens on the person's chosen way in — the code keypad (with the Face ID
+ * key when Face ID is on too), Face ID alone, or email — and "Entrar com
+ * email" is always there as the way back in. The server checks every unlock
+ * and refuses data until one succeeds; this screen is only how it asks.
  */
 export function LockScreen({ onRecovered }: { onRecovered: () => void }) {
-  const { session, refresh, logout } = useAuth();
-  const { language } = useLanguage();
+  const { session, refresh, logout, login } = useAuth();
+  const { language, dict } = useLanguage();
   const t = APP_COPY[language];
   const bio = biometricsLabel();
+  const BioIcon = bio === "faceId" ? ScanFace : Fingerprint;
 
-  const method = session?.unlockMethod ?? "pin";
-  const hasPin = Boolean(session?.hasPin);
-  const [mode, setMode] = useState<"pin" | "password">(
-    method === "password" || !hasPin ? "password" : "pin",
-  );
+  const methods = session?.unlockMethods ?? ["pin"];
+  const codeOn = methods.includes("pin") && Boolean(session?.hasPin);
+  const bioOn = methods.includes("passkey") && (session?.passkeyCount ?? 0) > 0;
+
+  const [mode, setMode] = useState<Mode>(codeOn ? "code" : bioOn ? "biometrics" : "email");
   const [recovering, setRecovering] = useState(false);
+  const [bioAvailable, setBioAvailable] = useState(false);
   const [pin, setPin] = useState("");
-  const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [shake, setShake] = useState(0);
-  const [bioAvailable, setBioAvailable] = useState(false);
   const autoTried = useRef(false);
 
-  const name = session?.user.name ?? "";
-  const firstName = name.split(/\s+/)[0] ?? name;
+  const name = session?.user.name ?? null;
 
   const tryBiometrics = useCallback(async () => {
     setBusy(true);
@@ -63,15 +54,14 @@ export function LockScreen({ onRecovered }: { onRecovered: () => void }) {
 
   useEffect(() => {
     void canUseBiometrics().then((can) => {
-      const available = can && (session?.passkeyCount ?? 0) > 0;
-      setBioAvailable(available);
-      // Face ID chosen as the way in: ask right away (once).
-      if (available && method === "passkey" && !autoTried.current) {
+      setBioAvailable(can && bioOn);
+      // Face ID on: ask right away, once per opening of the app.
+      if (can && bioOn && !autoTried.current && mode !== "email") {
         autoTried.current = true;
         void tryBiometrics();
       }
     });
-  }, [method, session?.passkeyCount, tryBiometrics]);
+  }, [bioOn, mode, tryBiometrics]);
 
   const submitPin = async (code: string) => {
     if (code.length !== PIN_LENGTH) return;
@@ -97,113 +87,138 @@ export function LockScreen({ onRecovered }: { onRecovered: () => void }) {
     }
   };
 
-  const submitPassword = async () => {
-    if (!password) return;
-    setBusy(true);
-    setError(null);
+  /** Email screen: the same account unlocks; another email signs in as that person. */
+  const submitEmail = async (email: string, password: string): Promise<string | null> => {
     try {
-      const res = await unlockWithPasswordFn({ data: { password } });
-      if (res.ok) {
-        if (recovering) onRecovered();
-        await refresh();
-        return;
-      }
-      setError(
-        res.reason === "invalid"
+      if (session && email.toLowerCase() === session.user.email.toLowerCase()) {
+        const res = await unlockWithPasswordFn({ data: { password } });
+        if (res.ok) {
+          if (recovering) onRecovered();
+          await refresh();
+          return null;
+        }
+        if (res.reason === "no_session") await refresh();
+        return res.reason === "invalid"
           ? t.wrongPassword
           : res.reason === "rate_limited"
             ? t.rateLimited
-            : t.account.error,
-      );
-      if (res.reason === "no_session") await refresh();
+            : t.account.error;
+      }
+      await logout();
+      const res = await login(email, password, true);
+      if (res.ok) return null;
+      return res.reason === "invalid"
+        ? dict.account.invalid
+        : res.reason === "rate_limited"
+          ? dict.account.rateLimited
+          : dict.account.unavailable;
     } catch {
-      setError(t.account.error);
-    } finally {
-      setBusy(false);
+      return t.account.error;
     }
   };
 
-  const BioIcon = bio === "faceId" ? ScanFace : Fingerprint;
-  const bioButton = bioAvailable ? (
+  const secondaryButton =
+    "w-full rounded-full bg-[#12324a] py-4 text-base font-medium text-[#3aa0ff]";
+  const signOutLink = (
     <button
       type="button"
-      onClick={() => void tryBiometrics()}
-      disabled={busy}
-      aria-label={t.unlockWithBiometrics[bio]}
-      className="flex h-[4.25rem] w-[4.25rem] items-center justify-center rounded-full bg-white/[0.07] text-studio-foreground active:bg-white/20 disabled:opacity-40 sm:h-20 sm:w-20"
+      onClick={() => void logout()}
+      className="mt-1 py-2 text-xs text-studio-muted"
     >
-      <BioIcon className="h-7 w-7" strokeWidth={1.5} />
+      {t.notYou(name?.split(/\s+/)[0] ?? "")} <span className="underline">{t.signOut}</span>
     </button>
-  ) : null;
+  );
 
-  return (
-    <AppScreen label={mode === "pin" ? t.enterCode : t.enterPassword}>
-      <div className="flex flex-1 flex-col items-center px-6 pt-8 text-center">
-        <div className="flex h-24 w-24 items-center justify-center rounded-full border-4 border-white/10 bg-[#e8f3ff] text-3xl font-medium text-[#3b9cff]">
-          {initials(name)}
-        </div>
-        <h1 className="mt-6 text-2xl font-semibold">
-          {t.greeting[greetingKey(new Date().getHours())]}, {firstName}
-        </h1>
-        <p className="mt-2 text-base text-studio-foreground/85">
-          {mode === "pin" ? t.enterCode : t.enterPassword}
-        </p>
-
-        <div className="mt-10 flex w-full flex-1 flex-col items-center">
-          {mode === "pin" ? (
-            <PinPad
-              value={pin}
-              onChange={(v) => {
-                setPin(v);
-                setError(null);
-              }}
-              onComplete={(v) => void submitPin(v)}
-              leftKey={bioButton}
-              disabled={busy}
-              shake={shake}
-              deleteLabel={t.delete}
-            />
-          ) : (
-            <form
-              onSubmit={(e: FormEvent) => {
-                e.preventDefault();
-                void submitPassword();
-              }}
-              className="flex w-full max-w-sm flex-col gap-4"
-            >
-              {/* Lets the password manager match the saved login for this account. */}
-              <input
-                type="email"
-                name="email"
-                autoComplete="username"
-                value={session?.user.email ?? ""}
-                readOnly
-                hidden
-              />
-              <input
-                type="password"
-                name="password"
-                autoComplete="current-password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder={t.password}
-                aria-label={t.password}
-                className="w-full rounded-2xl border border-white/15 bg-white/[0.06] px-5 py-4 text-base text-studio-foreground placeholder:text-studio-muted focus:border-accent focus:outline-none"
-              />
-              {/* With two fields and no submit button, browsers ignore Enter. */}
-              <button type="submit" className="sr-only" tabIndex={-1} aria-hidden>
-                {t.enter}
-              </button>
-              {bioAvailable && (
+  if (mode === "email") {
+    return (
+      <AppScreen label={t.email.credentials}>
+        <EmailSignIn
+          name={name}
+          defaultEmail={session?.user.email ?? ""}
+          onSubmit={submitEmail}
+          onBiometrics={bioAvailable ? () => void tryBiometrics() : undefined}
+          busy={busy}
+          secondary={
+            <>
+              {codeOn && (
                 <button
                   type="button"
-                  onClick={() => void tryBiometrics()}
-                  className="flex items-center justify-center gap-2 text-sm text-accent"
+                  onClick={() => {
+                    setMode("code");
+                    setRecovering(false);
+                  }}
+                  className="py-2 text-sm text-[#3aa0ff]"
                 >
-                  <BioIcon className="h-5 w-5" /> {t.unlockWithBiometrics[bio]}
+                  {t.useCode}
                 </button>
               )}
-            </form>
+              {signOutLink}
+            </>
+          }
+        />
+      </AppScreen>
+    );
+  }
+
+  const toEmail = (recover: boolean) => {
+    setMode("email");
+    setRecovering(recover);
+    setError(null);
+  };
+
+  return (
+    <AppScreen label={mode === "code" ? t.enterCode : t.unlockWithBiometrics[bio]}>
+      <div className="flex flex-1 flex-col items-center px-6 pt-8 text-center">
+        <Greeting
+          name={name}
+          subtitle={mode === "code" ? t.enterCode : t.unlockWithBiometrics[bio]}
+        />
+
+        <div className="mt-10 flex w-full flex-1 flex-col items-center">
+          {mode === "code" ? (
+            <>
+              <PinPad
+                value={pin}
+                onChange={(v) => {
+                  setPin(v);
+                  setError(null);
+                }}
+                onComplete={(v) => void submitPin(v)}
+                leftKey={
+                  bioAvailable ? (
+                    <button
+                      type="button"
+                      onClick={() => void tryBiometrics()}
+                      disabled={busy}
+                      aria-label={t.unlockWithBiometrics[bio]}
+                      className="flex h-[4.25rem] w-[4.25rem] items-center justify-center rounded-full bg-white/[0.07] text-studio-foreground active:bg-white/20 disabled:opacity-40 sm:h-20 sm:w-20"
+                    >
+                      <BioIcon className="h-7 w-7" strokeWidth={1.5} />
+                    </button>
+                  ) : null
+                }
+                disabled={busy}
+                shake={shake}
+                deleteLabel={t.delete}
+              />
+              <button
+                type="button"
+                onClick={() => toEmail(true)}
+                className="mt-6 text-xs text-studio-muted underline"
+              >
+                {t.email.forgotCode}
+              </button>
+            </>
+          ) : (
+            <button
+              type="button"
+              onClick={() => void tryBiometrics()}
+              disabled={busy}
+              className="flex w-full max-w-sm flex-col items-center gap-3 rounded-2xl bg-white/[0.07] px-6 py-8 text-sm active:bg-white/15 disabled:opacity-50"
+            >
+              <BioIcon className="h-12 w-12" strokeWidth={1.25} />
+              {t.email.useBiometrics[bio]}
+            </button>
           )}
           {error && (
             <p role="alert" className="mt-6 max-w-sm text-sm text-[#ff8a8a]">
@@ -214,48 +229,29 @@ export function LockScreen({ onRecovered }: { onRecovered: () => void }) {
       </div>
 
       <div className="mx-auto mt-8 flex w-full max-w-md flex-col gap-3 px-6">
-        <button
-          type="button"
-          disabled={busy || (mode === "pin" ? pin.length !== PIN_LENGTH : !password)}
-          onClick={() => void (mode === "pin" ? submitPin(pin) : submitPassword())}
-          className="w-full rounded-full bg-[#3aa0ff] py-4 text-base font-medium text-ink disabled:opacity-60"
-        >
-          {t.enter}
-        </button>
-        {mode === "pin" ? (
+        {mode === "code" && (
           <button
             type="button"
-            onClick={() => {
-              setMode("password");
-              setRecovering(true);
-              setError(null);
-            }}
-            className="w-full rounded-full bg-[#12324a] py-4 text-base font-medium text-[#3aa0ff]"
+            disabled={busy || pin.length !== PIN_LENGTH}
+            onClick={() => void submitPin(pin)}
+            className="w-full rounded-full bg-[#3aa0ff] py-4 text-base font-medium text-ink disabled:opacity-60"
           >
-            {t.recoverCode}
+            {t.enter}
           </button>
-        ) : (
-          hasPin && (
-            <button
-              type="button"
-              onClick={() => {
-                setMode("pin");
-                setRecovering(false);
-                setError(null);
-              }}
-              className="w-full rounded-full bg-[#12324a] py-4 text-base font-medium text-[#3aa0ff]"
-            >
-              {t.useCode}
-            </button>
-          )
         )}
-        <button
-          type="button"
-          onClick={() => void logout()}
-          className="mt-1 py-2 text-xs text-studio-muted"
-        >
-          {t.notYou(firstName)} <span className="underline">{t.signOut}</span>
+        <button type="button" onClick={() => toEmail(false)} className={secondaryButton}>
+          {t.email.signInWithEmail}
         </button>
+        {mode === "biometrics" && codeOn && (
+          <button
+            type="button"
+            onClick={() => setMode("code")}
+            className="py-2 text-sm text-[#3aa0ff]"
+          >
+            {t.useCode}
+          </button>
+        )}
+        {signOutLink}
       </div>
     </AppScreen>
   );

@@ -12,7 +12,7 @@ import {
   passkeyRegistrationOptions,
   passkeyUnlockOptions,
   setPin,
-  setUnlockMethod,
+  setUnlockMethods,
   unlockWithPasskey,
   unlockWithPassword,
   unlockWithPin,
@@ -105,23 +105,22 @@ export const unlockWithPasskeyFn = createServerFn({ method: "POST" })
 export const setPinFn = createServerFn({ method: "POST" })
   .validator((d: unknown) => pinSchema.parse(d))
   .handler(({ data }) =>
-    withUnlockedUser(async (userId) => {
-      const db = await getDb();
-      const result = await setPin(db, userId, data.pin);
-      // A fresh code becomes the way in unless Face ID was chosen.
-      if (result.ok)
-        await db.query(
-          "update users set unlock_method = 'pin' where id = $1 and unlock_method = 'password'",
-          [userId],
-        );
-      return result;
-    }),
+    withUnlockedUser(async (userId) => setPin(await getDb(), userId, data.pin)),
   );
 
-export const setUnlockMethodFn = createServerFn({ method: "POST" })
-  .validator((d: unknown) => z.object({ method: z.enum(["pin", "passkey", "password"]) }).parse(d))
+export const setUnlockMethodsFn = createServerFn({ method: "POST" })
+  .validator((d: unknown) =>
+    z
+      .object({
+        methods: z
+          .array(z.enum(["pin", "passkey", "password"]))
+          .min(1)
+          .max(3),
+      })
+      .parse(d),
+  )
   .handler(({ data }) =>
-    withUnlockedUser(async (userId) => setUnlockMethod(await getDb(), userId, data.method)),
+    withUnlockedUser(async (userId) => setUnlockMethods(await getDb(), userId, data.methods)),
   );
 
 export const listPasskeysFn = createServerFn({ method: "GET" }).handler(

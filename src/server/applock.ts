@@ -11,11 +11,6 @@ import {
 import { toIso, type Db } from "./db";
 import { pinProblem } from "@/lib/app/pin";
 
-export { pinProblem };
-
-type Transport = NonNullable<RegistrationResponseJSON["response"]["transports"]>[number];
-const transportsOf = (stored: string | null) =>
-  stored ? { transports: stored.split(",") as Transport[] } : {};
 import {
   authenticate,
   hashPassword,
@@ -25,6 +20,12 @@ import {
   type SessionUser,
 } from "./auth";
 
+export { pinProblem };
+
+type Transport = NonNullable<RegistrationResponseJSON["response"]["transports"]>[number];
+const transportsOf = (stored: string | null) =>
+  stored ? { transports: stored.split(",") as Transport[] } : {};
+
 /**
  * Lock for the installed phone/tablet app. A session created from the app
  * (`app_lock`) serves data only while `unlocked_until` is in the future;
@@ -32,6 +33,10 @@ import {
  * itself explicitly on every cold start. Unlocking takes the person's 6-digit
  * code, Face ID/fingerprint (a WebAuthn passkey on that device) or password,
  * always checked here — the lock screen is just the way to ask.
+ *
+ * Each person picks which of these the lock screen offers (unlock_methods,
+ * e.g. code + Face ID so one backs up the other); code and Face ID are only
+ * accepted when enabled. The password always works, as the way back in.
  *
  * Five wrong codes in a row sign that session out, so the next attempt has to
  * go through email + password again.
@@ -41,13 +46,15 @@ export const MAX_PIN_FAILURES = 5;
 const CHALLENGE_MINUTES = 5;
 
 export type UnlockMethod = "pin" | "passkey" | "password";
+export const UNLOCK_METHODS: UnlockMethod[] = ["pin", "passkey", "password"];
 
 export type SessionState = {
   user: SessionUser;
   /** Created from the installed app, so the lock applies to it. */
   appSession: boolean;
   locked: boolean;
-  unlockMethod: UnlockMethod;
+  /** What the lock screen offers, in no particular order. */
+  unlockMethods: UnlockMethod[];
   hasPin: boolean;
   passkeyCount: number;
 };
@@ -60,13 +67,13 @@ export async function sessionState(db: Db, token: string): Promise<SessionState 
     email: string;
     app_lock: boolean;
     unlocked: boolean;
-    unlock_method: UnlockMethod;
+    unlock_methods: UnlockMethod[];
     has_pin: boolean;
     passkeys: number;
   }>(
     `select u.id, u.name, u.email, s.app_lock,
             coalesce(s.unlocked_until > now(), false) as unlocked,
-            u.unlock_method, (u.pin_hash is not null) as has_pin,
+            to_json(u.unlock_methods) as unlock_methods, (u.pin_hash is not null) as has_pin,
             (select count(*)::int from passkeys p where p.user_id = u.id) as passkeys
        from sessions s join users u on u.id = s.user_id
       where s.token_hash = $1 and s.expires_at > now()`,
@@ -77,7 +84,7 @@ export async function sessionState(db: Db, token: string): Promise<SessionState 
     user: { id: String(row.id), name: row.name, email: row.email },
     appSession: Boolean(row.app_lock),
     locked: Boolean(row.app_lock) && !row.unlocked,
-    unlockMethod: row.unlock_method,
+    unlockMethods: row.unlock_methods,
     hasPin: Boolean(row.has_pin),
     passkeyCount: Number(row.passkeys),
   };
@@ -122,26 +129,36 @@ export async function setPin(
 ): Promise<{ ok: true } | { ok: false; reason: "format" | "too_simple" }> {
   const problem = pinProblem(pin);
   if (problem) return { ok: false, reason: problem };
-  await db.query("update users set pin_hash = $2, pin_failures = 0 where id = $1", [
-    userId,
-    await hashPassword(pin),
-  ]);
+  // Creating a code turns it on as a way in (replacing "password only").
+  await db.query(
+    `update users set pin_hash = $2, pin_failures = 0,
+            unlock_methods = case when 'pin' = any(unlock_methods) then unlock_methods
+                                  else array_remove(unlock_methods, 'password') || array['pin'] end
+      where id = $1`,
+    [userId, await hashPassword(pin)],
+  );
   return { ok: true };
 }
 
 export type UnlockResult =
   | { ok: true }
   | { ok: false; reason: "wrong"; attemptsLeft: number }
-  | { ok: false; reason: "signed_out" | "no_pin" | "no_session" };
+  | { ok: false; reason: "signed_out" | "no_pin" | "no_session" | "not_allowed" };
 
 export async function unlockWithPin(db: Db, token: string, pin: string): Promise<UnlockResult> {
-  const [row] = await db.query<{ user_id: string; pin_hash: string | null; pin_failures: number }>(
-    `select u.id as user_id, u.pin_hash, u.pin_failures
+  const [row] = await db.query<{
+    user_id: string;
+    pin_hash: string | null;
+    pin_failures: number;
+    allowed: boolean;
+  }>(
+    `select u.id as user_id, u.pin_hash, u.pin_failures, ('pin' = any(u.unlock_methods)) as allowed
        from sessions s join users u on u.id = s.user_id
       where s.token_hash = $1 and s.expires_at > now() and s.app_lock`,
     [tokenHash(token)],
   );
   if (!row) return { ok: false, reason: "no_session" };
+  if (!row.allowed) return { ok: false, reason: "not_allowed" };
   if (!row.pin_hash) return { ok: false, reason: "no_pin" };
 
   if (await verifyPassword(pin, row.pin_hash)) {
@@ -180,20 +197,26 @@ export async function unlockWithPassword(
   return { ok: true };
 }
 
-export async function setUnlockMethod(
+/**
+ * Which ways in the lock screen offers (at least one). Code and Face ID can
+ * only be turned on once they exist; the password always works regardless.
+ */
+export async function setUnlockMethods(
   db: Db,
   userId: string,
-  method: UnlockMethod,
-): Promise<{ ok: true } | { ok: false; reason: "needs_pin" | "needs_passkey" }> {
+  methods: UnlockMethod[],
+): Promise<{ ok: true } | { ok: false; reason: "empty" | "needs_pin" | "needs_passkey" }> {
+  const wanted = UNLOCK_METHODS.filter((m) => methods.includes(m));
+  if (wanted.length === 0) return { ok: false, reason: "empty" };
   const [row] = await db.query<{ has_pin: boolean; passkeys: number }>(
     `select (pin_hash is not null) as has_pin,
             (select count(*)::int from passkeys where user_id = $1) as passkeys
        from users where id = $1`,
     [userId],
   );
-  if (method === "pin" && !row?.has_pin) return { ok: false, reason: "needs_pin" };
-  if (method === "passkey" && !row?.passkeys) return { ok: false, reason: "needs_passkey" };
-  await db.query("update users set unlock_method = $2 where id = $1", [userId, method]);
+  if (wanted.includes("pin") && !row?.has_pin) return { ok: false, reason: "needs_pin" };
+  if (wanted.includes("passkey") && !row?.passkeys) return { ok: false, reason: "needs_passkey" };
+  await db.query("update users set unlock_methods = $2::text[] where id = $1", [userId, wanted]);
   return { ok: true };
 }
 
@@ -253,10 +276,13 @@ export async function listPasskeys(db: Db, userId: string): Promise<PasskeyInfo[
 export async function deletePasskey(db: Db, userId: string, id: string): Promise<void> {
   await db.batch([
     { text: "delete from passkeys where id = $1 and user_id = $2", params: [id, userId] },
-    // Without any passkey left, Face ID can't be the way in anymore.
+    // Without any passkey left, Face ID can't be a way in anymore; if it was
+    // the only one, fall back to the code (or the password).
     {
-      text: `update users set unlock_method = case when pin_hash is not null then 'pin' else 'password' end
-              where id = $1 and unlock_method = 'passkey'
+      text: `update users set unlock_methods = coalesce(
+                 nullif(array_remove(unlock_methods, 'passkey'), '{}'),
+                 case when pin_hash is not null then array['pin'] else array['password'] end)
+              where id = $1 and 'passkey' = any(unlock_methods)
                 and not exists (select 1 from passkeys where user_id = $1)`,
       params: [userId],
     },
@@ -332,6 +358,12 @@ export async function verifyPasskeyRegistration(
       deviceName?.slice(0, 80) ?? null,
     ],
   );
+  // Adding Face ID on a device means wanting to use it.
+  await db.query(
+    `update users set unlock_methods = unlock_methods || array['passkey']
+      where id = $1 and not ('passkey' = any(unlock_methods))`,
+    [userId],
+  );
   return { ok: true };
 }
 
@@ -342,7 +374,7 @@ export async function passkeyUnlockOptions(
   rp: RelyingParty,
 ): Promise<PublicKeyCredentialRequestOptionsJSON | null> {
   const state = await sessionState(db, token);
-  if (!state?.appSession) return null;
+  if (!state?.appSession || !state.unlockMethods.includes("passkey")) return null;
   const creds = await db.query<{ id: string; transports: string | null }>(
     "select id, transports from passkeys where user_id = $1",
     [state.user.id],
@@ -368,6 +400,7 @@ export async function unlockWithPasskey(
 ): Promise<{ ok: true } | { ok: false; reason: "expired" | "invalid" | "no_session" }> {
   const state = await sessionState(db, token);
   if (!state?.appSession) return { ok: false, reason: "no_session" };
+  if (!state.unlockMethods.includes("passkey")) return { ok: false, reason: "invalid" };
   const challenge = await takeChallenge(db, token);
   if (!challenge) return { ok: false, reason: "expired" };
 

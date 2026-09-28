@@ -1,8 +1,11 @@
 import { createServerFn } from "@tanstack/react-start";
+import { getRequest } from "@tanstack/react-start/server";
 import { z } from "zod";
 import { getDb } from "@/server/db.server";
 import { authenticate, createSession, deleteSession, setPasswordWithToken } from "@/server/auth";
 import { sessionState, type UnlockMethod } from "@/server/applock";
+import { resendSender } from "@/server/mail";
+import { requestPasswordReset } from "@/server/password-reset";
 import { MIN_PASSWORD_LENGTH } from "./password-policy";
 import { clearSessionCookie, readSessionToken, setSessionCookie } from "@/server/session.server";
 
@@ -14,7 +17,8 @@ export type AuthSession = {
   /** Session of the installed app (the code/Face ID lock applies to it). */
   appSession: boolean;
   locked: boolean;
-  unlockMethod: UnlockMethod;
+  /** Ways in the lock screen offers (the password always works too). */
+  unlockMethods: UnlockMethod[];
   hasPin: boolean;
   passkeyCount: number;
 };
@@ -94,4 +98,17 @@ export const setPassword = createServerFn({ method: "POST" })
     const session = await createSession(db, user.id, true);
     setSessionCookie(session.token, session.expiresAt, true);
     return { ok: true, user };
+  });
+
+/** "Esqueceu a palavra-passe?": always answers ok, whether or not the email has an account. */
+export const requestPasswordResetFn = createServerFn({ method: "POST" })
+  .validator((data: unknown) => z.object({ email: z.string().trim().email().max(200) }).parse(data))
+  .handler(async ({ data }) => {
+    try {
+      const origin = new URL(getRequest().url).origin;
+      await requestPasswordReset(await getDb(), data.email, origin, resendSender);
+    } catch (err) {
+      console.error(err);
+    }
+    return { ok: true as const };
   });

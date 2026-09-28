@@ -10,7 +10,8 @@ import {
   pinProblem,
   sessionState,
   setPin,
-  setUnlockMethod,
+  deletePasskey,
+  setUnlockMethods,
   unlockWithPassword,
   unlockWithPin,
 } from "./applock";
@@ -137,15 +138,41 @@ describe("unlocking with the password ('Recuperar código')", () => {
 });
 
 describe("unlock method", () => {
-  it("needs a code for 'pin' and a registered device for Face ID", async () => {
-    expect(await setUnlockMethod(db, userId, "pin")).toEqual({ ok: false, reason: "needs_pin" });
-    expect(await setUnlockMethod(db, userId, "passkey")).toEqual({
+  it("can combine ways in, each only once it exists", async () => {
+    expect(await setUnlockMethods(db, userId, [])).toEqual({ ok: false, reason: "empty" });
+    expect(await setUnlockMethods(db, userId, ["pin"])).toEqual({ ok: false, reason: "needs_pin" });
+    expect(await setUnlockMethods(db, userId, ["pin", "passkey"])).toEqual({
       ok: false,
-      reason: "needs_passkey",
+      reason: "needs_pin",
     });
-    expect(await setUnlockMethod(db, userId, "password")).toEqual({ ok: true });
+    expect(await setUnlockMethods(db, userId, ["password"])).toEqual({ ok: true });
+    await setPin(db, userId, PIN); // creating a code turns it on
+    expect((await sessionState(db, await appSession()))?.unlockMethods).toEqual(["pin"]);
+    await db.query("insert into passkeys (id, user_id, public_key) values ('cred-1', $1, 'AA')", [
+      userId,
+    ]);
+    expect(await setUnlockMethods(db, userId, ["passkey", "pin"])).toEqual({ ok: true });
+    expect((await sessionState(db, await appSession()))?.unlockMethods).toEqual(["pin", "passkey"]);
+  });
+
+  it("refuses the code when it isn't one of the chosen ways in", async () => {
     await setPin(db, userId, PIN);
-    expect(await setUnlockMethod(db, userId, "pin")).toEqual({ ok: true });
+    await setUnlockMethods(db, userId, ["password"]);
+    const token = await appSession();
+    await lockSession(db, token);
+    expect(await unlockWithPin(db, token, PIN)).toEqual({ ok: false, reason: "not_allowed" });
+    // The password always works.
+    expect(await unlockWithPassword(db, token, PASSWORD)).toEqual({ ok: true });
+  });
+
+  it("drops Face ID from the ways in when its last device is removed", async () => {
+    await setPin(db, userId, PIN);
+    await db.query("insert into passkeys (id, user_id, public_key) values ('cred-1', $1, 'AA')", [
+      userId,
+    ]);
+    await setUnlockMethods(db, userId, ["passkey"]);
+    await deletePasskey(db, userId, "cred-1");
+    expect((await sessionState(db, await appSession()))?.unlockMethods).toEqual(["pin"]);
   });
 
   it("offers Face ID only with a registered device", async () => {
@@ -155,6 +182,8 @@ describe("unlock method", () => {
     await db.query("insert into passkeys (id, user_id, public_key) values ('cred-1', $1, 'AA')", [
       userId,
     ]);
+    expect(await passkeyUnlockOptions(db, token, rp)).toBeNull(); // registered but not turned on
+    await setUnlockMethods(db, userId, ["passkey"]);
     const options = await passkeyUnlockOptions(db, token, rp);
     expect(options?.allowCredentials?.map((c) => c.id)).toEqual(["cred-1"]);
     expect(options?.userVerification).toBe("required");

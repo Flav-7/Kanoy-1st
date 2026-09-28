@@ -1,6 +1,19 @@
 import type { Language } from "@/lib/i18n/translations";
 
 type AppCopy = {
+  email: {
+    signInWithEmail: string;
+    credentials: string;
+    emailField: string;
+    showPassword: string;
+    hidePassword: string;
+    forgotPassword: string;
+    forgotCode: string;
+    resetSent: string;
+    resetNeedsEmail: string;
+    useBiometrics: Record<"faceId" | "biometrics", string>;
+    otherAccount: string;
+  };
   login: { welcome: string; text: string; email: string; submit: string; continueToSite: string };
   greeting: { morning: string; afternoon: string; evening: string };
   enterCode: string;
@@ -45,6 +58,7 @@ type AppCopy = {
     securityText: string;
     method: string;
     methods: { pin: string; passkey: Record<"faceId" | "biometrics", string>; password: string };
+    methodsHint: string;
     changeCode: string;
     createCode: string;
     newCode: string;
@@ -65,6 +79,19 @@ type AppCopy = {
 };
 
 const PT: AppCopy = {
+  email: {
+    signInWithEmail: "Entrar com email",
+    credentials: "Inicie sessão com as suas credenciais",
+    emailField: "Email",
+    showPassword: "Mostrar palavra-passe",
+    hidePassword: "Esconder palavra-passe",
+    forgotPassword: "Esqueceu a palavra-passe?",
+    forgotCode: "Esqueceu o código?",
+    resetSent: "Se este email tiver conta, enviámos um link para redefinir a palavra-passe.",
+    resetNeedsEmail: "Escreva primeiro o seu email.",
+    useBiometrics: { faceId: "Usar Face ID para entrar", biometrics: "Usar biometria para entrar" },
+    otherAccount: "Usar outra conta",
+  },
   login: {
     welcome: "Bem-vindo à KANOY",
     text: "Entre com a sua conta da equipa.",
@@ -119,12 +146,14 @@ const PT: AppCopy = {
     security: "Entrada na app",
     securityText:
       "Na app instalada no telemóvel/tablet, é pedido ao abrir e sempre que volta depois de 5 minutos fora. No browser do computador entra-se com a palavra-passe.",
-    method: "Como quer entrar",
+    method: "Como quer entrar (pode escolher vários)",
     methods: {
       pin: "Código",
       passkey: { faceId: "Face ID", biometrics: "Biometria" },
-      password: "Palavra-passe",
+      password: "Email",
     },
+    methodsHint:
+      "Ex.: Código + Face ID — se um falhar, usa o outro. O email e a palavra-passe funcionam sempre como último recurso.",
     changeCode: "Mudar código",
     createCode: "Criar código",
     newCode: "Novo código (6 dígitos)",
@@ -149,6 +178,20 @@ const PT: AppCopy = {
 
 const ES: AppCopy = {
   ...PT,
+  email: {
+    signInWithEmail: "Entrar con email",
+    credentials: "Inicia sesión con tus credenciales",
+    emailField: "Email",
+    showPassword: "Mostrar contraseña",
+    hidePassword: "Ocultar contraseña",
+    forgotPassword: "¿Has olvidado la contraseña?",
+    forgotCode: "¿Has olvidado el código?",
+    resetSent:
+      "Si este email tiene cuenta, te hemos enviado un enlace para restablecer la contraseña.",
+    resetNeedsEmail: "Escribe primero tu email.",
+    useBiometrics: { faceId: "Usar Face ID para entrar", biometrics: "Usar biometría para entrar" },
+    otherAccount: "Usar otra cuenta",
+  },
   login: {
     welcome: "Bienvenido a KANOY",
     text: "Entra con tu cuenta del equipo.",
@@ -201,12 +244,14 @@ const ES: AppCopy = {
     security: "Acceso a la app",
     securityText:
       "En la app instalada en el móvil/tablet se pide al abrirla y cada vez que vuelves tras 5 minutos fuera. En el navegador del ordenador se entra con la contraseña.",
-    method: "Cómo quieres entrar",
+    method: "Cómo quieres entrar (puedes elegir varios)",
     methods: {
       pin: "Código",
       passkey: { faceId: "Face ID", biometrics: "Biometría" },
-      password: "Contraseña",
+      password: "Email",
     },
+    methodsHint:
+      "P. ej.: Código + Face ID: si uno falla, usas el otro. El email y la contraseña siempre funcionan como último recurso.",
     changeCode: "Cambiar código",
     createCode: "Crear código",
     newCode: "Nuevo código (6 dígitos)",
@@ -231,6 +276,19 @@ const ES: AppCopy = {
 
 const EN: AppCopy = {
   ...PT,
+  email: {
+    signInWithEmail: "Sign in with email",
+    credentials: "Sign in with your credentials",
+    emailField: "Email",
+    showPassword: "Show password",
+    hidePassword: "Hide password",
+    forgotPassword: "Forgot your password?",
+    forgotCode: "Forgot your code?",
+    resetSent: "If this email has an account, we've sent a link to reset the password.",
+    resetNeedsEmail: "Type your email first.",
+    useBiometrics: { faceId: "Use Face ID to sign in", biometrics: "Use biometrics to sign in" },
+    otherAccount: "Use another account",
+  },
   login: {
     welcome: "Welcome to KANOY",
     text: "Sign in with your team account.",
@@ -280,12 +338,14 @@ const EN: AppCopy = {
     security: "Opening the app",
     securityText:
       "In the app installed on a phone/tablet, it's asked when the app opens and whenever you come back after 5 minutes away. In a computer's browser you sign in with your password.",
-    method: "How you unlock",
+    method: "How you unlock (pick one or more)",
     methods: {
       pin: "Code",
       passkey: { faceId: "Face ID", biometrics: "Biometrics" },
-      password: "Password",
+      password: "Email",
     },
+    methodsHint:
+      "E.g. Code + Face ID: if one fails, use the other. Email and password always work as a last resort.",
     changeCode: "Change code",
     createCode: "Create code",
     newCode: "New code (6 digits)",

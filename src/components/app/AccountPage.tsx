@@ -3,6 +3,7 @@ import { Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   ArrowLeft,
+  Check,
   Fingerprint,
   Lock,
   ScanFace,
@@ -19,7 +20,7 @@ import {
   deletePasskeyFn,
   listPasskeysFn,
   setPinFn,
-  setUnlockMethodFn,
+  setUnlockMethodsFn,
 } from "@/lib/app/applock.functions";
 import { biometricsLabel, canUseBiometrics } from "@/lib/app/app-mode";
 import { registerThisDevice } from "@/lib/app/passkey-client";
@@ -199,8 +200,14 @@ function UnlockSection() {
   if (!session) return null;
   const devices = passkeys.data?.ok ? passkeys.data.passkeys : [];
 
-  const chooseMethod = async (method: "pin" | "passkey" | "password") => {
-    const res = await setUnlockMethodFn({ data: { method } });
+  /** Toggles one way in; at least one has to stay on. */
+  const toggleMethod = async (method: "pin" | "passkey" | "password") => {
+    const current = session.unlockMethods;
+    const next = current.includes(method)
+      ? current.filter((m) => m !== method)
+      : [...current, method];
+    if (next.length === 0) return;
+    const res = await setUnlockMethodsFn({ data: { methods: next } });
     if (!res.ok) {
       setNote({
         kind: "error",
@@ -260,24 +267,35 @@ function UnlockSection() {
           {t.account.method}
         </legend>
         <div className="grid gap-2 sm:grid-cols-3">
-          {methods.map((m) => (
-            <label
-              key={m.id}
-              className={`cursor-pointer rounded-md border px-3 py-2.5 text-sm ${
-                session.unlockMethod === m.id ? "border-accent bg-accent/10" : "border-white/15"
-              }`}
-            >
-              <input
-                type="radio"
-                name="unlock-method"
-                className="sr-only"
-                checked={session.unlockMethod === m.id}
-                onChange={() => void chooseMethod(m.id)}
-              />
-              {m.label}
-            </label>
-          ))}
+          {methods.map((m) => {
+            const on = session.unlockMethods.includes(m.id);
+            return (
+              <label
+                key={m.id}
+                className={`flex cursor-pointer items-center gap-2.5 rounded-md border px-3 py-2.5 text-sm has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-accent ${
+                  on ? "border-accent bg-accent/10" : "border-white/15"
+                }`}
+              >
+                <input
+                  type="checkbox"
+                  className="sr-only"
+                  checked={on}
+                  onChange={() => void toggleMethod(m.id)}
+                />
+                <span
+                  aria-hidden
+                  className={`flex h-4 w-4 shrink-0 items-center justify-center rounded border ${
+                    on ? "border-accent bg-accent text-ink" : "border-white/30"
+                  }`}
+                >
+                  {on && <Check className="h-3 w-3" strokeWidth={3} />}
+                </span>
+                {m.label}
+              </label>
+            );
+          })}
         </div>
+        <p className="mt-2 text-xs text-studio-muted">{t.account.methodsHint}</p>
       </fieldset>
 
       <div className="mt-6">

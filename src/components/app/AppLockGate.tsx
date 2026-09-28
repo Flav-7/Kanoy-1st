@@ -26,7 +26,7 @@ export function AppLockGate() {
   if (session.locked) return <LockScreen onRecovered={() => setSetupRequested(true)} />;
 
   const needsFirstCode =
-    appMode && session.appSession && !session.hasPin && session.unlockMethod !== "password";
+    appMode && session.appSession && !session.hasPin && session.unlockMethods.includes("pin");
   if (!setupDone && (setupRequested || needsFirstCode)) {
     return (
       <PinSetup

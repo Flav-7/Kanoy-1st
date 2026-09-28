@@ -18,6 +18,7 @@ import {
 } from "./auth.functions";
 import { lockAppSession, makeAppSessionFn } from "@/lib/app/applock.functions";
 import { isInstalledTouchApp } from "@/lib/app/app-mode";
+import { rememberUser } from "@/lib/app/remembered-user";
 import { disablePush } from "@/lib/team/push-client";
 
 type AuthState = {
@@ -53,6 +54,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // Coming out of the lock: whatever loaded while locked was refused, reload it.
     if (wasLocked.current && next && !next.locked) void queryClient.invalidateQueries();
     wasLocked.current = Boolean(next?.locked);
+    if (next && isInstalledTouchApp()) rememberUser(next.user);
     setSession(next);
     setReady(true);
   }, [queryClient]);

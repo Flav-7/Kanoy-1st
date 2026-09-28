@@ -139,4 +139,16 @@ export const MIGRATIONS: { id: string; statements: string[] }[] = [
       )`,
     ],
   },
+  {
+    id: "004_unlock_methods",
+    statements: [
+      // Several ways in at once (e.g. code + Face ID, one backing up the
+      // other). Replaces users.unlock_method, which stays until the code that
+      // reads it is gone from production, then can be dropped.
+      `alter table users add column unlock_methods text[] not null default '{pin}'
+         check (cardinality(unlock_methods) > 0
+                and unlock_methods <@ array['pin', 'passkey', 'password']::text[])`,
+      `update users set unlock_methods = array[unlock_method]`,
+    ],
+  },
 ];

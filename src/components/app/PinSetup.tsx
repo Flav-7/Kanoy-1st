@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Fingerprint, ScanFace } from "lucide-react";
 import { useAuth } from "@/lib/auth/AuthContext";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
-import { setPinFn, setUnlockMethodFn } from "@/lib/app/applock.functions";
+import { setPinFn, setUnlockMethodsFn } from "@/lib/app/applock.functions";
 import { biometricsLabel, canUseBiometrics } from "@/lib/app/app-mode";
 import { registerThisDevice } from "@/lib/app/passkey-client";
 import { pinProblem } from "@/lib/app/pin";
@@ -79,14 +79,14 @@ export function PinSetup({ onDone }: { onDone: () => void }) {
 
   const enableBio = async () => {
     setBusy(true);
-    const ok = await registerThisDevice();
-    if (ok) await setUnlockMethodFn({ data: { method: "passkey" } }).catch(() => {});
+    // Registering turns Face ID on next to the code (see verifyPasskeyRegistration).
+    await registerThisDevice();
     setBusy(false);
     await finish();
   };
 
   const skipCode = async () => {
-    await setUnlockMethodFn({ data: { method: "password" } }).catch(() => {});
+    await setUnlockMethodsFn({ data: { methods: ["password"] } }).catch(() => {});
     await finish();
   };
 
