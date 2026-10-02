@@ -5,6 +5,7 @@ import { ArrowLeft, CalendarDays, Lock, Plus, Users, X } from "lucide-react";
 import { AccountMenu, LoginDialog } from "@/components/kanoy/AccountMenu";
 import { NotificationsButton } from "@/components/team/NotificationsButton";
 import { TEAM_COPY } from "@/components/team/team-i18n";
+import { useHoldAppSplash } from "@/lib/app/app-splash";
 import { useAuth } from "@/lib/auth/AuthContext";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import {
@@ -232,6 +233,10 @@ function CalendarWorkspace() {
     (bootstrap.data && !bootstrap.data.ok) || (events.data && !events.data.ok);
   const firstLoad = bootstrap.isPending || (events.isPending && !events.data);
   const failed = bootstrap.isError || events.isError;
+  // Installed app: the launch screen stays until the calendar has its data,
+  // so opening the app is one loading screen, not the splash and then this
+  // page's skeleton.
+  useHoldAppSplash(firstLoad && !failed && !unauthenticated);
 
   let body: ReactNode;
   if (unauthenticated) {
