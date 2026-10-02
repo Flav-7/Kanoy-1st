@@ -2,7 +2,7 @@ import { format } from "date-fns";
 import { pt } from "date-fns/locale";
 import type { Db } from "./db";
 import { toZoned } from "@/lib/calendar/dates";
-import type { CalendarEvent } from "@/lib/calendar/types";
+import type { CalendarEvent, EventStatus } from "@/lib/calendar/types";
 
 /**
  * Phone/desktop notifications (Web Push) for activity in an area. Each
@@ -57,14 +57,42 @@ export async function recipientsFor(
   return rows.map((r) => ({ endpoint: r.endpoint, keys: { p256dh: r.p256dh, auth: r.auth } }));
 }
 
-export type ChangeKind = "created" | "updated" | "cancelled" | "deleted";
+export type ChangeKind =
+  "created" | "updated" | "confirmed" | "tentative" | "cancelled" | "restored" | "deleted";
 
-const HEADLINES: Record<ChangeKind, string> = {
-  created: "Nova atividade",
-  updated: "Atividade alterada",
-  cancelled: "Atividade cancelada",
-  deleted: "Atividade eliminada",
-};
+/** What an update did, from the status before and after: a status change says so first. */
+export function updateKind(before: EventStatus | undefined, after: EventStatus): ChangeKind {
+  if (before === after || before === undefined)
+    return after === "cancelled" ? "cancelled" : "updated";
+  if (after === "cancelled") return "cancelled";
+  if (before === "cancelled") return "restored";
+  return after === "confirmed" ? "confirmed" : "tentative";
+}
+
+/**
+ * The title says whether the activity is confirmed or tentative, so nobody
+ * has to open the app to know: "Nova atividade provisória", "Atividade
+ * confirmada" (was tentative), "Atividade cancelada"…
+ */
+function headline(kind: ChangeKind, status: EventStatus): string {
+  const tentative = status === "tentative";
+  switch (kind) {
+    case "created":
+      return tentative ? "Nova atividade provisória" : "Nova atividade confirmada";
+    case "updated":
+      return tentative ? "Atividade provisória alterada" : "Atividade alterada";
+    case "confirmed":
+      return "Atividade confirmada";
+    case "tentative":
+      return "Atividade passou a provisória";
+    case "cancelled":
+      return "Atividade cancelada";
+    case "restored":
+      return tentative ? "Atividade reposta (provisória)" : "Atividade reposta (confirmada)";
+    case "deleted":
+      return "Atividade eliminada";
+  }
+}
 
 /**
  * "Nova atividade · Websites" / "Reunião com cliente — seg., 28 set., 14:00–15:00".
@@ -88,7 +116,7 @@ export function describeChange(
     ? `${day} (dia inteiro)`
     : `${day}, ${format(toZoned(start, tz), "HH:mm")}–${format(toZoned(end, tz), "HH:mm")}`;
   return {
-    title: `${HEADLINES[kind]} · ${areaName}`,
+    title: `${headline(kind, event.status)} · ${areaName}`,
     body: `${event.title} — ${when}`,
     url: "/calendario",
     tag: `event-${event.id}`,

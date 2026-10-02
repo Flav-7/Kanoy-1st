@@ -12,7 +12,7 @@ import {
   updateEvent,
 } from "@/server/calendar";
 import type { Db } from "@/server/db";
-import { notifyArea, type ChangeKind } from "@/server/push";
+import { notifyArea, updateKind, type ChangeKind } from "@/server/push";
 import { isManager } from "@/server/team";
 import { webPushSender } from "@/server/web-push.server";
 import {
@@ -121,10 +121,11 @@ export const updateEventFn = createServerFn({ method: "POST" })
   .validator((data: unknown) => updateSchema.parse(data))
   .handler(({ data }): Promise<MutationResult> =>
     asUser(async (db, userId) => {
+      // Read first: the notification says what changed, e.g. tentative → confirmed.
+      const before = await getEvent(db, userId, data.id);
       const result = await updateEvent(db, userId, data.id, data.expectedVersion, data.input);
       if (result.ok && result.event) {
-        const kind = result.event.status === "cancelled" ? "cancelled" : "updated";
-        await notify(db, userId, result.event, kind);
+        await notify(db, userId, result.event, updateKind(before?.status, result.event.status));
       }
       return result;
     }),

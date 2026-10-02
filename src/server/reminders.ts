@@ -67,7 +67,7 @@ export function describeDay(
 ): PushMessage {
   const lines = list.slice(0, MAX_LINES).map((o) => {
     const when = o.event.allDay ? "Dia inteiro ·" : instantToWallTime(o.start, tz).slice(11, 16);
-    return `${when} ${o.event.title}`;
+    return `${when} ${o.event.title}${o.event.status === "tentative" ? " (provisória)" : ""}`;
   });
   if (list.length > MAX_LINES) lines.push(`+${list.length - MAX_LINES} mais`);
   return {

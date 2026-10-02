@@ -16,6 +16,7 @@ import {
   notifyArea,
   recipientsFor,
   saveSubscription,
+  updateKind,
   type PushSender,
 } from "./push";
 
@@ -185,7 +186,7 @@ describe("notifications", () => {
     };
     expect(await notifyArea(db, send, created.event, flavio, "created")).toBe(1);
     expect(sent).toContain(
-      `${sub(1).endpoint} Nova atividade · Websites | Apresentação da proposta — seg, 5 out, 14:00–15:30`,
+      `${sub(1).endpoint} Nova atividade confirmada · Websites | Apresentação da proposta — seg, 5 out, 14:00–15:30`,
     );
     expect((await recipientsFor(db, websites, flavio)).map((r) => r.endpoint)).toEqual([
       sub(1).endpoint,
@@ -226,5 +227,52 @@ describe("notifications", () => {
       title: "Atividade cancelada · Redes sociais",
       body: "Sessão fotográfica — qua, 7 out (dia inteiro)",
     });
+  });
+
+  it("say in the title whether an activity is tentative or confirmed", () => {
+    const event = (status: "confirmed" | "tentative" | "cancelled") => ({
+      id: "e",
+      calendarId: websites,
+      title: "Cãovívio",
+      description: null,
+      startAt: "2026-10-03T14:00:00.000Z",
+      endAt: "2026-10-03T15:00:00.000Z",
+      timezone: "Europe/Lisbon",
+      allDay: false,
+      category: "production_meeting" as const,
+      status,
+      recurrence: null,
+      exdates: [],
+      participants: [],
+      createdBy: flavio,
+      createdAt: "",
+      updatedAt: "",
+      version: 1,
+    });
+    const title = (
+      status: "confirmed" | "tentative" | "cancelled",
+      kind: Parameters<typeof describeChange>[2],
+    ) => describeChange(event(status), "Geral", kind).title;
+
+    expect(title("tentative", "created")).toBe("Nova atividade provisória · Geral");
+    expect(title("confirmed", "created")).toBe("Nova atividade confirmada · Geral");
+    expect(title("confirmed", updateKind("tentative", "confirmed"))).toBe(
+      "Atividade confirmada · Geral",
+    );
+    expect(title("cancelled", updateKind("tentative", "cancelled"))).toBe(
+      "Atividade cancelada · Geral",
+    );
+    expect(title("tentative", updateKind("confirmed", "tentative"))).toBe(
+      "Atividade passou a provisória · Geral",
+    );
+    expect(title("tentative", updateKind("tentative", "tentative"))).toBe(
+      "Atividade provisória alterada · Geral",
+    );
+    expect(title("confirmed", updateKind("confirmed", "confirmed"))).toBe(
+      "Atividade alterada · Geral",
+    );
+    expect(title("confirmed", updateKind("cancelled", "confirmed"))).toBe(
+      "Atividade reposta (confirmada) · Geral",
+    );
   });
 });
