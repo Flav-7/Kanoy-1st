@@ -187,6 +187,39 @@ export function EventFormDialog({
             </div>
           </fieldset>
 
+          {/* Confirmed or tentative, chosen when creating; a tentative event is
+              confirmed or cancelled later from its details. Cancelled only
+              shows up here when editing an event that already is. */}
+          <fieldset>
+            <legend className="mb-1.5 text-[10px] uppercase tracking-[0.3em] text-studio-muted">
+              {t.status}
+            </legend>
+            <div className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap">
+              {STATUSES.filter((s) => s !== "cancelled" || form.status === "cancelled").map((s) => {
+                const on = form.status === s;
+                return (
+                  <button
+                    key={s}
+                    type="button"
+                    aria-pressed={on}
+                    onClick={() => set({ status: s })}
+                    className={`rounded-full border px-4 py-2 text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent ${
+                      on
+                        ? s === "tentative"
+                          ? "border-amber-300 bg-amber-300 font-medium text-ink"
+                          : s === "cancelled"
+                            ? "border-destructive bg-destructive font-medium text-white"
+                            : "border-emerald-500 bg-emerald-500 font-medium text-ink"
+                        : "border-white/15 text-studio-foreground hover:bg-white/[0.06]"
+                    }`}
+                  >
+                    {ui.copy.statusNames[s]}
+                  </button>
+                );
+              })}
+            </div>
+          </fieldset>
+
           <label className="flex items-center gap-2 text-sm">
             <input
               type="checkbox"
@@ -250,7 +283,7 @@ export function EventFormDialog({
             </p>
           )}
 
-          <div className="grid gap-3 sm:grid-cols-2">
+          <div className="grid gap-3">
             <Field label={t.calendar}>
               <select
                 value={form.calendarId}
@@ -266,19 +299,6 @@ export function EventFormDialog({
                 {editableCalendars.map((c) => (
                   <option key={c.id} value={c.id}>
                     {c.name}
-                  </option>
-                ))}
-              </select>
-            </Field>
-            <Field label={t.status}>
-              <select
-                value={form.status}
-                onChange={(e) => set({ status: e.target.value as EventFormState["status"] })}
-                className={inputClass}
-              >
-                {STATUSES.map((s) => (
-                  <option key={s} value={s}>
-                    {ui.copy.statusNames[s]}
                   </option>
                 ))}
               </select>
