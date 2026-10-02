@@ -32,11 +32,11 @@ export const IOS_STARTUP_IMAGES = IOS_SCREENS.map(([w, h, r]) => ({
 }));
 
 /**
- * The launch images are drawn on the whole screen, status bar included, but
- * the page starts below the status bar. So on those iPhones #app-splash is
- * made exactly screen-tall and pinned to the bottom (its top tucked under
- * the status bar): the K and the bar stay on the very pixels of the launch
- * image instead of jumping down when the page takes over.
+ * The launch images are drawn on the whole screen, status bar included. The
+ * app now runs edge to edge too, but should iOS ever lay the page out below
+ * the status bar, #app-splash stays exactly screen-tall and pinned to the
+ * bottom on those iPhones: the K and the bar keep to the very pixels of the
+ * launch image instead of jumping down when the page takes over.
  */
 const SCREEN_HEIGHTS = IOS_SCREENS.map(
   ([w, h, r]) => `  @media ${screenMedia(w, h, r)} { #app-splash { --splash-h: ${h}px; } }`,
@@ -85,7 +85,13 @@ export const APP_SPLASH_CSS = `
 ${SCREEN_HEIGHTS}
   /* iOS 26 blurs the top of the page under the status bar unless it finds a
      sticky/fixed bar there, whose colour it then extends instead. */
-  .app-topbar { position: sticky; top: 0; z-index: 30; background-color: var(--studio); }
+  .app-topbar {
+    position: sticky; top: 0; z-index: 30; background-color: var(--studio);
+    /* Edge to edge: the bar reaches under the status bar, its content below it. */
+    padding-top: calc(env(safe-area-inset-top) + 0.75rem);
+  }
+  /* Fixed controls pinned near the top of the screen. */
+  .app-below-status-bar { margin-top: env(safe-area-inset-top); }
 }
 @keyframes app-splash-load { 0% { transform: translateX(-100%); } 100% { transform: translateX(250%); } }
 @keyframes app-splash-giveup { to { visibility: hidden; } }

@@ -70,7 +70,9 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "mobile-web-app-capable", content: "yes" },
       { name: "apple-mobile-web-app-capable", content: "yes" },
       { name: "apple-mobile-web-app-title", content: "KANOY" },
-      { name: "apple-mobile-web-app-status-bar-style", content: "black" },
+      // Edge to edge: the page runs under the status bar like the launch
+      // image does (see the viewport script in RootShell).
+      { name: "apple-mobile-web-app-status-bar-style", content: "black-translucent" },
     ],
     links: [
       // Fonts are self-hosted in src/styles.css (@font-face) — see that file
@@ -115,6 +117,18 @@ function RootShell({ children }: { children: ReactNode }) {
             for the stylesheet (see lib/app/app-splash.ts). */}
         <style id="app-splash-css" dangerouslySetInnerHTML={{ __html: APP_SPLASH_CSS }} />
         <HeadContent />
+        {/* Installed iPhone app only: the page fills the whole screen, status
+            bar included — the same frame as the launch image, so iOS hands
+            over without resizing the page (a grey flash) — and env(safe-area-
+            inset-*) report the status bar and home indicator. A separate
+            meta so React's own one is untouched; Safari tabs keep the
+            default, so the site never slides under the notch in landscape. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              'if(navigator.standalone){var m=document.createElement("meta");m.name="viewport";m.content="width=device-width, initial-scale=1, viewport-fit=cover";document.head.appendChild(m)}',
+          }}
+        />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(ORGANIZATION_SCHEMA) }}

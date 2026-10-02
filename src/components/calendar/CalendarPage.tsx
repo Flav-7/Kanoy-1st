@@ -370,7 +370,10 @@ function CalendarWorkspace() {
       <DialogPrimitive.Root open={filtersOpen} onOpenChange={setFiltersOpen}>
         <DialogPrimitive.Portal>
           <DialogPrimitive.Overlay className="fixed inset-0 z-50 bg-black/50 lg:hidden" />
-          <DialogPrimitive.Content className="fixed inset-x-0 bottom-0 z-50 max-h-[80dvh] overflow-y-auto rounded-t-2xl border-t border-white/10 bg-ink text-studio-foreground lg:hidden">
+          <DialogPrimitive.Content
+            className="fixed inset-x-0 bottom-0 z-50 max-h-[80dvh] overflow-y-auto rounded-t-2xl border-t border-white/10 bg-ink text-studio-foreground lg:hidden"
+            style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
+          >
             <div className="flex items-center justify-between px-5 pt-4">
               <DialogPrimitive.Title className="font-display text-lg">
                 {copy.filters}

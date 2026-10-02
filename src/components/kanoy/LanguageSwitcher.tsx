@@ -25,7 +25,7 @@ export function LanguageSwitcher({
   return (
     <div
       ref={rootRef}
-      className="fixed right-4 top-4 z-50 flex items-center gap-3 md:right-6 md:top-6"
+      className="app-below-status-bar fixed right-4 top-4 z-50 flex items-center gap-3 md:right-6 md:top-6"
     >
       {children}
 
