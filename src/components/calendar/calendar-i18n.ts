@@ -51,6 +51,11 @@ type CalendarCopy = {
     delete: string;
     close: string;
     readOnly: string;
+    /** Tentative events: the box asking an editor to confirm or cancel. */
+    pendingTitle: string;
+    pendingText: string;
+    confirm: string;
+    cancel: string;
   };
   form: {
     newTitle: string;
@@ -95,6 +100,8 @@ type CalendarCopy = {
   conflictRefreshed: string;
   saved: string;
   deleted: string;
+  confirmed: string;
+  cancelled: string;
 };
 
 const PT: CalendarCopy = {
@@ -150,6 +157,10 @@ const PT: CalendarCopy = {
     delete: "Eliminar",
     close: "Fechar",
     readOnly: "Só tem permissão de leitura neste calendário.",
+    pendingTitle: "Por confirmar",
+    pendingText: "Este evento está provisório. Confirme-o ou cancele-o.",
+    confirm: "Confirmar",
+    cancel: "Cancelar",
   },
   form: {
     newTitle: "Novo evento",
@@ -210,6 +221,8 @@ const PT: CalendarCopy = {
     "Outra pessoa alterou este evento entretanto. Os dados foram atualizados: confirme e tente de novo.",
   saved: "Evento guardado.",
   deleted: "Evento eliminado.",
+  confirmed: "Evento confirmado.",
+  cancelled: "Evento cancelado.",
 };
 
 const ES: CalendarCopy = {
@@ -264,6 +277,10 @@ const ES: CalendarCopy = {
     delete: "Eliminar",
     close: "Cerrar",
     readOnly: "Solo tienes permiso de lectura en este calendario.",
+    pendingTitle: "Por confirmar",
+    pendingText: "Este evento es provisional. Confírmalo o cancélalo.",
+    confirm: "Confirmar",
+    cancel: "Cancelar",
   },
   form: {
     newTitle: "Nuevo evento",
@@ -324,6 +341,8 @@ const ES: CalendarCopy = {
     "Otra persona ha modificado este evento. Los datos se han actualizado: revísalos e inténtalo de nuevo.",
   saved: "Evento guardado.",
   deleted: "Evento eliminado.",
+  confirmed: "Evento confirmado.",
+  cancelled: "Evento cancelado.",
 };
 
 const EN: CalendarCopy = {
@@ -380,6 +399,10 @@ const EN: CalendarCopy = {
     delete: "Delete",
     close: "Close",
     readOnly: "You can only view this calendar.",
+    pendingTitle: "Awaiting confirmation",
+    pendingText: "This event is tentative. Confirm or cancel it.",
+    confirm: "Confirm",
+    cancel: "Cancel",
   },
   form: {
     newTitle: "New event",
@@ -434,6 +457,8 @@ const EN: CalendarCopy = {
     "Someone else changed this event meanwhile. It has been refreshed: check it and try again.",
   saved: "Event saved.",
   deleted: "Event deleted.",
+  confirmed: "Event confirmed.",
+  cancelled: "Event cancelled.",
 };
 
 export const CALENDAR_COPY: Record<Language, CalendarCopy> = { pt: PT, es: ES, en: EN };

@@ -3,6 +3,7 @@ import * as DialogPrimitive from "@radix-ui/react-dialog";
 import {
   Ban,
   CalendarDays,
+  Check,
   Clock,
   Globe,
   Pencil,
@@ -108,6 +109,15 @@ export function EventDrawer({
   const calendar = event ? ui.calendarsById.get(event.calendarId) : undefined;
   const editable = canEditEvents(calendar?.role);
   const CategoryIcon = event?.category ? CATEGORY_ICONS[event.category] : null;
+  const pending = editable && event?.status === "tentative";
+
+  const setStatus = (status: CalendarEvent["status"], message: string) => {
+    if (!event) return;
+    void run(
+      () => actions.update(event.id, event.version, eventToInput(event, { status })),
+      () => notify(message),
+    );
+  };
 
   return (
     <DialogPrimitive.Root
@@ -285,49 +295,74 @@ export function EventDrawer({
                     </div>
                   </div>
                 ) : (
-                  <div className="flex flex-wrap gap-2">
-                    <button
-                      type="button"
-                      onClick={() => onEdit(event)}
-                      className="btn-kanoy inline-flex items-center gap-2 bg-accent text-ink"
-                      style={{ padding: "10px 16px" }}
-                    >
-                      <Pencil className="h-3.5 w-3.5" aria-hidden />
-                      {ui.copy.details.edit}
-                    </button>
-                    <SecondaryButton
-                      disabled={busy}
-                      onClick={() =>
-                        run(
-                          () =>
-                            actions.update(
-                              event.id,
-                              event.version,
-                              eventToInput(event, {
-                                status: event.status === "cancelled" ? "confirmed" : "cancelled",
-                              }),
-                            ),
-                          () => notify(ui.copy.saved),
-                        )
-                      }
-                    >
-                      {event.status === "cancelled" ? (
-                        <RotateCcw className="h-3.5 w-3.5" aria-hidden />
-                      ) : (
-                        <Ban className="h-3.5 w-3.5" aria-hidden />
+                  <>
+                    {pending && (
+                      <div className="mb-4 rounded-xl border border-amber-300/25 bg-amber-300/[0.06] p-4">
+                        <p className="text-sm font-medium">{ui.copy.details.pendingTitle}</p>
+                        <p className="mt-0.5 text-xs text-studio-muted">
+                          {ui.copy.details.pendingText}
+                        </p>
+                        <div className="mt-3 grid grid-cols-2 gap-2">
+                          <button
+                            type="button"
+                            disabled={busy}
+                            onClick={() => setStatus("confirmed", ui.copy.confirmed)}
+                            className="inline-flex items-center justify-center gap-2 rounded-full bg-emerald-500 py-3 text-sm font-semibold text-ink transition-opacity hover:opacity-90 disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+                          >
+                            <Check className="h-4 w-4" aria-hidden />
+                            {ui.copy.details.confirm}
+                          </button>
+                          <button
+                            type="button"
+                            disabled={busy}
+                            onClick={() => setStatus("cancelled", ui.copy.cancelled)}
+                            className="inline-flex items-center justify-center gap-2 rounded-full border border-destructive/60 py-3 text-sm font-semibold text-destructive transition-colors hover:bg-destructive/10 disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+                          >
+                            <Ban className="h-4 w-4" aria-hidden />
+                            {ui.copy.details.cancel}
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                    <div className="flex flex-wrap gap-2">
+                      <button
+                        type="button"
+                        onClick={() => onEdit(event)}
+                        className="btn-kanoy inline-flex items-center gap-2 bg-accent text-ink"
+                        style={{ padding: "10px 16px" }}
+                      >
+                        <Pencil className="h-3.5 w-3.5" aria-hidden />
+                        {ui.copy.details.edit}
+                      </button>
+                      {/* Tentative: cancelling is in the box above. */}
+                      {!pending && (
+                        <SecondaryButton
+                          disabled={busy}
+                          onClick={() =>
+                            event.status === "cancelled"
+                              ? setStatus("confirmed", ui.copy.saved)
+                              : setStatus("cancelled", ui.copy.cancelled)
+                          }
+                        >
+                          {event.status === "cancelled" ? (
+                            <RotateCcw className="h-3.5 w-3.5" aria-hidden />
+                          ) : (
+                            <Ban className="h-3.5 w-3.5" aria-hidden />
+                          )}
+                          {event.status === "cancelled"
+                            ? ui.copy.details.restoreEvent
+                            : ui.copy.details.cancelEvent}
+                        </SecondaryButton>
                       )}
-                      {event.status === "cancelled"
-                        ? ui.copy.details.restoreEvent
-                        : ui.copy.details.cancelEvent}
-                    </SecondaryButton>
-                    <SecondaryButton
-                      onClick={() => setConfirming(true)}
-                      className="text-destructive hover:border-destructive"
-                    >
-                      <Trash2 className="h-3.5 w-3.5" aria-hidden />
-                      {ui.copy.details.delete}
-                    </SecondaryButton>
-                  </div>
+                      <SecondaryButton
+                        onClick={() => setConfirming(true)}
+                        className="text-destructive hover:border-destructive"
+                      >
+                        <Trash2 className="h-3.5 w-3.5" aria-hidden />
+                        {ui.copy.details.delete}
+                      </SecondaryButton>
+                    </div>
+                  </>
                 )}
               </div>
             </>
