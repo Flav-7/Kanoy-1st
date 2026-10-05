@@ -11,6 +11,8 @@ export const Route = createFileRoute("/privacidade")({
     meta: [
       { title },
       { name: "description", content: description },
+      // Legal pages stay out of search results so a search for "kanoy" lands on the homepage.
+      { name: "robots", content: "noindex, follow" },
       { property: "og:title", content: title },
       { property: "og:description", content: description },
     ],
